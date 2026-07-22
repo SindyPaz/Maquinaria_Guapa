@@ -1,0 +1,42 @@
+{
+  "name": "Labores Maquinaria - Agricola Guapa",
+  "short_name": "Labores Maq",
+  "description": "Registro de labores y turnos de maquinaria agrícola",
+  "start_url": "./APP2_Labores.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0A1A0F",
+  "theme_color": "#065F46",
+  "lang": "es",
+  "categories": ["productivity", "agriculture"],
+  "icons": [
+    {
+      "src": "icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Nuevo Turno",
+      "short_name": "Turno",
+      "description": "Iniciar un nuevo turno rápidamente",
+      "url": "./APP2_Labores.html#turno"
+    }
+  ]
+}

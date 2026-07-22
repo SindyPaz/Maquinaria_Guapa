@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body>
+<h2 id="msg" style="font-size:40px;padding:40px;font-family:Arial">⏳ Cargando...</h2>
+<select id="sel" style="font-size:24px;padding:16px;width:100%">
+  <option>Esperando JS...</option>
+</select>
+<script>
+  document.getElementById('msg').textContent = '✅ JavaScript SI funciona';
+  document.getElementById('msg').style.color = 'green';
+  var s = document.getElementById('sel');
+  s.innerHTML = '';
+  s.add(new Option('Opcion 1','1'));
+  s.add(new Option('Opcion 2','2'));
+  s.add(new Option('Opcion 3','3'));
+</script>
+</body>
+</html>

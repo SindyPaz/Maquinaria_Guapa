@@ -1,0 +1,249 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <!-- Cielo gradiente -->
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4A90D9"/>
+      <stop offset="100%" stop-color="#87CEEB"/>
+    </linearGradient>
+    <!-- Campo gradiente -->
+    <linearGradient id="field" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3A7D2C"/>
+      <stop offset="100%" stop-color="#1F4D15"/>
+    </linearGradient>
+    <!-- Rueda gradiente -->
+    <radialGradient id="wheel" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#555"/>
+      <stop offset="100%" stop-color="#111"/>
+    </radialGradient>
+    <!-- Cuerpo tractor -->
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4CAF50"/>
+      <stop offset="100%" stop-color="#2E7D32"/>
+    </linearGradient>
+    <!-- Cabina -->
+    <linearGradient id="cab" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#388E3C"/>
+      <stop offset="100%" stop-color="#1B5E20"/>
+    </linearGradient>
+    <!-- Sombra suave -->
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="2" dy="3" stdDeviation="3" flood-opacity="0.3"/>
+    </filter>
+    <filter id="soft" x="-5%" y="-5%" width="110%" height="110%">
+      <feGaussianBlur stdDeviation="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- Fondo cielo -->
+  <rect width="200" height="200" fill="url(#sky)"/>
+
+  <!-- Nubes -->
+  <g opacity="0.85">
+    <ellipse cx="30" cy="28" rx="18" ry="10" fill="white"/>
+    <ellipse cx="45" cy="22" rx="14" ry="9" fill="white"/>
+    <ellipse cx="18" cy="24" rx="12" ry="8" fill="white"/>
+    <ellipse cx="155" cy="35" rx="22" ry="11" fill="white"/>
+    <ellipse cx="173" cy="29" rx="15" ry="9" fill="white"/>
+    <ellipse cx="140" cy="31" rx="14" ry="8" fill="white"/>
+  </g>
+
+  <!-- Campo verde -->
+  <rect x="0" y="120" width="200" height="80" fill="url(#field)"/>
+
+  <!-- Surcos del cultivo (líneas de piña) -->
+  <g stroke="#2A6B1A" stroke-width="1" opacity="0.5">
+    <line x1="0" y1="135" x2="200" y2="135"/>
+    <line x1="0" y1="148" x2="200" y2="148"/>
+    <line x1="0" y1="161" x2="200" y2="161"/>
+    <line x1="0" y1="174" x2="200" y2="174"/>
+    <line x1="0" y1="187" x2="200" y2="187"/>
+  </g>
+
+  <!-- Plantas de piña simplificadas (elegantes) -->
+  <g fill="#2E7D32">
+    <!-- Planta 1 -->
+    <ellipse cx="15" cy="125" rx="6" ry="8" fill="#FFB300" opacity="0.8"/>
+    <polygon points="15,110 9,124 21,124" fill="#388E3C"/>
+    <polygon points="15,112 6,120 24,120" fill="#2E7D32"/>
+    <polygon points="15,115 4,122 26,122" fill="#1B5E20"/>
+    <!-- Planta 2 -->
+    <ellipse cx="168" cy="123" rx="6" ry="8" fill="#FFB300" opacity="0.8"/>
+    <polygon points="168,108 162,122 174,122" fill="#388E3C"/>
+    <polygon points="168,110 159,118 177,118" fill="#2E7D32"/>
+    <polygon points="168,113 156,121 180,121" fill="#1B5E20"/>
+    <!-- Planta 3 -->
+    <ellipse cx="185" cy="140" rx="5" ry="7" fill="#FFB300" opacity="0.7"/>
+    <polygon points="185,128 180,139 190,139" fill="#388E3C"/>
+    <polygon points="185,130 177,137 193,137" fill="#2E7D32"/>
+    <!-- Planta 4 -->
+    <ellipse cx="8" cy="145" rx="5" ry="6" fill="#FFB300" opacity="0.7"/>
+    <polygon points="8,134 3,144 13,144" fill="#388E3C"/>
+    <polygon points="8,136 1,143 15,143" fill="#2E7D32"/>
+  </g>
+
+  <!-- ═══════════ TRACTOR ═══════════ -->
+  <g filter="url(#shadow)">
+
+    <!-- RUEDA TRASERA GRANDE -->
+    <circle cx="72" cy="140" r="38" fill="url(#wheel)" stroke="#333" stroke-width="3"/>
+    <!-- Aro interior -->
+    <circle cx="72" cy="140" r="26" fill="#222" stroke="#444" stroke-width="2"/>
+    <circle cx="72" cy="140" r="10" fill="#555" stroke="#666" stroke-width="1.5"/>
+    <!-- Radios rueda trasera -->
+    <g stroke="#777" stroke-width="2.5" stroke-linecap="round">
+      <line x1="72" y1="118" x2="72" y2="132"/>
+      <line x1="72" y1="148" x2="72" y2="162"/>
+      <line x1="50" y1="140" x2="64" y2="140"/>
+      <line x1="80" y1="140" x2="94" y2="140"/>
+      <line x1="56" y1="124" x2="66" y2="133"/>
+      <line x1="78" y1="147" x2="88" y2="156"/>
+      <line x1="88" y1="124" x2="78" y2="133"/>
+      <line x1="56" y1="147" x2="66" y2="147"/>
+    </g>
+    <!-- Tachones rueda trasera -->
+    <g fill="#444" stroke="#555" stroke-width="0.5">
+      <rect x="35" y="136" width="5" height="8" rx="1" transform="rotate(-15 37 140)"/>
+      <rect x="35" y="136" width="5" height="8" rx="1" transform="rotate(30 72 140) translate(0 -38)"/>
+      <rect x="35" y="136" width="5" height="8" rx="1" transform="rotate(75 72 140) translate(0 -38)"/>
+      <rect x="35" y="136" width="5" height="8" rx="1" transform="rotate(120 72 140) translate(0 -38)"/>
+      <rect x="35" y="136" width="5" height="8" rx="1" transform="rotate(165 72 140) translate(0 -38)"/>
+      <rect x="35" y="136" width="5" height="8" rx="1" transform="rotate(210 72 140) translate(0 -38)"/>
+      <rect x="35" y="136" width="5" height="8" rx="1" transform="rotate(255 72 140) translate(0 -38)"/>
+      <rect x="35" y="136" width="5" height="8" rx="1" transform="rotate(300 72 140) translate(0 -38)"/>
+      <rect x="35" y="136" width="5" height="8" rx="1" transform="rotate(345 72 140) translate(0 -38)"/>
+    </g>
+
+    <!-- EJE / TRANSMISIÓN -->
+    <rect x="82" y="126" width="55" height="10" rx="4" fill="#2E7D32" stroke="#1B5E20" stroke-width="1.5"/>
+
+    <!-- CHASIS PRINCIPAL -->
+    <rect x="72" y="108" width="90" height="28" rx="5" fill="url(#body)" stroke="#1B5E20" stroke-width="2"/>
+
+    <!-- CAPA SUPERIOR CHASIS -->
+    <rect x="75" y="108" width="85" height="12" rx="3" fill="#43A047" opacity="0.5"/>
+
+    <!-- CAPÓ DEL MOTOR (trapezoide) -->
+    <polygon points="75,108 130,108 125,78 80,78" fill="url(#body)" stroke="#1B5E20" stroke-width="2"/>
+    <!-- Rejilla capó -->
+    <g stroke="#1B5E20" stroke-width="1.5" opacity="0.7">
+      <line x1="90" y1="80" x2="88" y2="106"/>
+      <line x1="100" y1="80" x2="98" y2="106"/>
+      <line x1="110" y1="80" x2="108" y2="106"/>
+      <line x1="120" y1="80" x2="118" y2="106"/>
+      <line x1="81" y1="90" x2="129" y2="90"/>
+      <line x1="82" y1="99" x2="128" y2="99"/>
+    </g>
+    <!-- Logo/emblema en capó -->
+    <circle cx="103" cy="84" r="7" fill="#FFD600" stroke="#FFA000" stroke-width="1"/>
+    <text x="103" y="88" text-anchor="middle" font-size="8" font-weight="bold" fill="#1B5E20">AG</text>
+
+    <!-- ESCAPE -->
+    <rect x="122" y="58" width="7" height="22" rx="3" fill="#757575" stroke="#424242" stroke-width="1"/>
+    <ellipse cx="125" cy="58" rx="4" ry="2.5" fill="#616161" stroke="#424242" stroke-width="1"/>
+    <!-- Humo -->
+    <g opacity="0.4">
+      <circle cx="125" cy="52" r="4" fill="#B0BEC5"/>
+      <circle cx="122" cy="46" r="5" fill="#CFD8DC"/>
+      <circle cx="127" cy="40" r="6" fill="#ECEFF1"/>
+    </g>
+
+    <!-- CABINA -->
+    <rect x="128" y="68" width="52" height="38" rx="4" fill="url(#cab)" stroke="#1B5E20" stroke-width="2"/>
+    <!-- Techo cabina -->
+    <rect x="124" y="63" width="60" height="8" rx="3" fill="#1B5E20" stroke="#0A3D0A" stroke-width="1.5"/>
+    <!-- Vidrio delantero (brillante) -->
+    <rect x="132" y="72" width="22" height="26" rx="3" fill="#B3E5FC" stroke="#0288D1" stroke-width="1.5" opacity="0.85"/>
+    <!-- Reflejo vidrio -->
+    <line x1="135" y1="74" x2="140" y2="95" stroke="white" stroke-width="1.5" opacity="0.7"/>
+    <line x1="139" y1="73" x2="142" y2="80" stroke="white" stroke-width="1" opacity="0.5"/>
+    <!-- Vidrio trasero -->
+    <rect x="156" y="72" width="20" height="26" rx="3" fill="#B3E5FC" stroke="#0288D1" stroke-width="1.5" opacity="0.75"/>
+    <line x1="159" y1="74" x2="162" y2="93" stroke="white" stroke-width="1" opacity="0.5"/>
+    <!-- Espejo lateral -->
+    <rect x="128" y="75" width="5" height="8" rx="1" fill="#616161" stroke="#424242" stroke-width="1"/>
+    <line x1="126" y1="74" x2="130" y2="76" stroke="#757575" stroke-width="1.5"/>
+
+    <!-- RUEDA DELANTERA -->
+    <circle cx="155" cy="148" r="22" fill="url(#wheel)" stroke="#333" stroke-width="2.5"/>
+    <circle cx="155" cy="148" r="15" fill="#222" stroke="#444" stroke-width="1.5"/>
+    <circle cx="155" cy="148" r="6" fill="#555" stroke="#666" stroke-width="1"/>
+    <g stroke="#777" stroke-width="2" stroke-linecap="round">
+      <line x1="155" y1="133" x2="155" y2="142"/>
+      <line x1="155" y1="154" x2="155" y2="163"/>
+      <line x1="140" y1="148" x2="149" y2="148"/>
+      <line x1="161" y1="148" x2="170" y2="148"/>
+      <line x1="144" y1="137" x2="151" y2="143"/>
+      <line x1="159" y1="153" x2="166" y2="159"/>
+      <line x1="166" y1="137" x2="159" y2="143"/>
+      <line x1="144" y1="153" x2="151" y2="159"/>
+    </g>
+
+    <!-- FAROLES -->
+    <ellipse cx="130" cy="115" rx="5" ry="4" fill="#FFF176" stroke="#F9A825" stroke-width="1"/>
+    <ellipse cx="130" cy="115" rx="3" ry="2.5" fill="#FFFF00" opacity="0.8"/>
+    <!-- Luz trasera -->
+    <rect x="72" y="115" width="5" height="7" rx="1" fill="#F44336" stroke="#B71C1C" stroke-width="1"/>
+
+    <!-- PASOS SUBIDA -->
+    <rect x="106" y="126" width="20" height="5" rx="1" fill="#388E3C" stroke="#1B5E20" stroke-width="1"/>
+    <rect x="108" y="118" width="18" height="5" rx="1" fill="#388E3C" stroke="#1B5E20" stroke-width="1"/>
+
+    <!-- SOMBRA EN SUELO -->
+    <ellipse cx="110" cy="177" rx="65" ry="6" fill="black" opacity="0.2" filter="url(#soft)"/>
+
+  </g>
+
+  <!-- ═══════════ HERRAMIENTAS ═══════════ -->
+
+  <!-- LLAVE INGLESA (derecha arriba) -->
+  <g transform="translate(168, 62) rotate(-35)" filter="url(#shadow)">
+    <rect x="-3" y="-22" width="6" height="44" rx="2" fill="#9E9E9E" stroke="#616161" stroke-width="1"/>
+    <!-- Cabeza llave -->
+    <circle cx="0" cy="-22" r="9" fill="#BDBDBD" stroke="#616161" stroke-width="1.5"/>
+    <circle cx="0" cy="-22" r="5" fill="#9E9E9E"/>
+    <rect x="-9" y="-25" width="18" height="6" rx="1" fill="#BDBDBD" stroke="#616161" stroke-width="1"/>
+    <!-- Mango -->
+    <rect x="-3" y="14" width="6" height="14" rx="2" fill="#F44336" stroke="#B71C1C" stroke-width="1"/>
+  </g>
+
+  <!-- ENGRANAJE (izquierda arriba) -->
+  <g transform="translate(28, 68)" filter="url(#shadow)">
+    <circle cx="0" cy="0" r="16" fill="#78909C" stroke="#455A64" stroke-width="2"/>
+    <circle cx="0" cy="0" r="8" fill="#546E7A" stroke="#37474F" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="4" fill="#37474F"/>
+    <!-- Dientes del engranaje -->
+    <g fill="#90A4AE" stroke="#546E7A" stroke-width="1">
+      <rect x="-3" y="-20" width="6" height="7" rx="1"/>
+      <rect x="-3" y="13" width="6" height="7" rx="1"/>
+      <rect x="-20" y="-3" width="7" height="6" rx="1"/>
+      <rect x="13" y="-3" width="7" height="6" rx="1"/>
+      <rect x="-16" y="-16" width="6" height="6" rx="1" transform="rotate(45 -13 -13)"/>
+      <rect x="10" y="-16" width="6" height="6" rx="1" transform="rotate(-45 13 -13)"/>
+      <rect x="-16" y="10" width="6" height="6" rx="1" transform="rotate(-45 -13 13)"/>
+      <rect x="10" y="10" width="6" height="6" rx="1" transform="rotate(45 13 13)"/>
+    </g>
+  </g>
+
+  <!-- MARTILLO (abajo derecha, pequeño) -->
+  <g transform="translate(185, 155) rotate(30)" filter="url(#shadow)">
+    <!-- Mango -->
+    <rect x="-2" y="0" width="4" height="22" rx="1.5" fill="#795548" stroke="#4E342E" stroke-width="1"/>
+    <!-- Cabeza -->
+    <rect x="-9" y="-8" width="18" height="10" rx="2" fill="#757575" stroke="#424242" stroke-width="1.5"/>
+    <rect x="-9" y="-8" width="8" height="10" rx="2" fill="#9E9E9E"/>
+  </g>
+
+  <!-- DESTORNILLADOR (abajo izquierda) -->
+  <g transform="translate(12, 158) rotate(-20)" filter="url(#shadow)">
+    <rect x="-2" y="-28" width="4" height="28" rx="1" fill="#9E9E9E" stroke="#616161" stroke-width="1"/>
+    <rect x="-4" y="-34" width="8" height="8" rx="1" fill="#F44336" stroke="#B71C1C" stroke-width="1"/>
+    <rect x="-2" y="-30" width="4" height="4" fill="#EF9A9A"/>
+    <polygon points="0,-28 -3,-22 3,-22" fill="#757575"/>
+    <!-- Punta -->
+    <polygon points="-1.5,0 1.5,0 0,6" fill="#BDBDBD"/>
+  </g>
+
+  <!-- Texto "AGRÍCOLA GUAPA" pequeño abajo -->
+  <text x="100" y="196" text-anchor="middle" font-family="Arial,sans-serif" font-size="9"
+        font-weight="bold" fill="#A5D6A7" letter-spacing="1" opacity="0.8">AGRÍCOLA GUAPA SAS</text>
+</svg>

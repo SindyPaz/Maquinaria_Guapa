@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Test Diagnóstico</title>
+<style>
+body{font-family:Arial,sans-serif;padding:20px;background:#0F172A;color:#E2E8F0}
+select,input{width:100%;padding:12px;margin:8px 0;background:#1E293B;border:1px solid #334155;border-radius:8px;color:#F1F5F9;font-size:16px}
+.ok{color:#10B981;font-weight:bold}
+.err{color:#EF4444;font-weight:bold}
+.box{background:#1E293B;border-radius:12px;padding:16px;margin-bottom:12px}
+</style>
+</head>
+<body>
+
+<div class="box">
+  <h2>🔍 Test de Diagnóstico</h2>
+  <div id="estado">⏳ Cargando...</div>
+</div>
+
+<div class="box">
+  <label>Prueba 1 — Select simple</label>
+  <select id="sel-test">
+    <option value="">Seleccionar...</option>
+  </select>
+  <div id="r1">⏳</div>
+</div>
+
+<div class="box">
+  <label>Prueba 2 — Fecha y Hora</label>
+  <input type="datetime-local" id="fecha-test">
+  <div id="r2">⏳</div>
+</div>
+
+<div class="box">
+  <label>Prueba 3 — Operador (datos reales)</label>
+  <select id="sel-op">
+    <option value="">Seleccionar operador...</option>
+  </select>
+  <div id="r3">⏳</div>
+</div>
+
+<div id="log" style="background:#000;border-radius:8px;padding:12px;font-size:12px;color:#4ade80;margin-top:12px;font-family:monospace;min-height:60px"></div>
+
+<script>
+function log(msg, ok) {
+  const d = document.getElementById('log');
+  d.innerHTML += `<div style="color:${ok===false?'#f87171':ok===true?'#4ade80':'#fbbf24'}">${msg}</div>`;
+}
+
+log('▶ Script iniciado');
+
+// Prueba 1 — fill básico
+try {
+  const s = document.getElementById('sel-test');
+  const items = ['Opción A', 'Opción B', 'Opción C'];
+  items.forEach(i => s.add(new Option(i, i)));
+  document.getElementById('r1').innerHTML = '<span class="ok">✅ Fill básico OK — ' + s.options.length + ' opciones</span>';
+  log('✅ Prueba 1 OK', true);
+} catch(e) {
+  document.getElementById('r1').innerHTML = '<span class="err">❌ Error: ' + e.message + '</span>';
+  log('❌ Prueba 1 FALLÓ: ' + e.message, false);
+}
+
+// Prueba 2 — datetime-local
+try {
+  const ahora = new Date(); ahora.setSeconds(0,0);
+  document.getElementById('fecha-test').value = ahora.toISOString().slice(0,16);
+  document.getElementById('r2').innerHTML = '<span class="ok">✅ Fecha y hora OK</span>';
+  log('✅ Prueba 2 OK', true);
+} catch(e) {
+  document.getElementById('r2').innerHTML = '<span class="err">❌ Error: ' + e.message + '</span>';
+  log('❌ Prueba 2 FALLÓ: ' + e.message, false);
+}
+
+// Prueba 3 — operadores reales (muestra de 5)
+try {
+  const ops = [
+    {codigo:'1',  nombre:'MADERA AVILA AMAURIS'},
+    {codigo:'3',  nombre:'ZAPATA PEÑA ALIRIO'},
+    {codigo:'6',  nombre:'ESPITIA DIAZ DANYS DANIEL'},
+    {codigo:'8',  nombre:'BEDOYA GONZALEZ DENIS LEONCIO'},
+    {codigo:'9',  nombre:'MORALES VILLA DIEGO JESUS'}
+  ];
+  const s = document.getElementById('sel-op');
+  ops.forEach(o => s.add(new Option(o.codigo + ' - ' + o.nombre, o.codigo)));
+  document.getElementById('r3').innerHTML = '<span class="ok">✅ Operadores OK — ' + s.options.length + ' opciones</span>';
+  log('✅ Prueba 3 OK', true);
+} catch(e) {
+  document.getElementById('r3').innerHTML = '<span class="err">❌ Error: ' + e.message + '</span>';
+  log('❌ Prueba 3 FALLÓ: ' + e.message, false);
+}
+
+// Estado general
+document.getElementById('estado').innerHTML = '<span class="ok">✅ JavaScript funcionando correctamente</span>';
+log('▶ Todas las pruebas completadas', true);
+</script>
+</body>
+</html>

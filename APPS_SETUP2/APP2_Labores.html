@@ -1,0 +1,665 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Labores Maq">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-apple.png">
+<meta name="msapplication-TileColor" content="#065F46">
+<meta name="msapplication-TileImage" content="icon-144.png">
+<title>Labores Maquinaria</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#0A1A0F;color:#E2E8F0;min-height:100vh;-webkit-text-size-adjust:100%;touch-action:manipulation}
+.hdr{background:linear-gradient(135deg,#065F46,#047857);padding:14px 16px;padding-top:calc(14px + env(safe-area-inset-top,0px));display:flex;align-items:center;gap:10px;position:-webkit-sticky;position:sticky;top:0;z-index:100}
+.hdr h1{font-size:17px;font-weight:700;color:#fff;flex:1}
+.hdr p{font-size:11px;color:#6EE7B7}
+.sbar{background:#132A1C;padding:6px 16px;text-align:right;font-size:11px;border-bottom:1px solid #1F4C2A}
+.tabs{display:flex;background:#132A1C;border-bottom:1px solid #1F4C2A;position:-webkit-sticky;position:sticky;top:74px;z-index:99}
+.tab{flex:1;padding:11px 4px;text-align:center;font-size:12px;font-weight:600;color:#4B7A5C;cursor:pointer;border-bottom:3px solid transparent}
+.tab.on{color:#10B981;border-bottom-color:#10B981;background:#0A1A0F}
+.pg{display:none;padding:14px;max-width:560px;margin:0 auto;padding-bottom:calc(80px + env(safe-area-inset-bottom))}
+.pg.on{display:block}
+.card{background:#132A1C;border-radius:14px;padding:18px;margin-bottom:14px;border:1px solid #1F4C2A}
+.ct{font-size:14px;font-weight:700;color:#F1F5F9;margin-bottom:14px}
+.fg{margin-bottom:12px}
+label{display:block;font-size:11px;font-weight:600;color:#6EE7B7;margin-bottom:5px;text-transform:uppercase}
+input,select,textarea{width:100%;padding:11px 13px;background:#0A1A0F;border:1.5px solid #1F4C2A;border-radius:9px;color:#F1F5F9;font-size:16px;outline:none;-webkit-appearance:none;-moz-appearance:none;appearance:none;touch-action:manipulation}
+input:focus,select:focus{border-color:#10B981}
+select option{background:#132A1C}
+textarea{resize:vertical;min-height:70px}
+.rg{display:flex;gap:8px}
+.btn{width:100%;padding:14px;border:none;border-radius:11px;font-size:15px;font-weight:700;cursor:pointer;margin-top:6px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.btn-g{background:linear-gradient(135deg,#059669,#047857);color:#fff}
+.btn-b{background:linear-gradient(135deg,#2563EB,#1D4ED8);color:#fff}
+.btn-r{background:linear-gradient(135deg,#DC2626,#B91C1C);color:#fff}
+.btn-o{background:transparent;border:2px solid #1F4C2A;color:#6EE7B7}
+.btn-sm{padding:9px 14px;font-size:13px;border-radius:9px;border:none;cursor:pointer;font-weight:700}
+.btn-act{background:linear-gradient(135deg,#059669,#047857);color:#fff}
+.sep{height:1px;background:#1F4C2A;margin:12px 0}
+.act-row{background:#0F2318;border:1px solid #1F4C2A;border-radius:11px;padding:13px;margin-bottom:9px}
+.act-row .act-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.act-num{font-size:13px;font-weight:700;color:#10B981}
+.del-btn{background:#7F1D1D;border:none;color:#FCA5A5;border-radius:7px;padding:4px 10px;font-size:12px;cursor:pointer}
+.emp{text-align:center;padding:30px 16px;color:#2D6A40}
+.turno-info{background:#0F2318;border:1px solid #10B981;border-radius:11px;padding:13px;margin-bottom:12px}
+.turno-lbl{font-size:11px;font-weight:700;color:#10B981;text-transform:uppercase;margin-bottom:4px}
+.turno-val{font-size:14px;color:#F1F5F9;font-weight:600}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700}
+.badge-g{background:#064E3B;color:#6EE7B7;border:1px solid #059669}
+.badge-b{background:#1E3A5F;color:#93C5FD;border:1px solid #2563EB}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);color:#fff;padding:11px 22px;border-radius:28px;font-weight:600;font-size:13px;z-index:200;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1}
+.cnt{background:#059669;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;margin-left:5px}
+.sect-ttl{font-size:12px;font-weight:700;color:#10B981;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div style="width:40px;height:40px;background:rgba(255,255,255,.15);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px">&#128663;</div>
+  <div style="flex:1;margin-left:10px"><h1>Labores Maquinaria</h1><p>Agricola Guapa SAS</p></div>
+  <button id="btn-instalar" onclick="instalarPWA()" style="display:none;background:rgba(16,185,129,.25);border:1px solid #10B981;color:#6EE7B7;padding:6px 10px;border-radius:8px;font-size:12px;cursor:pointer;margin-right:4px">&#11015; Instalar</button>
+  <button onclick="syncNow()" style="background:rgba(255,255,255,.1);border:none;color:#6EE7B7;padding:6px 10px;border-radius:8px;font-size:12px;cursor:pointer">&#128260; Sync</button>
+</div>
+<div class="sbar"><span id="ss">&#8987; Iniciando...</span></div>
+
+<div class="tabs">
+  <div class="tab on" onclick="showPg('turno')">&#128203; Turno</div>
+  <div class="tab" onclick="showPg('act')">&#9881;&#65039; Actividades <span class="cnt" id="cnt">0</span></div>
+  <div class="tab" onclick="showPg('exp')">&#128202; Datos</div>
+</div>
+
+<div id="pg-turno" class="pg on">
+
+<div id="div-turno-activo" style="display:none">
+  <div class="turno-info">
+    <div class="turno-lbl">&#128994; Turno Activo</div>
+    <div class="turno-val" id="turno-resumen">-</div>
+  </div>
+  <div class="card">
+    <div class="ct">&#10010; Nueva Actividad</div>
+    <div class="fg"><label>Hora Inicio *</label><input type="datetime-local" id="a-hora"></div>
+    <div class="fg"><label>Codigo de Labor *</label><select id="a-labor"><option value="">Seleccionar labor...</option></select></div>
+    <div class="fg"><label>Lote</label><select id="a-lote"><option value="">Sin lote...</option></select></div>
+    <div class="fg"><label>Implemento</label><select id="a-impl"><option value="">Sin implemento...</option></select></div>
+    <div class="rg">
+      <div class="fg" style="flex:1"><label>Cantidad</label><input type="number" id="a-cant" placeholder="0.00" step="0.01" min="0"></div>
+      <div class="fg" style="flex:1"><label>Unidad</label><select id="a-unidad"><option value="">-</option></select></div>
+    </div>
+    <div class="fg"><label>Observaciones</label><textarea id="a-obs" placeholder="Opcional..."></textarea></div>
+    <button class="btn btn-act" onclick="agregarActividad()">&#10010; Agregar Actividad</button>
+  </div>
+  <div class="card">
+    <div class="ct">&#128203; Actividades del Turno <span class="cnt" id="cnt2">0</span></div>
+    <div id="act-lista"><div class="emp">Sin actividades aun</div></div>
+  </div>
+  <div class="card" style="border-color:#DC2626">
+    <div class="ct" style="color:#FCA5A5">&#128308; Cerrar Turno</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="fg"><label>Horometro Final *</label><input type="number" id="c-horo-fin" placeholder="0.0" step="0.1" min="0"></div>
+      <div class="fg"><label>ACPM (galones)</label><input type="number" id="c-acpm" placeholder="0.0" step="0.1" min="0"></div>
+    </div>
+    <button class="btn btn-r" onclick="cerrarTurno()">&#128308; Cerrar Turno</button>
+  </div>
+</div>
+
+<div id="div-nuevo-turno">
+  <div class="card">
+    <div class="ct">&#128203; Nuevo Turno</div>
+    <div class="fg"><label>Fecha *</label><input type="date" id="t-fecha"></div>
+    <div class="fg"><label>Operador *</label><select id="t-op"><option value="">Seleccionar operador...</option></select></div>
+    <div class="fg"><label>Equipo *</label><select id="t-eq"><option value="">Seleccionar equipo...</option></select></div>
+    <div class="sep"></div>
+    <div class="sect-ttl">&#128205; Ubicacion</div>
+    <div class="fg"><label>Finca *</label><select id="t-finca"><option value="">Seleccionar finca...</option></select></div>
+    <div class="fg"><label>Area</label><select id="t-area"><option value="">Seleccionar area...</option></select></div>
+    <div class="sep"></div>
+    <div class="sect-ttl">&#128268; Horometro</div>
+    <div class="fg"><label>Horometro Inicio *</label><input type="number" id="t-horo" placeholder="0.0" step="0.1" min="0"></div>
+    <button class="btn btn-g" onclick="iniciarTurno()">&#128994; Iniciar Turno</button>
+  </div>
+</div>
+
+</div>
+
+<div id="pg-act" class="pg">
+  <div style="display:flex;gap:8px;margin-bottom:12px">
+    <button class="btn btn-b" onclick="cargarServidor()" style="margin-top:0;flex:1">&#9729;&#65039; Cargar servidor</button>
+    <button class="btn btn-o" onclick="renderHistorial()" style="margin-top:0;flex:1">&#128260; Actualizar</button>
+  </div>
+  <div id="hist-info" style="font-size:11px;color:#4B7A5C;margin-bottom:10px;text-align:center"></div>
+  <div id="hist-wrap"></div>
+</div>
+
+<div id="pg-exp" class="pg">
+<div class="card">
+  <div class="ct">&#128202; Estado de Datos</div>
+  <div id="expstats"></div>
+  <button class="btn btn-g" onclick="exportCSV()" style="margin-top:14px">&#128229; Descargar CSV</button>
+  <button class="btn btn-b" onclick="syncNow()" style="margin-top:8px">&#128260; Sincronizar Ahora</button>
+  <button class="btn btn-b" onclick="reenviarTodo()" style="margin-top:8px;background:linear-gradient(135deg,#7C3AED,#6D28D9)">&#128257; Reenviar TODO al servidor</button>
+  <button class="btn btn-o" onclick="limpiar()" style="margin-top:8px">&#128465;&#65039; Limpiar enviados</button>
+</div>
+<div class="card">
+  <p style="color:#4B7A5C;font-size:13px;line-height:1.7">
+    &#128245; <b style="color:#F1F5F9">Sin wifi:</b> datos guardados en el celular.<br>
+    &#128246; <b style="color:#F1F5F9">Con wifi:</b> se sincronizan solos a Google Sheets.<br>
+    &#128229; <b style="color:#F1F5F9">CSV:</b> descarga para analizar en Excel.
+  </p>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="application/json" id="_d">{"operadores":[{"codigo":"1","nombre":"MADERA AVILA AMAURIS"},{"codigo":"3","nombre":"ZAPATA PEÑA ALIRIO"},{"codigo":"4","nombre":"VELASQUEZ ESCOBAR ANIBAL EDUARDO"},{"codigo":"6","nombre":"ESPITIA DIAZ DANYS DANIEL"},{"codigo":"8","nombre":"BEDOYA GONZALEZ DENIS LEONCIO"},{"codigo":"9","nombre":"MORALES VILLA DIEGO JESUS"},{"codigo":"11","nombre":"MORENO QUINTERO ELBER"},{"codigo":"12","nombre":"MOSQUERA CÓRDOBA EUCLIDES"},{"codigo":"15","nombre":"ZAPATA OSORIO JOSE FREDY"},{"codigo":"17","nombre":"QUINTERO GERMIN ARLEY"},{"codigo":"18","nombre":"GARCIA QUINTERO GILBERTO ANTONIO"},{"codigo":"20","nombre":"ARROYO MONTALVO JESUS MARIA"},{"codigo":"21","nombre":"GRACIANO SEPULVEDA JOSE ANGEL"},{"codigo":"22","nombre":"DURANGO USUGA LUIS ALBERTO"},{"codigo":"23","nombre":"PÉREZ MOSQUERA LUIS EDUARDO"},{"codigo":"24","nombre":"ESPITIA LUGO LUIS ENRIQUE"},{"codigo":"25","nombre":"VARGAS MEDARDO"},{"codigo":"28","nombre":"MENDOZA ARGEL OSNAIDER RAFAEL"},{"codigo":"29","nombre":"MONTIEL BERRIO PEDRO PABLO"},{"codigo":"33","nombre":"BENITEZ VIDAL JUAN DAVID"},{"codigo":"34","nombre":"NUÑEZ VILLALBA EDUARDO ANTONIO"},{"codigo":"36","nombre":"YAÑEZ RIOS GERMAN LEON"},{"codigo":"67","nombre":"GAVIRIA DIAZ CRISTIAN DANIEL"},{"codigo":"77","nombre":"MERCADO MONTES NILSON DE JESUS"},{"codigo":"83","nombre":"SERNA ARIAS RAUL ALBERTO"},{"codigo":"87","nombre":"GONZALEZ PATIÑO KEVIN STIVEN"},{"codigo":"88","nombre":"ALVAREZ SILGADO JORGE EMILIO"},{"codigo":"103","nombre":"AGUIRRE OSORIO DINEY"},{"codigo":"104","nombre":"LLORENTE GUERRA JANIO ALBERTO"},{"codigo":"105","nombre":"RODRIGUEZ JIMENEZ JENRY"},{"codigo":"106","nombre":"TORRES VELASQUEZ WILSON ALEJANDRO"},{"codigo":"110","nombre":"BENITEZ PADILLA LUIS MANUEL"},{"codigo":"112","nombre":"MENA ORDOÑEZ JUAN FELIPE"},{"codigo":"118","nombre":"ORTEGA MONTERROZA VICENTE RAFAEL"},{"codigo":"122","nombre":"LOPEZ GUISAO LUIS"},{"codigo":"134","nombre":"LUIS FERNANDO DIAZ"},{"codigo":"135","nombre":"COGOLLO QUINTERO LUIS ELIAS"},{"codigo":"136","nombre":"USUGA CARTAGENA JOHN EDWIN"},{"codigo":"140","nombre":"MELGAREJO GUAPACHA HERMES GABRIEL"},{"codigo":"142","nombre":"URIBE RAMBAY JORGE HERNAN"},{"codigo":"148","nombre":"VERGARA DIAZ PEDRO JAVIER"},{"codigo":"154","nombre":"TORRES NOREÑA KEVIN DAVID"},{"codigo":"160","nombre":"CASTAÑO TAPASCO JUAQUIN EDUARDO"},{"codigo":"162","nombre":"URANGO HERNANDEZ UBISNEY"},{"codigo":"163","nombre":"PADILLA PADILLA RICHAR MANUEL"},{"codigo":"174","nombre":"ARCO CHAMORRO JHON BAIRO"},{"codigo":"175","nombre":"JIMENEZ SAEZ WILTON RAFAEL"},{"codigo":"179","nombre":"GUZMAN NISPERUZA NORBEY"},{"codigo":"180","nombre":"VEGA BARON CLEIBER ESTIVEN"},{"codigo":"185","nombre":"FLOREZ PADIERNA VICTOR ALONSO"},{"codigo":"186","nombre":"BANQUETH HERNANDEZ JAVIER"},{"codigo":"187","nombre":"PEREZ ARTEAGA FRANCISCO MIGUEL"},{"codigo":"191","nombre":"DURANGO BENITEZ ALEXANDER"},{"codigo":"192","nombre":"ESCOBAR MACHADO ANDRUS LEON"}],"equipos":[{"codigo":"TA-01","tipo":"Propia","descripcion":"108 HP"},{"codigo":"TA-02","tipo":"Propia","descripcion":"108 HP"},{"codigo":"TA-03","tipo":"Propia","descripcion":"108 HP"},{"codigo":"TA-04","tipo":"Propia","descripcion":"108 HP"},{"codigo":"TA-05","tipo":"Propia","descripcion":"108 HP"},{"codigo":"TA-06","tipo":"Propia","descripcion":"135 HP"},{"codigo":"TA-07","tipo":"Propia","descripcion":"135 HP"},{"codigo":"TA-08","tipo":"Propia","descripcion":"Pajarita-310K"},{"codigo":"TA-09","tipo":"Propia","descripcion":"Retro-120D"},{"codigo":"TA-10","tipo":"Propia","descripcion":"Bulldozer"},{"codigo":"TA-11","tipo":"Propia","descripcion":"Ford cargo"},{"codigo":"TA-12","tipo":"Propia","descripcion":"Rtero-U50"},{"codigo":"TA-13","tipo":"Propia","descripcion":"108 HP"},{"codigo":"TA-14","tipo":"Propia","descripcion":"108 HP"},{"codigo":"TA-15","tipo":"Propia","descripcion":"135 HP"},{"codigo":"TA-16","tipo":"Propia","descripcion":"135 HP"},{"codigo":"TA-17","tipo":"Propia","descripcion":"135 HP"},{"codigo":"TA-18","tipo":"Propia","descripcion":"Montacargas"},{"codigo":"TA-19","tipo":"Propia","descripcion":"108 HP"},{"codigo":"TA-20","tipo":"Propia","descripcion":"135 HP"},{"codigo":"TA-21","tipo":"Propia","descripcion":"108 HP"},{"codigo":"TA-22","tipo":"Propia","descripcion":"Camión sisterna"},{"codigo":"TA-23","tipo":"Propia","descripcion":"108 HP"},{"codigo":"TA-24","tipo":"Propia","descripcion":"108 HP"},{"codigo":"TA-25","tipo":"Propia","descripcion":"108 HP"},{"codigo":"TA-26","tipo":"Propia","descripcion":"135 HP"},{"codigo":"Camión","tipo":"Alquilada","descripcion":""},{"codigo":"Camioneta","tipo":"Propia","descripcion":""},{"codigo":"Hitachi -120","tipo":"Alquilada","descripcion":"120 HP"},{"codigo":"Hitachi -135","tipo":"Alquilada","descripcion":"135 HP"},{"codigo":"Hunday - 60","tipo":"Alquilada","descripcion":"60 HP"},{"codigo":"Montacarga - Toyota JP","tipo":"Alquilada","descripcion":""},{"codigo":"Mula","tipo":"Alquilada","descripcion":""},{"codigo":"New Holland 1","tipo":"Alquilada","descripcion":"108 HP"},{"codigo":"New Holland 2","tipo":"Alquilada","descripcion":"108 HP"},{"codigo":"Same explorer 1195","tipo":"Alquilada","descripcion":"108 HP"},{"codigo":"Sany - 135","tipo":"Alquilada","descripcion":"135 HP"},{"codigo":"Kubota - 108 JD","tipo":"Alquilada","descripcion":"108 HP"},{"codigo":"Hunday -220 ","tipo":"Alquilada","descripcion":"220 HP"},{"codigo":"Lon Kin-60","tipo":"Alquilada","descripcion":"60 HP"},{"codigo":"John Deere-6403","tipo":"Alquilada","descripcion":"108 HP"},{"codigo":"New Holland KD","tipo":"Alquilada","descripcion":"108 HP"},{"codigo":"Kubota - 108 GB","tipo":"Alquilada","descripcion":"108 HP"},{"codigo":"Camión SH","tipo":"Alquilada","descripcion":""},{"codigo":"New Holland GB","tipo":"Alquilada","descripcion":"108 HP"},{"codigo":"Planchon","tipo":"Alquilada","descripcion":""},{"codigo":"TA-27","tipo":"Propia","descripcion":""},{"codigo":"TA-28","tipo":"Propia","descripcion":""},{"codigo":"TA-29","tipo":"Propia","descripcion":""},{"codigo":"TA-30","tipo":"Propia","descripcion":""},{"codigo":"TA-31","tipo":"Propia","descripcion":""},{"codigo":"TA-32","tipo":"Propia","descripcion":""},{"codigo":"TA-33","tipo":"Propia","descripcion":""},{"codigo":"TA-34","tipo":"Propia","descripcion":""},{"codigo":"TA-35","tipo":"Propia","descripcion":""},{"codigo":"TA-36","tipo":"Propia","descripcion":""},{"codigo":"TA-37","tipo":"Propia","descripcion":""},{"codigo":"TA-38","tipo":"Propia","descripcion":""},{"codigo":"NISSAN ","tipo":"Alquilada","descripcion":""},{"codigo":"John Deere-6403  ZM","tipo":"Alquilada","descripcion":"108 HP"},{"codigo":"Bulldozer-D5-R","tipo":"Alquilada","descripcion":""},{"codigo":"Kubota - 108 AS","tipo":"Alquilada","descripcion":"108 HP"},{"codigo":"Ford -6610","tipo":"Alquilada","descripcion":"108 HP"},{"codigo":"Global -130","tipo":"Alquilada","descripcion":"130 HP"},{"codigo":"New Holland-5100 AF","tipo":"Alquilada","descripcion":"108 HP"},{"codigo":"Samy  Explore CMV","tipo":"Alquilada","descripcion":"108 HP"},{"codigo":"Jhon Deere 5705 JL","tipo":"Alquilada","descripcion":"108 HP"},{"codigo":"Fm wordl  KN","tipo":"Alquilada","descripcion":"140 HP"},{"codigo":"New Holland JL","tipo":"Alquilada","descripcion":"108 HP"},{"codigo":"John Deere-6403  CH","tipo":"Alquilada","descripcion":"95 HP"},{"codigo":"Kubota - 108 KN","tipo":"Alquilada","descripcion":"95 HP"},{"codigo":"Massey Ferguson KN","tipo":"Alquilada","descripcion":"95 HP"},{"codigo":"Jhon Deree 5705 WG","tipo":"Alquilada","descripcion":""},{"codigo":"Massey Ferguson 4310 CV","tipo":"Alquilada","descripcion":""},{"codigo":"Massey Ferguson 290 CV","tipo":"Alquilada","descripcion":""},{"codigo":"ZOOMLION -75 ","tipo":"Alquilada","descripcion":""},{"codigo":"Bulldozer 550","tipo":"Alquilada","descripcion":""},{"codigo":"N/A","tipo":"","descripcion":""},{"codigo":"TA-39 ","tipo":"Propia","descripcion":"Dron T50"},{"codigo":"TA-40","tipo":"Propia","descripcion":"Planta Electrica"},{"codigo":"TA-41","tipo":"Propia","descripcion":"Planta Electrica-Empacadora"},{"codigo":"TA-42","tipo":"Propia","descripcion":"Camioneta Hilux HPL261 "},{"codigo":"TA-43","tipo":"Propia","descripcion":"Camioneta Hilux HPL316"},{"codigo":"Bulldozer D4C","tipo":"Alquilada","descripcion":""},{"codigo":"Hitachi -130","tipo":"Alquilada","descripcion":""},{"codigo":"Sany - 215","tipo":"Alquilada","descripcion":"135 HP"},{"codigo":"Lovol AO","tipo":"Alquilada","descripcion":""},{"codigo":"Jhon Deree 6125 D","tipo":"Alquilada","descripcion":""},{"codigo":"TA-44","tipo":"Propia","descripcion":"Camionta Nissan ENV004"},{"codigo":"TA-45","tipo":"Propia","descripcion":"Jimmy NTY390"},{"codigo":"TA-46","tipo":"Propia","descripcion":"Jimmy NTY391"},{"codigo":"TA-47","tipo":"Propia","descripcion":"Motocarro CERONTE200"},{"codigo":"TA-48","tipo":"Propia","descripcion":"Dron T70P"},{"codigo":"TA-49","tipo":"Propia","descripcion":"Dron Multiespetral "},{"codigo":"TA-50","tipo":"Propia","descripcion":"Dron 2AIR"},{"codigo":"kubota 108 JA","tipo":"Alquilada","descripcion":""},{"codigo":"Montacarga HELI","tipo":"Alquilada","descripcion":""},{"codigo":"Kubota 9540 JA","tipo":"Alquilada","descripcion":""},{"codigo":"New Holland 6630 MN","tipo":"Alquilada","descripcion":""},{"codigo":"kubota 9540 NC","tipo":"Alquilada","descripcion":""},{"codigo":"Masey Fergunson 4309 NC","tipo":"Alquilada","descripcion":""},{"codigo":"Jhon Deere 6125 JL","tipo":"Alquilada","descripcion":""},{"codigo":"TA-51","tipo":"Propia","descripcion":"Montacargas"}],"labores":[{"codigo":"1","descripcion":"ABASTECIMIENTO DE AGUA (MEZCLAS)"},{"codigo":"3","descripcion":"APLICACIÓN CON BOOM SPRAYER"},{"codigo":"6","descripcion":"AUSENTISMOS"},{"codigo":"11","descripcion":"CONSTRUCCIÓN DE CAMINOS PRINCIPALES"},{"codigo":"13","descripcion":"CIVILIZACIÓN"},{"codigo":"20","descripcion":"DERRIBA DE ARBOLES BULLDOZER"},{"codigo":"24","descripcion":"CONSTRUCCIÓN DE DRENAJE PRIMARIO"},{"codigo":"25","descripcion":"CONSTRUCCIÓN DE DRENAJE RECOLECTOR"},{"codigo":"26","descripcion":"CONSTRUCCIÓN DE DRENAJES ESPINAS"},{"codigo":"27","descripcion":"ELIMINACIÓN DE RASTROJO"},{"codigo":"28","descripcion":"ENCAMADO"},{"codigo":"31","descripcion":"INCAPACITADO"},{"codigo":"37","descripcion":"MANTENIMIENTO DE DRENAJES"},{"codigo":"39","descripcion":"MANTENIMIENTO DE VÍAS"},{"codigo":"40","descripcion":"REPARACIÓN DE PUENTES"},{"codigo":"43","descripcion":"NIVELACIÓN"},{"codigo":"49","descripcion":"PERMISO"},{"codigo":"50","descripcion":"PERMISO REMUNERADO"},{"codigo":"51","descripcion":"CONSTRUCCIÓN DE PUENTES SECUNDARIOS Y TERCIARIOS"},{"codigo":"52","descripcion":"RASTRA AFINADORA"},{"codigo":"53","descripcion":"RASTRA PULIDOR"},{"codigo":"54","descripcion":"RECAVA DRENAJES PRIMARIOS"},{"codigo":"60","descripcion":"SUBSOLADO"},{"codigo":"63","descripcion":"TRANSPORTE DE COLINO"},{"codigo":"65","descripcion":"TRANSPORTE DE MADERA"},{"codigo":"66","descripcion":"TRANSPORTE DE TUBOS"},{"codigo":"72","descripcion":"CONSTRUCCIÓN DE VÍAS SECUNDARIAS"},{"codigo":"73","descripcion":"CONSTRUCCIÓN DE PUENTES PRIMARIOS"},{"codigo":"75","descripcion":"CONTROL DE MAQUINAS RENTADAS"},{"codigo":"78","descripcion":"VACACIONES"},{"codigo":"79","descripcion":"TRANSPORTE Y CARGUE DE COSECHA MANUAL"},{"codigo":"81","descripcion":"CONSTRUCCIÓN DE BOQUETES"},{"codigo":"86","descripcion":"TRASVASE DE BINES"},{"codigo":"91","descripcion":"APLICACIONES CON STROLLER"},{"codigo":"96","descripcion":"CONTROL DE MALEZAS CON TRACTOR"},{"codigo":"102","descripcion":"DESCANSO COMPENSADO"},{"codigo":"112","descripcion":"DESBROCE"},{"codigo":"121","descripcion":"MEDICION DE TERRENO"},{"codigo":"123","descripcion":"TAPADA DE DRENAJES"},{"codigo":"130","descripcion":"TRANSPORTE DE FRUTA COSECHADA"},{"codigo":"136","descripcion":"RECUPERACIÓN DE TUBOS"},{"codigo":"138","descripcion":"DESBROCE DE DESCARTE DE SEMILLA"},{"codigo":"147","descripcion":"LAVADO DE TANQUES Y MANTENIMIENTO DE STAR"},{"codigo":"148","descripcion":"TRANSPORTE DE INSUMOS"},{"codigo":"152","descripcion":"TRANSPORTE DE RESIDUOS Y BASURA EN PREPARACIÓN"},{"codigo":"158","descripcion":"TRANSPORTE DE BINES CON FRUTA DESCARTE"},{"codigo":"169","descripcion":"TRANSPORTE DE RESIDUOS Y BASURA EN PREPARACION"},{"codigo":"173","descripcion":"TRANSPORTE DE COSECHADORA"},{"codigo":"174","descripcion":"TRANSPORTE DE AGUA PARA COMEDORES"},{"codigo":"175","descripcion":"TRANSPORTE DE RESIDUOS Y BASURA"},{"codigo":"176","descripcion":"MANTENIMIENTO DE BOQUETES"},{"codigo":"177","descripcion":"RECOLECCIÓN DE BASURAS (VÍAS/LOTES) MAQUINARIA"},{"codigo":"213","descripcion":"DRENAJE RECOLECTOR GUÍA"},{"codigo":"215","descripcion":"TRANSPORTE DE SEMILLA EN CAMIÓN"},{"codigo":"216","descripcion":"TRANSPORTE DE FRUTA EN CAMIÓN"},{"codigo":"217","descripcion":"APOYO EN TALLER"},{"codigo":"220","descripcion":"LABOR CULTURAL- OPERADOR"},{"codigo":"221","descripcion":"DERRIBA DE ARBOLES RETRO"},{"codigo":"222","descripcion":"CONSTRUCCIÓN DE DRENAJE RECOLECTOR CON RETRO"},{"codigo":"223","descripcion":"CONSTRUCCIÓN DE DRENAJES ESPINAS CON RETRO"},{"codigo":"224","descripcion":"ENCAMADO DOBLE CON RETRO"},{"codigo":"225","descripcion":"MANTENIMIENTO DE VÍAS CON BULLDOZER"},{"codigo":"226","descripcion":"REPARACIÓN DE PUENTES CON PLUMA"},{"codigo":"227","descripcion":"TAPADA DE DRENAJES CON CUCHILLA"},{"codigo":"228","descripcion":"RECUPERACIÓN DE TUBOS CON PLUMA"},{"codigo":"229","descripcion":"CONSTRUCCIÓN DE DRENAJE SECUNDARIO"},{"codigo":"230","descripcion":"RASTRA PARA INCORPORAR"},{"codigo":"231","descripcion":"SUBSUELO PROFUNDO"},{"codigo":"232","descripcion":"RASTRA ARADO"},{"codigo":"233","descripcion":"RECAVA DE DRENAJES SECUNDARIOS"},{"codigo":"234","descripcion":"REGADA DE SUELOS DE LA CONSTRUCCIÓN DE DRENAJES 1ARIOS"},{"codigo":"235","descripcion":"REGADA DE SUELOS DE LAS RECAVAS DE 1ARIOS"},{"codigo":"236","descripcion":"REGADA DE SUELOS DE LAS RECAVAS DE 2ARIOS"},{"codigo":"237","descripcion":"CARGUE Y DESCARGUE DE TUBOS"},{"codigo":"238","descripcion":"CARGUE Y DESCARGUE DE TUBOS EN CIVILIZACIÓN"},{"codigo":"239","descripcion":"TRANSPORTE DE TUBOS EN CIVILIZACIÓN"},{"codigo":"241","descripcion":"REGADA DE SUELOS DE LA CONSTRUCCIÓN DE DRENAJES  2ARIOS"},{"codigo":"247","descripcion":"NIVELACIÓN DE TERRENO CON TRADILLA"},{"codigo":"267","descripcion":"ESCOLTA"},{"codigo":"500","descripcion":"MAQUINA VARADA EN TALLER"},{"codigo":"501","descripcion":"ESPERA DE SERVICIO EN CAMPO"},{"codigo":"502","descripcion":"PARADO POR REPARACIÓN"},{"codigo":"503","descripcion":"MAQUINA EN MANTENIMIENTO PROGRAMADO"},{"codigo":"504","descripcion":"MAQUINARIA VARADA EN EL CAMPO"},{"codigo":"505","descripcion":"EQUIPO O IMPLEMENTO VARADO HACIA TALLER"},{"codigo":"506","descripcion":"CAMBIO DE IMPLEMENTO"},{"codigo":"507","descripcion":"PARADA POR CALIBRACIÓN"},{"codigo":"508","descripcion":"PARADA POR TERMINACIÓN DE LABORES"},{"codigo":"509","descripcion":"EQUIPO PARADO POR ACCIDENTE"},{"codigo":"510","descripcion":"PARADA POR LLUVIA Y HUMEDAD"},{"codigo":"511","descripcion":"ESPERANDO ABASTECER OTRO EQUIPO"},{"codigo":"512","descripcion":"LAVADO DE TRACTOR O IMPLEMENTO"},{"codigo":"513","descripcion":"FALTA DE COMBUSTIBLE"},{"codigo":"514","descripcion":"FALTA DE OPERARIO"},{"codigo":"515","descripcion":"ALIMENTACIÓN"},{"codigo":"516","descripcion":"REVISIÓN PREVIA DEL EQUIPO E IMPLEMENTO"},{"codigo":"517","descripcion":"ESPERA DE TRANSPORTE CAMA BAJA"},{"codigo":"518","descripcion":"PARADA POR REUNIÓN O CAPACITACIÓN DEL OPERADOR"},{"codigo":"519","descripcion":"ESPERA DE CARGUE O DESCARGUE"},{"codigo":"520","descripcion":"MAQUINA PEGADA EN ESPERA"},{"codigo":"521","descripcion":"ESPERANDO SER ABASTECIDO EN CAMPO"},{"codigo":"522","descripcion":"PARADA POR FALTA DE ÁREA"},{"codigo":"523","descripcion":"DESPLAZAMIENTOS"},{"codigo":"524","descripcion":"PARADA POR FALTA DE INSTRUCCIONES"},{"codigo":"525","descripcion":"EQUIPO DISPONIBLE EN PATIO"},{"codigo":"526","descripcion":"MANTENIMIENTO DE INSTALACIONES"},{"codigo":"527","descripcion":"TRANSPORTE DE COMBUSTIBLE"},{"codigo":"528","descripcion":"ABASTECIMIENTO DE AGUA PARA COMEDORES"},{"codigo":"529","descripcion":"LAVADO DE TANQUES Y MANTENIMIENTO DE STAR"},{"codigo":"530","descripcion":"TRANSPORTE DE INSUMOS"},{"codigo":"531","descripcion":"TANQUEO (ACPM/GASOLINA)"},{"codigo":"532","descripcion":"TRANSPORTE DE PERSONAL"},{"codigo":"533","descripcion":"HALADA TRACTOR"},{"codigo":"534","descripcion":"TRANSPORTE DE MATERIALES"},{"codigo":"535","descripcion":"TRANSPORTE DE COSTALES"},{"codigo":"536","descripcion":"SUCCIONADA DE AGUA EN TANQUES"},{"codigo":"537","descripcion":"TRANSPORTE Y LAVADO DE BINES"},{"codigo":"538","descripcion":"TRANSPORTE EN CAMA BAJA"},{"codigo":"539","descripcion":"PRUEBAS DE EQUIPO E IMPLEMENTO"},{"codigo":"540","descripcion":"ENGRASE DE MAQUINA O IMPLEMENTO"},{"codigo":"541","descripcion":"ESPERA DE SERVICIO EN TALLER"},{"codigo":"542","descripcion":"PARADA POR FALTA DE BINES"},{"codigo":"543","descripcion":"PARO"},{"codigo":"544","descripcion":"PARADA POR MONTACARGA VARADO"},{"codigo":"545","descripcion":"LLENADO DE TANQUETA EN LA SEDE"},{"codigo":"546","descripcion":"ESPERANDO SER ABASTECIDO EN LA SEDE"},{"codigo":"547","descripcion":"CAMBIO DE TURNO (DESPLAZAMIENTO Y ENTREGA)"},{"codigo":"549","descripcion":"ESPERA DE CARGUE EN CAMPO"},{"codigo":"550","descripcion":"ESPERA DE CAMBIO DE BINES"},{"codigo":"551","descripcion":"TRANSPORTE Y CARGUE DE COSECHA MECANICA"},{"codigo":"552","descripcion":"AJUSTE STANDBY"},{"codigo":"553","descripcion":"ESPERA DE CAMION"},{"codigo":"554","descripcion":"RALENTI"},{"codigo":"555","descripcion":"TAPADA DE SEGUNDARIO"},{"codigo":"556","descripcion":"LLENADO DE BOOM"},{"codigo":"557","descripcion":"DESAGUE DE LOTE"},{"codigo":"558","descripcion":"ENCALADO"},{"codigo":"559","descripcion":"ABASTECIMIENTO DE CAL"},{"codigo":"560","descripcion":"ESPERA DE ESCOLTA"},{"codigo":"561","descripcion":"RIEGO"},{"codigo":"562","descripcion":"SPRAY BOOM VARADO"},{"codigo":"563","descripcion":"NOVEDAD CEDULAS"},{"codigo":"564","descripcion":"BOMBA DE MESCLADO VARADA"},{"codigo":"565","descripcion":"ESPERA DE DESPACHO DE INSUMOS"},{"codigo":"566","descripcion":"ESPERA DE CARGUE Y DESCARGE DE INSUMOS"}],"lotes":[{"lote":"1","area_neta":16.94,"area_ef":11.4,"estado":"Preparación","finca":"La Fé","distrito":"Distrito 1"},{"lote":"2","area_neta":13.48,"area_ef":8.19,"estado":"Preparación","finca":"La Fé","distrito":"Distrito 1"},{"lote":"3","area_neta":20.46,"area_ef":13.53,"estado":"Preparación","finca":"La Fé","distrito":"Distrito 1"},{"lote":"4","area_neta":21.05,"area_ef":15.52,"estado":"Preparación","finca":"La Fé","distrito":"Distrito 1"},{"lote":"5","area_neta":18.82,"area_ef":12.63,"estado":"Preparación","finca":"La Fé","distrito":"Distrito 1"},{"lote":"6","area_neta":11.85,"area_ef":6.97,"estado":"Preparación","finca":"La Fé","distrito":"Distrito 1"},{"lote":"7","area_neta":12.83,"area_ef":8.16,"estado":"Preparación","finca":"La Fé","distrito":"Distrito 1"},{"lote":"8","area_neta":26.37,"area_ef":15.36,"estado":"Preparación","finca":"La Fé","distrito":"Distrito 1"},{"lote":"9","area_neta":7.46,"area_ef":4.39,"estado":"Preparación","finca":"La Fé","distrito":"Distrito 1"},{"lote":"10","area_neta":14.65,"area_ef":8.85,"estado":"Preparación","finca":"La Fé","distrito":"Distrito 1"},{"lote":"11","area_neta":13.68,"area_ef":9.73,"estado":"Preparación","finca":"La Fé","distrito":"Distrito 1"},{"lote":"12","area_neta":20.02,"area_ef":14.04,"estado":"Preparación","finca":"La Fé","distrito":"Distrito 1"},{"lote":"13","area_neta":17.61,"area_ef":12.25,"estado":"Preparación","finca":"La Fé","distrito":"Distrito 1"},{"lote":"14","area_neta":17.58,"area_ef":11.42,"estado":"Preparación","finca":"La Fé","distrito":"Distrito 1"},{"lote":"15","area_neta":20.09,"area_ef":10.73,"estado":"Preparación","finca":"La Fé","distrito":"Distrito 1"},{"lote":"16","area_neta":19.86,"area_ef":12.17,"estado":"Preparación","finca":"La Fé","distrito":"Distrito 1"},{"lote":"17","area_neta":19.52,"area_ef":11.41,"estado":"Preparación","finca":"La Fé","distrito":"Distrito 1"},{"lote":"18","area_neta":22.98,"area_ef":15.16,"estado":"Preparación","finca":"La Fé","distrito":"Distrito 1"},{"lote":"19","area_neta":15.4433,"area_ef":11,"estado":"Preparación","finca":"La Fé","distrito":"Distrito 1"},{"lote":"20","area_neta":24.5858,"area_ef":16.42,"estado":"Preparación","finca":"La Fé","distrito":"Distrito 1"},{"lote":"21","area_neta":16.79,"area_ef":11.14,"estado":"Preparación","finca":"La Sultana","distrito":"Distrito 1"},{"lote":"22","area_neta":0,"area_ef":0,"estado":"Preparación","finca":"La Sultana","distrito":"Distrito 1"},{"lote":"23","area_neta":12.94,"area_ef":7.81,"estado":"Preparación","finca":"La Sultana","distrito":"Distrito 1"},{"lote":"24","area_neta":14.27,"area_ef":10.45,"estado":"Preparación","finca":"La Sultana","distrito":"Distrito 1"},{"lote":"25","area_neta":18.12,"area_ef":11.58,"estado":"Preparación","finca":"La Sultana","distrito":"Distrito 1"},{"lote":"26","area_neta":10.94,"area_ef":6.81,"estado":"Preparación","finca":"La Sultana","distrito":"Distrito 1"},{"lote":"27","area_neta":10.74,"area_ef":5.65,"estado":"Preparación","finca":"La Sultana","distrito":"Distrito 1"},{"lote":"28","area_neta":2.9,"area_ef":1.68,"estado":"Preparación","finca":"Jamaica","distrito":"Distrito 2"},{"lote":"29","area_neta":8.36,"area_ef":5.27,"estado":"Preparación","finca":"Jamaica","distrito":"Distrito 2"},{"lote":"30","area_neta":8.12,"area_ef":4.96,"estado":"Preparación","finca":"Jamaica","distrito":"Distrito 2"},{"lote":"31","area_neta":13.76,"area_ef":9.08,"estado":"Preparación","finca":"Jamaica","distrito":"Distrito 2"},{"lote":"32","area_neta":23.4,"area_ef":17.14,"estado":"Preparación","finca":"Jamaica","distrito":"Distrito 2"},{"lote":"33","area_neta":16.8,"area_ef":9.75,"estado":"Preparación","finca":"Jamaica","distrito":"Distrito 2"},{"lote":"34","area_neta":15.23,"area_ef":12.64,"estado":"Preparación","finca":"Jamaica","distrito":"Distrito 2"},{"lote":"35","area_neta":12.33,"area_ef":10.8,"estado":"Preparación","finca":"Jamaica","distrito":"Distrito 2"},{"lote":"36","area_neta":13.95,"area_ef":9.31,"estado":"Preparación","finca":"Jamaica","distrito":"Distrito 2"},{"lote":"37","area_neta":12.01,"area_ef":6.95,"estado":"Preparación","finca":"Jamaica","distrito":"Distrito 2"},{"lote":"38","area_neta":9.39,"area_ef":7.93,"estado":"Preparación","finca":"Jamaica","distrito":"Distrito 2"},{"lote":"39","area_neta":5.29,"area_ef":4.82,"estado":"Preparación","finca":"Jamaica","distrito":"Distrito 2"},{"lote":"40","area_neta":14.44,"area_ef":9.49,"estado":"Preparación","finca":"Egipto","distrito":"Distrito 3"},{"lote":"41","area_neta":12.72,"area_ef":6.36,"estado":"Preparación","finca":"Egipto","distrito":"Distrito 3"},{"lote":"42","area_neta":13.2,"area_ef":10.5,"estado":"Preparación","finca":"Egipto","distrito":"Distrito 3"},{"lote":"43","area_neta":11.8,"area_ef":9.61,"estado":"Preparación","finca":"Egipto","distrito":"Distrito 3"},{"lote":"44","area_neta":8.83,"area_ef":7.44,"estado":"Preparación","finca":"Egipto","distrito":"Distrito 3"},{"lote":"45","area_neta":9.22,"area_ef":6.63,"estado":"Preparación","finca":"Egipto","distrito":"Distrito 3"},{"lote":"46","area_neta":13.51,"area_ef":10.29,"estado":"Preparación","finca":"Egipto","distrito":"Distrito 3"},{"lote":"47","area_neta":6.86,"area_ef":5.1,"estado":"Preparación","finca":"Egipto","distrito":"Distrito 3"},{"lote":"48","area_neta":4.64,"area_ef":2.88,"estado":"Preparación","finca":"Egipto","distrito":"Distrito 3"},{"lote":"49","area_neta":4.45,"area_ef":2.84,"estado":"Preparación","finca":"Egipto","distrito":"Distrito 3"},{"lote":"50","area_neta":2.69,"area_ef":1.35,"estado":"Preparación","finca":"Egipto","distrito":"Distrito 3"},{"lote":"51","area_neta":5.37,"area_ef":2.787,"estado":"Preparación","finca":"Egipto","distrito":"Distrito 3"},{"lote":"52","area_neta":3.36,"area_ef":2.39,"estado":"Preparación","finca":"Egipto","distrito":"Distrito 3"},{"lote":"53","area_neta":8.09,"area_ef":5.245,"estado":"Preparación","finca":"Egipto","distrito":"Distrito 3"},{"lote":"54","area_neta":6.87,"area_ef":5.05,"estado":"Preparación","finca":"Egipto","distrito":"Distrito 3"},{"lote":"55","area_neta":4.89,"area_ef":3.42,"estado":"Preparación","finca":"Egipto","distrito":"Distrito 3"},{"lote":"56","area_neta":21.08,"area_ef":14.29,"estado":"Preparación","finca":"Las Américas","distrito":"Distrito 2"},{"lote":"57","area_neta":13.84,"area_ef":9.37,"estado":"Preparación","finca":"Las Américas","distrito":"Distrito 2"},{"lote":"58","area_neta":23.49,"area_ef":16.47,"estado":"Preparación","finca":"Las Américas","distrito":"Distrito 2"},{"lote":"59","area_neta":18.1,"area_ef":12.69,"estado":"Preparación","finca":"Las Américas","distrito":"Distrito 2"},{"lote":"60","area_neta":11.4,"area_ef":7.92,"estado":"Preparación","finca":"Las Américas","distrito":"Distrito 2"},{"lote":"61","area_neta":17.2,"area_ef":11.41,"estado":"Preparación","finca":"Las Américas","distrito":"Distrito 2"},{"lote":"62","area_neta":16.2,"area_ef":10.91,"estado":"Preparación","finca":"Las Américas","distrito":"Distrito 2"},{"lote":"63","area_neta":18.4,"area_ef":12.35,"estado":"Preparación","finca":"Las Américas","distrito":"Distrito 2"},{"lote":"64","area_neta":8.73,"area_ef":5.76,"estado":"Preparación","finca":"Las Américas","distrito":"Distrito 2"},{"lote":"65","area_neta":12.5,"area_ef":7.77,"estado":"Preparación","finca":"Las Américas","distrito":"Distrito 2"},{"lote":"66","area_neta":8.278,"area_ef":6.67,"estado":"Preparación","finca":"Brasil","distrito":"Distrito 3"},{"lote":"67","area_neta":10.39,"area_ef":8.24,"estado":"Preparación","finca":"Brasil","distrito":"Distrito 2"},{"lote":"68","area_neta":19.747,"area_ef":16.27,"estado":"Preparación","finca":"Brasil","distrito":"Distrito 3"},{"lote":"69","area_neta":19.747,"area_ef":12.32,"estado":"Preparación","finca":"Brasil","distrito":"Distrito 2"},{"lote":"70","area_neta":12.8,"area_ef":7.33,"estado":"Preparación","finca":"Brasil","distrito":"Distrito 2"},{"lote":"71","area_neta":13.45,"area_ef":11.63,"estado":"Preparación","finca":"Brasil","distrito":"Distrito 2"},{"lote":"72","area_neta":19,"area_ef":12.11686,"estado":"Preparación","finca":"Brasil","distrito":"Distrito 3"},{"lote":"73","area_neta":19,"area_ef":11.84,"estado":"Preparación","finca":"Brasil","distrito":"Distrito 3"},{"lote":"74","area_neta":10.301,"area_ef":8.2766,"estado":"Preparación","finca":"Brasil","distrito":"Distrito 3"},{"lote":"75","area_neta":9.145,"area_ef":7.25,"estado":"Preparación","finca":"Brasil","distrito":"Distrito 2"},{"lote":"76","area_neta":5.088,"area_ef":4.92,"estado":"Preparación","finca":"Brasil","distrito":"Distrito 3"},{"lote":"77","area_neta":14.965,"area_ef":12.07,"estado":"Preparación","finca":"Argentina","distrito":"Distrito 3"},{"lote":"78","area_neta":12.73,"area_ef":10.81,"estado":"Preparación","finca":"Argentina","distrito":"Distrito 3"},{"lote":"79","area_neta":6.5,"area_ef":5.27,"estado":"Preparación","finca":"Argentina","distrito":"Distrito 3"},{"lote":"80","area_neta":18.54,"area_ef":15.09,"estado":"Preparación","finca":"Argentina","distrito":"Distrito 3"},{"lote":"81","area_neta":18.32,"area_ef":16.8,"estado":"Preparación","finca":"Argentina","distrito":"Distrito 3"},{"lote":"82","area_neta":15.729,"area_ef":12.72,"estado":"Preparación","finca":"Argentina","distrito":"Distrito 3"},{"lote":"83","area_neta":10.916,"area_ef":9.71,"estado":"Preparación","finca":"Argentina","distrito":"Distrito 3"},{"lote":"84","area_neta":5.9,"area_ef":4.798,"estado":"Preparación","finca":"Argentina","distrito":"Distrito 3"},{"lote":"85","area_neta":5.04,"area_ef":3.4,"estado":"Preparación","finca":"Argentina","distrito":"Distrito 3"},{"lote":"86","area_neta":9.673,"area_ef":7.886,"estado":"Preparación","finca":"Argentina","distrito":"Distrito 3"},{"lote":"87","area_neta":7.596,"area_ef":6.1,"estado":"Preparación","finca":"Argentina","distrito":"Distrito 3"}],"lotes_por_finca":{"La Fé":["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"],"La Sultana":["21","22","23","24","25","26","27"],"Jamaica":["28","29","30","31","32","33","34","35","36","37","38","39"],"Egipto":["40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55"],"Las Américas":["56","57","58","59","60","61","62","63","64","65"],"Brasil":["66","67","68","69","70","71","72","73","74","75","76"],"Argentina":["77","78","79","80","81","82","83","84","85","86","87"]},"fincas":["Argentina","Brasil","Egipto","Jamaica","La Fé","La Sultana","Las Américas"],"areas":["Aplicaciones","CTIA","Control operaciones","Cosecha","Desarrollo de cultivo","Empaque","Preparación","Taller","semillero","siembra"],"implementos":[{"codigo":"IA-01","descripcion":"RASTRA ROMPEDORA"},{"codigo":"IA-02","descripcion":"RASTRA ROMPEDORA"},{"codigo":"IA-03","descripcion":"RASTRA AFINADORA"},{"codigo":"IA-04","descripcion":"RASTRA AFINADORA"},{"codigo":"IA-05","descripcion":"RASTRA ROMPEDORA"},{"codigo":"IA-06","descripcion":"ENCAMADORA"},{"codigo":"IA-07","descripcion":"ENCAMADORA"},{"codigo":"IA-08","descripcion":"SUBSOLADOR"},{"codigo":"IA-09","descripcion":"SUBSOLADOR"},{"codigo":"IA-10","descripcion":"ZANJADORA"},{"codigo":"IA-11","descripcion":"ZANJADORA"},{"codigo":"IA-12","descripcion":"CARRETA"},{"codigo":"IA-13","descripcion":"CARRETA"},{"codigo":"IA-14","descripcion":"BOOM SPRAYER"},{"codigo":"IA-15","descripcion":"PALA TRASERA"},{"codigo":"IA-16","descripcion":"PALA TRASERA"},{"codigo":"IA-17","descripcion":"BOMBA ESTACIONARIA"},{"codigo":"IA-18","descripcion":"TANQUETA ABASTECEDOR"},{"codigo":"IA-19","descripcion":"CARRETA DE SEMILLA"},{"codigo":"IA-20","descripcion":"CHASIS DE COSECHA"},{"codigo":"IA-21","descripcion":"CHASIS DE COSECHA"},{"codigo":"IA-22","descripcion":"CHASIS DE COSECHA"},{"codigo":"IA-23","descripcion":"COSECHADORA"},{"codigo":"IA-24","descripcion":"CHASIS"},{"codigo":"IA-25","descripcion":"STROLLER"},{"codigo":"IA-26","descripcion":"CORTA MALEZA TA"},{"codigo":"IA-27","descripcion":"CARRETA/PLATAFORMA"},{"codigo":"IA-28","descripcion":"BOOM SPRAYER 2"},{"codigo":"IA-29","descripcion":"CARRETA"},{"codigo":"IA-30","descripcion":"CHASIS DE COSECHA"},{"codigo":"IA-31","descripcion":"CARRETA DE SEMILLA"},{"codigo":"IA-32","descripcion":"COSECHADORA"},{"codigo":"IA-33","descripcion":"CHASIS DE COSECHA"},{"codigo":"IA-34","descripcion":"TRENCILLO"},{"codigo":"IA-35","descripcion":"DESBROZADORA"},{"codigo":"IA-36","descripcion":"SURQUIADOR"},{"codigo":"IA-37","descripcion":"SUBSOLADOR"},{"codigo":"IA-38","descripcion":"RASTRILLO PARA BASURA"},{"codigo":"IA-39","descripcion":"TANQUETA DE ABASTO"},{"codigo":"IA-40","descripcion":"CARRETA PARA BIN 5TA RUEDA"},{"codigo":"IA-41","descripcion":"CARRETA PARA BIN 5TA RUEDA"},{"codigo":"IA-42","descripcion":"PLUMA"},{"codigo":"IA-43","descripcion":"PALA HIDRAULICA"},{"codigo":"IA-44","descripcion":"ZANJADORA"},{"codigo":"IA-45","descripcion":"SUBSOLADOR/CINCEL DE TRES PUNTAS"},{"codigo":"IA-46","descripcion":"PLATAFORMA DE CARGA"},{"codigo":"IA-47","descripcion":"SUBSOLADOR/CINCEL DE TRES PUNTAS"},{"codigo":"IA-48","descripcion":"DESBROZADORA (CUCHILLAS)"},{"codigo":"IA-49","descripcion":"DESBROZADORA (CUCHILLAS)"},{"codigo":"IA-50","descripcion":"TANQUETA ABASTECIMIENTO"},{"codigo":"IA-51","descripcion":"ZANAJADORA DONDI"},{"codigo":"IA-52","descripcion":"TANQUETA DE ABASTECIMIENTO"},{"codigo":"IA-53","descripcion":"BOOM SPRAYER 3"},{"codigo":"IA-54","descripcion":"MOTOBOMBA"},{"codigo":"IA-55","descripcion":"ZANJADORA"},{"codigo":"IA-56","descripcion":"ENCAMADORA"},{"codigo":"IA-57","descripcion":"COSECHADORA"},{"codigo":"IA-58","descripcion":"CHASIS DE COSECHA"},{"codigo":"IA-59","descripcion":"CHASIS DE COSECHA"},{"codigo":"IA-60","descripcion":"CHASIS DE COSECHA"},{"codigo":"IA-61","descripcion":"CHASIS DE COSECHA"},{"codigo":"IA-62","descripcion":"DESBROZADORA"},{"codigo":"IA-63","descripcion":"COSECHADORA"},{"codigo":"IA-64","descripcion":"BOOM"},{"codigo":"IA-65","descripcion":"COSECHADORA"},{"codigo":"IA-66","descripcion":"TANQUETA"},{"codigo":"IA-67","descripcion":"BOOM"},{"codigo":"IA-68","descripcion":"PALA TRASERA"},{"codigo":"IA-69","descripcion":"INSTRUCTURA BOMBA ESTACIONARIA"},{"codigo":"IA-70","descripcion":"ENCAMADORA"},{"codigo":"IA-71","descripcion":"ENCALADORA"},{"codigo":"IA-72","descripcion":"CARRETA DE SEMILLA 4 RUEDAS"},{"codigo":"IA-73","descripcion":"PALA CUCHILLA"},{"codigo":"IA-74","descripcion":"RASTRA GRANDE"},{"codigo":"IA-75","descripcion":"CARRETA DE VOLTEO"},{"codigo":"IA-76","descripcion":"VIBRO COMPACTADOR"},{"codigo":"IA-77","descripcion":"SUBSUELO"},{"codigo":"IA-78","descripcion":"DONDY"},{"codigo":"IA-79","descripcion":"CHASIS CARRETA PARA BIN"},{"codigo":"IA-80","descripcion":"PLANTA"},{"codigo":"IA-81","descripcion":"BOOM"}],"unidades":["HA","METROS","UNIDAD","HORAS","GALONES","TONELADAS"]}</script>
+
+<script>
+var D = null;
+var turnoActivo = null;
+var API = 'https://script.google.com/macros/s/AKfycbyL1ZTEVzwYUBNFnzp0JyoPggFRe6sl1p0uSGF28yo-FV_zZfnX_yiNwpB8mW0IoVH8/exec';
+var STORE = 'turnos_app2';
+
+function init() {
+  try {
+    var el = document.getElementById('_d');
+    D = JSON.parse(el.textContent || el.innerText);
+  } catch(e) {
+    document.getElementById('ss').innerHTML = '<span style="color:#EF4444">Error JSON: ' + e.message + '</span>';
+    return;
+  }
+
+  var ahora = new Date(); ahora.setSeconds(0,0);
+  var pad = function(n){ return n < 10 ? '0'+n : n; };
+  var fechaLocal = ahora.getFullYear() + '-' + pad(ahora.getMonth()+1) + '-' + pad(ahora.getDate()) + 'T' + pad(ahora.getHours()) + ':' + pad(ahora.getMinutes());
+  document.getElementById('a-hora').value = fechaLocal;
+
+  var hoy = ahora.getFullYear() + '-' + pad(ahora.getMonth()+1) + '-' + pad(ahora.getDate());
+  document.getElementById('t-fecha').value = hoy;
+
+  fill('t-op',   D.operadores, function(o){ return o.codigo + ' - ' + o.nombre; });
+  fill('t-eq',   D.equipos,    function(e){ return e.codigo + (e.descripcion ? ' - ' + e.descripcion : ''); });
+  fill('t-finca', D.fincas);
+  fill('t-area',  D.areas);
+  fill('a-labor', D.labores,      function(l){ return l.codigo + ' - ' + l.descripcion; });
+  fill('a-impl',  D.implementos,  function(i){ return i.codigo + ' - ' + i.descripcion; });
+  fill('a-unidad', D.unidades);
+
+  turnoActivo = cargarTurnoActivo();
+  mostrarEstadoTurno();
+  updCnt();
+
+  var st = navigator.onLine ? '<span style="color:#10B981">&#128246; En linea</span>' : '<span style="color:#EF4444">&#128245; Sin conexion</span>';
+  document.getElementById('ss').innerHTML = st;
+
+  setTimeout(function(){ if(navigator.onLine) syncData(); }, 2000);
+}
+
+function fill(id, items, fn) {
+  var s = document.getElementById(id);
+  if (!s) return;
+  while (s.options.length > 1) s.remove(1);
+  if (!items || !items.length) return;
+  for (var i = 0; i < items.length; i++) {
+    var item = items[i];
+    var val  = (typeof item === 'string') ? item : (item.codigo || item);
+    var lbl  = fn ? fn(item) : ((typeof item === 'string') ? item : item.nombre || item.codigo);
+    s.add(new Option(lbl, val));
+  }
+}
+
+function cargarTurnoActivo() {
+  try {
+    var t = localStorage.getItem(STORE + '_turno_activo');
+    return t ? JSON.parse(t) : null;
+  } catch(e) { return null; }
+}
+
+function guardarTurnoActivo(t) {
+  if (t) {
+    localStorage.setItem(STORE + '_turno_activo', JSON.stringify(t));
+  } else {
+    localStorage.removeItem(STORE + '_turno_activo');
+  }
+}
+
+function llenarLotes(finca) {
+  var s = document.getElementById('a-lote');
+  if (!s) return;
+  while (s.options.length > 1) s.remove(1);
+  if (!finca || !D || !D.lotes_por_finca) return;
+  var nums = D.lotes_por_finca[finca] || [];
+  for (var i = 0; i < nums.length; i++) {
+    s.add(new Option('Lote ' + nums[i], nums[i]));
+  }
+}
+
+function mostrarEstadoTurno() {
+  var divActivo = document.getElementById('div-turno-activo');
+  var divNuevo  = document.getElementById('div-nuevo-turno');
+  if (turnoActivo) {
+    divActivo.style.display = 'block';
+    divNuevo.style.display  = 'none';
+    var resumen = turnoActivo.fecha + ' | ' + turnoActivo.operador_nombre + ' | ' + turnoActivo.equipo;
+    document.getElementById('turno-resumen').textContent = resumen;
+    llenarLotes(turnoActivo.finca);
+    renderActividadesTurno();
+  } else {
+    divActivo.style.display = 'none';
+    divNuevo.style.display  = 'block';
+  }
+}
+
+function iniciarTurno() {
+  var fe = document.getElementById('t-fecha').value;
+  var os = document.getElementById('t-op');
+  var es = document.getElementById('t-eq');
+  var fi = document.getElementById('t-finca');
+  var ho = document.getElementById('t-horo').value;
+
+  var errores = [];
+  marcarError('t-fecha', !!fe);     if (!fe)       errores.push('Fecha');
+  marcarError('t-op',    !!os.value); if (!os.value) errores.push('Operador');
+  marcarError('t-eq',    !!es.value); if (!es.value) errores.push('Equipo');
+  marcarError('t-finca', !!fi.value); if (!fi.value) errores.push('Finca');
+  marcarError('t-horo',  !!ho);      if (!ho)       errores.push('Horometro Inicio');
+
+  if (errores.length > 0) {
+    toast('Faltan: ' + errores.join(', '), '#EF4444');
+    return;
+  }
+
+  turnoActivo = {
+    id:              Date.now(),
+    fecha:           fe,
+    operador:        os.value,
+    operador_nombre: os.options[os.selectedIndex].text,
+    equipo:          es.value,
+    equipo_desc:     es.options[es.selectedIndex].text,
+    finca:           fi.value,
+    area:            document.getElementById('t-area').value,
+    horometro_ini:   parseFloat(ho) || 0,
+    actividades:     [],
+    estado:          'abierto'
+  };
+
+  guardarTurnoActivo(turnoActivo);
+  mostrarEstadoTurno();
+  llenarLotes(turnoActivo.finca);
+  updCnt();
+  toast('Turno iniciado correctamente');
+}
+
+function agregarActividad() {
+  if (!turnoActivo) { toast('Primero inicia un turno', '#EF4444'); return; }
+
+  var ho = document.getElementById('a-hora').value;
+  var ls = document.getElementById('a-labor');
+
+  var errores = [];
+  marcarError('a-hora',  !!ho);      if (!ho)       errores.push('Hora Inicio');
+  marcarError('a-labor', !!ls.value); if (!ls.value) errores.push('Codigo de Labor');
+
+  if (errores.length > 0) {
+    toast('Faltan: ' + errores.join(', '), '#EF4444');
+    return;
+  }
+
+  var is = document.getElementById('a-impl');
+  var us = document.getElementById('a-unidad');
+  var act = {
+    id:         Date.now(),
+    hora:       ho,
+    labor:      ls.value,
+    labor_desc: ls.options[ls.selectedIndex].text,
+    lote:       document.getElementById('a-lote').value,
+    implemento: is.value,
+    impl_desc:  is.options[is.selectedIndex] ? is.options[is.selectedIndex].text : '',
+    cantidad:   parseFloat(document.getElementById('a-cant').value) || 0,
+    unidad:     us ? us.value : '',
+    obs:        document.getElementById('a-obs').value
+  };
+
+  turnoActivo.actividades.push(act);
+  guardarTurnoActivo(turnoActivo);
+  renderActividadesTurno();
+  updCnt();
+
+  var ahora = new Date(); ahora.setSeconds(0,0);
+  var pad2 = function(n){ return n < 10 ? '0'+n : n; };
+  var fl2 = ahora.getFullYear()+'-'+pad2(ahora.getMonth()+1)+'-'+pad2(ahora.getDate())+'T'+pad2(ahora.getHours())+':'+pad2(ahora.getMinutes());
+  document.getElementById('a-hora').value = fl2;
+  document.getElementById('a-labor').selectedIndex = 0;
+  document.getElementById('a-lote').value  = '';
+  document.getElementById('a-impl').selectedIndex   = 0;
+  document.getElementById('a-unidad').selectedIndex = 0;
+  document.getElementById('a-cant').value = '';
+  document.getElementById('a-obs').value  = '';
+
+  toast('Actividad agregada');
+}
+
+function eliminarActividad(idx) {
+  if (!turnoActivo) return;
+  if (!confirm('Eliminar esta actividad?')) return;
+  turnoActivo.actividades.splice(idx, 1);
+  guardarTurnoActivo(turnoActivo);
+  renderActividadesTurno();
+  updCnt();
+}
+
+function renderActividadesTurno() {
+  var lista = document.getElementById('act-lista');
+  var cnt2  = document.getElementById('cnt2');
+  if (!turnoActivo || !turnoActivo.actividades.length) {
+    lista.innerHTML = '<div class="emp">Sin actividades aun</div>';
+    if (cnt2) cnt2.textContent = '0';
+    return;
+  }
+  var n = turnoActivo.actividades.length;
+  if (cnt2) cnt2.textContent = n;
+  var html = '';
+  for (var i = 0; i < n; i++) {
+    var a = turnoActivo.actividades[i];
+    html += '<div class="act-row">';
+    html += '<div class="act-hdr"><span class="act-num">Act. ' + (i+1) + '</span>';
+    html += '<button class="del-btn" onclick="eliminarActividad(' + i + ')">&#10005; Quitar</button></div>';
+    html += '<div style="font-size:13px;color:#F1F5F9;font-weight:600;margin-bottom:3px">' + a.labor_desc + '</div>';
+    html += '<div style="font-size:11px;color:#6EE7B7">&#128336; ' + (a.hora || '-') + '</div>';
+    if (a.lote) html += '<div style="font-size:11px;color:#94A3B8">Lote: ' + a.lote + '</div>';
+    if (a.implemento) html += '<div style="font-size:11px;color:#94A3B8">Impl: ' + a.impl_desc + '</div>';
+    if (a.cantidad) html += '<div style="font-size:11px;color:#94A3B8">Cant: ' + a.cantidad + (a.unidad ? ' ' + a.unidad : '') + '</div>';
+    if (a.obs) html += '<div style="font-size:11px;color:#64748B;font-style:italic">' + a.obs + '</div>';
+    html += '</div>';
+  }
+  lista.innerHTML = html;
+}
+
+function cerrarTurno() {
+  if (!turnoActivo) return;
+  var hf = document.getElementById('c-horo-fin').value;
+  marcarError('c-horo-fin', !!hf);
+  if (!hf) { toast('Ingresa el horometro final', '#EF4444'); return; }
+
+  if (!confirm('Cerrar este turno?')) return;
+
+  turnoActivo.horometro_fin = parseFloat(hf) || 0;
+  turnoActivo.acpm          = parseFloat(document.getElementById('c-acpm').value) || 0;
+  turnoActivo.estado        = 'cerrado';
+  turnoActivo.fecha_cierre  = new Date().toISOString().slice(0,16);
+
+  var todos = JSON.parse(localStorage.getItem(STORE) || '[]');
+  todos.unshift(turnoActivo);
+  localStorage.setItem(STORE, JSON.stringify(todos));
+
+  var pend = JSON.parse(localStorage.getItem(STORE + '_sync') || '[]');
+  pend.push(turnoActivo);
+  localStorage.setItem(STORE + '_sync', JSON.stringify(pend));
+
+  if (navigator.onLine) syncData();
+
+  document.getElementById('c-horo-fin').value = '';
+  document.getElementById('c-acpm').value     = '';
+  turnoActivo = null;
+  guardarTurnoActivo(null);
+  mostrarEstadoTurno();
+  updCnt();
+  toast('Turno cerrado y guardado correctamente');
+}
+
+function updCnt() {
+  var n = 0;
+  if (turnoActivo && turnoActivo.actividades) n = turnoActivo.actividades.length;
+  document.getElementById('cnt').textContent  = n;
+}
+
+function showPg(t) {
+  var tabs = document.querySelectorAll('.tab');
+  var pgs  = document.querySelectorAll('.pg');
+  for (var i = 0; i < tabs.length; i++) tabs[i].className = 'tab';
+  for (var i = 0; i < pgs.length; i++)  pgs[i].className  = 'pg';
+  var selTab = document.querySelector('[onclick="showPg(\'' + t + '\')"]');
+  if (selTab) selTab.className = 'tab on';
+  document.getElementById('pg-' + t).className = 'pg on';
+  if (t === 'act') renderHistorial();
+  if (t === 'exp') renderStats();
+}
+
+function renderHistorial() {
+  var wrap = document.getElementById('hist-wrap');
+  var info = document.getElementById('hist-info');
+  var todos = JSON.parse(localStorage.getItem(STORE) || '[]');
+  if (info) info.textContent = todos.length + ' turnos guardados';
+  if (!todos.length) {
+    wrap.innerHTML = '<div class="emp"><div style="font-size:44px">&#128203;</div><p>No hay turnos cerrados aun</p></div>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < todos.length; i++) {
+    var t = todos[i];
+    var nActs = t.actividades ? t.actividades.length : 0;
+    html += '<div class="act-row">';
+    html += '<div class="act-hdr"><span class="act-num">' + (t.fecha || '-') + '</span>';
+    html += '<span class="badge badge-g">' + nActs + ' actos</span></div>';
+    html += '<div style="font-size:13px;color:#F1F5F9;font-weight:600">' + (t.equipo_desc || t.equipo || '-') + '</div>';
+    html += '<div style="font-size:12px;color:#6EE7B7">' + (t.operador_nombre || '-') + '</div>';
+    html += '<div style="font-size:11px;color:#94A3B8">Finca: ' + (t.finca||'-') + (t.area ? ' | ' + t.area : '') + '</div>';
+    html += '<div style="font-size:11px;color:#94A3B8">Horo: ' + (t.horometro_ini||0) + ' &rarr; ' + (t.horometro_fin||'?') + (t.acpm ? ' | ACPM: ' + t.acpm + ' gal' : '') + '</div>';
+    if (nActs) {
+      html += '<div style="margin-top:8px;font-size:11px;font-weight:700;color:#4B7A5C;text-transform:uppercase">Actividades:</div>';
+      for (var j = 0; j < t.actividades.length; j++) {
+        var a = t.actividades[j];
+        html += '<div style="font-size:11px;color:#94A3B8;padding:3px 0;border-bottom:1px solid #1F4C2A">';
+        html += a.hora + ' | ' + a.labor_desc + (a.lote ? ' | Lote ' + a.lote : '') + (a.cantidad ? ' | ' + a.cantidad : '');
+        html += '</div>';
+      }
+    }
+    html += '</div>';
+  }
+  wrap.innerHTML = html;
+}
+
+function renderStats() {
+  var todos   = JSON.parse(localStorage.getItem(STORE) || '[]');
+  var nosync  = JSON.parse(localStorage.getItem(STORE + '_sync') || '[]');
+  var nActs   = 0;
+  for (var i = 0; i < todos.length; i++) {
+    if (todos[i].actividades) nActs += todos[i].actividades.length;
+  }
+  document.getElementById('expstats').innerHTML =
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center;margin-bottom:8px">' +
+    '<div style="background:#0A1A0F;padding:12px;border-radius:10px"><div style="font-size:22px;font-weight:700;color:#10B981">' + todos.length + '</div><div style="font-size:10px;color:#4B7A5C">Turnos</div></div>' +
+    '<div style="background:#0A1A0F;padding:12px;border-radius:10px"><div style="font-size:22px;font-weight:700;color:#6EE7B7">' + nActs + '</div><div style="font-size:10px;color:#4B7A5C">Actividades</div></div>' +
+    '<div style="background:#0A1A0F;padding:12px;border-radius:10px"><div style="font-size:22px;font-weight:700;color:#F59E0B">' + nosync.length + '</div><div style="font-size:10px;color:#4B7A5C">Sin enviar</div></div>' +
+    '</div>';
+}
+
+function marcarError(id, ok) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.style.borderColor = ok ? '#1F4C2A' : '#EF4444';
+  el.style.boxShadow   = ok ? 'none' : '0 0 0 3px rgba(239,68,68,.2)';
+}
+
+async function syncData() {
+  var pend = JSON.parse(localStorage.getItem(STORE + '_sync') || '[]');
+  if (!pend.length) { toast('No hay datos pendientes'); return; }
+  var ss = document.getElementById('ss');
+  if (ss) ss.innerHTML = '<span style="color:#F59E0B">&#128260; Enviando ' + pend.length + ' turnos...</span>';
+  try {
+    var params = new URLSearchParams();
+    params.append('action', 'saveTurnos');
+    params.append('data',   JSON.stringify(pend));
+    await fetch(API, { method: 'POST', body: params, mode: 'no-cors' });
+    localStorage.removeItem(STORE + '_sync');
+    if (ss) ss.innerHTML = '<span style="color:#10B981">&#9989; Enviado (' + pend.length + ')</span>';
+    setTimeout(function(){ if (ss) ss.innerHTML = '<span style="color:#64748B">&#128246; En linea</span>'; }, 4000);
+    toast('Sincronizado: ' + pend.length + ' turnos');
+  } catch(e) {
+    if (ss) ss.innerHTML = '<span style="color:#EF4444">Error sync: ' + e.message + '</span>';
+    toast('Error al sincronizar', '#EF4444');
+  }
+}
+
+function syncNow() { syncData(); }
+
+async function cargarServidor() {
+  var info = document.getElementById('hist-info');
+  if (!navigator.onLine) { toast('Necesitas wifi para cargar', '#EF4444'); return; }
+  if (info) info.textContent = '&#8987; Cargando del servidor...';
+  toast('Conectando...');
+  try {
+    var r = await fetch(API + '?action=getPendientes', { method: 'GET', cache: 'no-cache' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    var d = await r.json();
+    if (d.ok && d.pendientes) {
+      var locales   = JSON.parse(localStorage.getItem(STORE) || '[]');
+      var mapaLocal = {};
+      for (var i = 0; i < locales.length; i++) mapaLocal[String(locales[i].id)] = i;
+      var nuevos = 0; var actual = 0;
+      for (var i = 0; i < d.pendientes.length; i++) {
+        var reg = d.pendientes[i];
+        var rid = String(reg.id || '');
+        if (!rid) continue;
+        if (mapaLocal[rid] !== undefined) { locales[mapaLocal[rid]] = reg; actual++; }
+        else { locales.unshift(reg); nuevos++; }
+      }
+      localStorage.setItem(STORE, JSON.stringify(locales));
+      if (info) info.textContent = nuevos + ' nuevos + ' + actual + ' actualizados. Total: ' + locales.length;
+      renderHistorial();
+      toast('&#9989; ' + nuevos + ' nuevos del servidor');
+    } else {
+      toast('Sin pendientes en el servidor');
+      renderHistorial();
+    }
+  } catch(e) {
+    if (info) info.textContent = 'Error: ' + e.message;
+    toast('Error de conexion: ' + e.message, '#EF4444');
+  }
+}
+
+function exportCSV() {
+  var todos = JSON.parse(localStorage.getItem(STORE) || '[]');
+  if (!todos.length) { toast('Sin datos para exportar', '#EF4444'); return; }
+  var cols = ['Turno ID','Fecha','Operador','Equipo','Finca','Area','Horo Ini','Horo Fin','ACPM','Estado','Hora Actividad','Labor','Labor Desc','Lote','Implemento','Implemento Desc','Cantidad','Obs Actividad'];
+  var rows = [];
+  for (var i = 0; i < todos.length; i++) {
+    var t = todos[i];
+    if (!t.actividades || !t.actividades.length) {
+      rows.push([t.id,t.fecha,t.operador_nombre,t.equipo_desc||t.equipo,t.finca,t.area,t.horometro_ini,t.horometro_fin||'',t.acpm||'',t.estado,'','','','','','','','']
+        .map(function(v){ return '"' + (v||'').toString().replace(/"/g,'""') + '"'; }).join(','));
+    } else {
+      for (var j = 0; j < t.actividades.length; j++) {
+        var a = t.actividades[j];
+        rows.push([t.id,t.fecha,t.operador_nombre,t.equipo_desc||t.equipo,t.finca,t.area,t.horometro_ini,t.horometro_fin||'',t.acpm||'',t.estado,a.hora,a.labor,a.labor_desc,a.lote||'',a.implemento||'',a.impl_desc||'',a.cantidad||'',a.obs||'']
+          .map(function(v){ return '"' + (v||'').toString().replace(/"/g,'""') + '"'; }).join(','));
+      }
+    }
+  }
+  var csv = '\uFEFF' + cols.join(',') + '\n' + rows.join('\n');
+  var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  var url  = URL.createObjectURL(blob);
+  var nombre = 'Labores_' + new Date().toISOString().split('T')[0] + '.csv';
+  // iOS Safari no soporta el atributo download en anchor \u2014 abrir en nueva pesta\u00F1a
+  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  if (isIOS) {
+    window.open(url, '_blank');
+    toast('Abre el archivo y guarda desde Safari');
+  } else {
+    var a = document.createElement('a');
+    a.href = url; a.download = nombre;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    toast('CSV descargado');
+  }
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 10000);
+}
+
+function reenviarTodo() {
+  var todos = JSON.parse(localStorage.getItem(STORE) || '[]');
+  if (!todos.length) { toast('No hay datos locales', '#EF4444'); return; }
+  localStorage.setItem(STORE + '_sync', JSON.stringify(todos));
+  toast('Reenviando ' + todos.length + ' turnos...');
+  syncData();
+}
+
+function limpiar() {
+  if (confirm('Limpiar cola de envio?')) {
+    localStorage.removeItem(STORE + '_sync');
+    toast('Listo'); renderStats();
+  }
+}
+
+function toast(m, c) {
+  var t = document.getElementById('toast');
+  t.textContent = m; t.style.background = c || '#059669';
+  t.className = 'toast on';
+  setTimeout(function(){ t.className = 'toast'; }, 2500);
+}
+
+window.addEventListener('online',  function(){ document.getElementById('ss').innerHTML='<span style="color:#10B981">&#128246; En linea</span>';  syncData(); });
+window.addEventListener('offline', function(){ document.getElementById('ss').innerHTML='<span style="color:#EF4444">&#128245; Sin conexion</span>'; });
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('./sw.js').then(function(reg) {
+      reg.addEventListener('updatefound', function() {
+        var newWorker = reg.installing;
+        newWorker.addEventListener('statechange', function() {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            toast('Nueva version disponible - recarga para actualizar', '#2563EB');
+          }
+        });
+      });
+    }).catch(function(err) { console.warn('SW no registrado:', err); });
+  });
+}
+
+var deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredPrompt = e;
+  var btn = document.getElementById('btn-instalar');
+  if (btn) btn.style.display = 'inline-block';
+});
+
+function instalarPWA() {
+  if (!deferredPrompt) {
+    var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isIOS) {
+      alert('En iPhone/iPad:\n1. Toca el boton Compartir\n2. Selecciona "Anadir a pantalla de inicio"\n3. Toca "Anadir"');
+    } else {
+      toast('Usa el menu del navegador: Instalar app', '#2563EB');
+    }
+    return;
+  }
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(function(result) {
+    if (result.outcome === 'accepted') {
+      toast('App instalada!');
+      var btn = document.getElementById('btn-instalar');
+      if (btn) btn.style.display = 'none';
+    }
+    deferredPrompt = null;
+  });
+}
+
+window.addEventListener('appinstalled', function() {
+  toast('App instalada!');
+  deferredPrompt = null;
+  var btn = document.getElementById('btn-instalar');
+  if (btn) btn.style.display = 'none';
+});
+
+try { init(); } catch(e) {
+  var ss = document.getElementById('ss');
+  if (ss) ss.innerHTML = '<span style="color:#EF4444">Error: ' + e.message + '</span>';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Anomalias Maquinaria</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#0F172A;color:#E2E8F0;min-height:100vh}
+.hdr{background:linear-gradient(135deg,#1E40AF,#1D4ED8);padding:14px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100}
+.hdr h1{font-size:17px;font-weight:700;color:#fff;flex:1}
+.hdr p{font-size:11px;color:#93C5FD}
+.sbar{background:#1E293B;padding:6px 16px;text-align:right;font-size:11px;border-bottom:1px solid #334155}
+.tabs{display:flex;background:#1E293B;border-bottom:1px solid #334155;position:sticky;top:74px;z-index:99}
+.tab{flex:1;padding:11px 4px;text-align:center;font-size:12px;font-weight:600;color:#64748B;cursor:pointer;border-bottom:3px solid transparent}
+.tab.on{color:#3B82F6;border-bottom-color:#3B82F6;background:#0F172A}
+.pg{display:none;padding:14px;max-width:560px;margin:0 auto;padding-bottom:80px}
+.pg.on{display:block}
+.card{background:#1E293B;border-radius:14px;padding:18px;margin-bottom:14px;border:1px solid #334155}
+.ct{font-size:14px;font-weight:700;color:#F1F5F9;margin-bottom:14px}
+.fg{margin-bottom:12px}
+label{display:block;font-size:11px;font-weight:600;color:#94A3B8;margin-bottom:5px;text-transform:uppercase}
+input,select,textarea{width:100%;padding:11px 13px;background:#0F172A;border:1.5px solid #334155;border-radius:9px;color:#F1F5F9;font-size:15px;outline:none;-webkit-appearance:none}
+input:focus,select:focus{border-color:#3B82F6}
+select option{background:#1E293B}
+textarea{resize:vertical;min-height:80px}
+.rg{display:flex;gap:8px}
+.rb{flex:1;padding:11px;background:#0F172A;border:2px solid #334155;border-radius:9px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;color:#94A3B8}
+.rb.on-v{background:#7F1D1D;border-color:#EF4444;color:#FCA5A5}
+.rb.on-d{background:#14532D;border-color:#22C55E;color:#86EFAC}
+.rb.on-a{background:#7C2D12;border-color:#F97316;color:#FDBA74}
+.rb.on-m{background:#713F12;border-color:#EAB308;color:#FDE047}
+.rb.on-b{background:#14532D;border-color:#22C55E;color:#86EFAC}
+.btn{width:100%;padding:14px;border:none;border-radius:11px;font-size:15px;font-weight:700;cursor:pointer;margin-top:6px}
+.btn-r{background:linear-gradient(135deg,#DC2626,#B91C1C);color:#fff}
+.btn-g{background:linear-gradient(135deg,#059669,#047857);color:#fff}
+.btn-b{background:linear-gradient(135deg,#2563EB,#1D4ED8);color:#fff}
+.btn-o{background:transparent;border:2px solid #475569;color:#CBD5E1}
+.sep{height:1px;background:#334155;margin:12px 0}
+.pin-ov{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:1000}
+.pin-bx{background:#1E293B;border-radius:18px;padding:28px;width:280px;text-align:center;border:1px solid #334155}
+.pin-in{background:#0F172A;border:2px solid #334155;color:#F1F5F9;font-size:22px;text-align:center;letter-spacing:8px;border-radius:10px;padding:12px;width:100%;margin-bottom:14px}
+.ac{background:#1E293B;border:1px solid #334155;border-radius:12px;padding:14px;margin-bottom:10px}
+.ac.v{border-left:4px solid #EF4444}
+.ac.d{border-left:4px solid #22C55E}
+.emp{text-align:center;padding:40px 16px;color:#475569}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700}
+.badge-r{background:#7F1D1D;color:#FCA5A5;border:1px solid #EF4444}
+.badge-g{background:#14532D;color:#86EFAC;border:1px solid #22C55E}
+.badge-y{background:#713F12;color:#FDE047;border:1px solid #EAB308}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);color:#fff;padding:11px 22px;border-radius:28px;font-weight:600;font-size:13px;z-index:200;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1}
+.cnt{background:#2563EB;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;margin-left:5px}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" style="border-radius:11px;flex-shrink:0">
+    <defs>
+      <linearGradient id="hdrBg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#1E3A5F"/>
+        <stop offset="100%" stop-color="#0F2444"/>
+      </linearGradient>
+      <radialGradient id="gearGrad" cx="50%" cy="40%" r="60%">
+        <stop offset="0%" stop-color="#90A4AE"/>
+        <stop offset="100%" stop-color="#546E7A"/>
+      </radialGradient>
+      <linearGradient id="excavGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#FFD740"/>
+        <stop offset="100%" stop-color="#FFA000"/>
+      </linearGradient>
+      <filter id="logoShadow" x="-20%" y="-20%" width="140%" height="140%">
+        <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.4"/>
+      </filter>
+    </defs>
+    <!-- Fondo azul oscuro redondeado -->
+    <rect width="48" height="48" rx="11" fill="url(#hdrBg)"/>
+    <!-- Brillo superior -->
+    <rect x="4" y="3" width="40" height="14" rx="8" fill="white" opacity="0.06"/>
+    <!-- Engranaje gris grande -->
+    <g transform="translate(22,22)" filter="url(#logoShadow)">
+      <circle cx="0" cy="0" r="12" fill="url(#gearGrad)" stroke="#37474F" stroke-width="1.5"/>
+      <circle cx="0" cy="0" r="6" fill="#37474F" stroke="#455A64" stroke-width="1"/>
+      <circle cx="0" cy="0" r="2.5" fill="#546E7A"/>
+      <!-- Dientes del engranaje (8 dientes) -->
+      <g fill="#90A4AE" stroke="#546E7A" stroke-width="0.8">
+        <rect x="-2" y="-15" width="4" height="5" rx="1"/>
+        <rect x="-2" y="10" width="4" height="5" rx="1"/>
+        <rect x="-15" y="-2" width="5" height="4" rx="1"/>
+        <rect x="10" y="-2" width="5" height="4" rx="1"/>
+        <rect x="-13" y="-11" width="4" height="4" rx="1" transform="rotate(45 -11 -9)"/>
+        <rect x="9" y="-11" width="4" height="4" rx="1" transform="rotate(-45 11 -9)"/>
+        <rect x="-13" y="7" width="4" height="4" rx="1" transform="rotate(-45 -11 9)"/>
+        <rect x="9" y="7" width="4" height="4" rx="1" transform="rotate(45 11 9)"/>
+      </g>
+    </g>
+    <!-- Excavadora/maquinaria amarilla dentro del engranaje -->
+    <g transform="translate(14,18)">
+      <!-- Cuerpo excavadora -->
+      <rect x="0" y="5" width="10" height="6" rx="1.5" fill="url(#excavGrad)" stroke="#E65100" stroke-width="0.8"/>
+      <!-- Cabina -->
+      <rect x="6" y="2" width="5" height="5" rx="1" fill="url(#excavGrad)" stroke="#E65100" stroke-width="0.8"/>
+      <!-- Ventana cabina -->
+      <rect x="7" y="3" width="2.5" height="2.5" rx="0.5" fill="#B3E5FC" opacity="0.9"/>
+      <!-- Brazo excavadora -->
+      <rect x="9" y="0" width="2" height="6" rx="1" fill="#FFB300" stroke="#E65100" stroke-width="0.6" transform="rotate(-20 10 3)"/>
+      <!-- Ruedas -->
+      <circle cx="2" cy="11" r="2" fill="#37474F" stroke="#263238" stroke-width="0.8"/>
+      <circle cx="8" cy="11" r="2" fill="#37474F" stroke="#263238" stroke-width="0.8"/>
+      <circle cx="2" cy="11" r="0.8" fill="#546E7A"/>
+      <circle cx="8" cy="11" r="0.8" fill="#546E7A"/>
+    </g>
+    <!-- Triangulo de alerta rojo (esquina inferior derecha) -->
+    <g transform="translate(29,28)">
+      <polygon points="9,17 0,17 4.5,9" fill="#EF4444" stroke="#B91C1C" stroke-width="1" stroke-linejoin="round"/>
+      <polygon points="9,17 0,17 4.5,9" fill="url(#alertGrad)" opacity="0.3"/>
+      <text x="4.5" y="16" text-anchor="middle" font-size="5.5" font-weight="900" fill="white" font-family="Arial">!</text>
+    </g>
+  </svg>
+  <div style="flex:1;margin-left:10px">
+    <h1 style="display:flex;align-items:center;gap:6px">Anomalias Maquinaria <span style="font-size:14px">&#128295;</span></h1>
+    <p>Agricola Guapa SAS</p>
+  </div>
+  <button onclick="syncNow()" style="background:rgba(255,255,255,.1);border:none;color:#93C5FD;padding:6px 10px;border-radius:8px;font-size:12px;cursor:pointer">&#128260; Sync</button>
+</div>
+<div class="sbar"><span id="ss">&#8987; Iniciando...</span></div>
+
+<div class="tabs">
+  <div class="tab on" onclick="showPg('reg')">
+    <svg width="16" height="16" viewBox="0 0 24 24" style="display:inline-block;vertical-align:middle;margin-right:3px" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="docG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E2E8F0"/><stop offset="100%" stop-color="#94A3B8"/></linearGradient></defs><rect x="4" y="2" width="13" height="17" rx="2" fill="url(#docG)" stroke="#64748B" stroke-width="1"/><line x1="7" y1="7" x2="14" y2="7" stroke="#64748B" stroke-width="1.2" stroke-linecap="round"/><line x1="7" y1="10" x2="14" y2="10" stroke="#64748B" stroke-width="1.2" stroke-linecap="round"/><line x1="7" y1="13" x2="11" y2="13" stroke="#64748B" stroke-width="1.2" stroke-linecap="round"/><g transform="translate(14,13) rotate(-35)"><rect x="-1.5" y="-6" width="3" height="8" rx="0.8" fill="#EF4444"/><rect x="-1.5" y="-7.5" width="3" height="2" rx="0.5" fill="#FCA5A5"/><polygon points="-1.5,2 1.5,2 0,4.5" fill="#F87171"/></g></svg>Registrar
+  </div>
+  <div class="tab" onclick="showPg('tall')">
+    <svg width="16" height="16" viewBox="0 0 24 24" style="display:inline-block;vertical-align:middle;margin-right:3px" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="wrnG" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#CBD5E1"/><stop offset="100%" stop-color="#90A4AE"/></linearGradient></defs><g transform="rotate(40 12 12)"><rect x="10.5" y="5" width="3" height="14" rx="1.5" fill="url(#wrnG)" stroke="#64748B" stroke-width="0.8"/><circle cx="12" cy="5" r="3.5" fill="#B0BEC5" stroke="#78909C" stroke-width="1"/><circle cx="12" cy="5" r="1.8" fill="#78909C"/><rect x="9" y="3.5" width="6" height="3" rx="0.8" fill="#CFD8DC" stroke="#90A4AE" stroke-width="0.8"/></g></svg>Taller <span class="cnt" id="cnt">0</span>
+  </div>
+  <div class="tab" onclick="showPg('exp')">
+    <svg width="16" height="16" viewBox="0 0 24 24" style="display:inline-block;vertical-align:middle;margin-right:3px" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="b1g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FCD34D"/><stop offset="100%" stop-color="#F59E0B"/></linearGradient><linearGradient id="b2g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FB923C"/><stop offset="100%" stop-color="#EA580C"/></linearGradient><linearGradient id="b3g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4ADE80"/><stop offset="100%" stop-color="#16A34A"/></linearGradient></defs><rect x="3" y="14" width="4" height="7" rx="1" fill="url(#b1g)"/><rect x="9" y="9" width="4" height="12" rx="1" fill="url(#b2g)"/><rect x="15" y="5" width="4" height="16" rx="1" fill="url(#b3g)"/><line x1="2" y1="21" x2="22" y2="21" stroke="#64748B" stroke-width="1.2" stroke-linecap="round"/></svg>Datos
+  </div>
+</div>
+
+<div class="pin-ov" id="pinov" style="display:none">
+  <div class="pin-bx">
+    <div style="font-size:36px;margin-bottom:10px">&#128272;</div>
+    <h2 style="margin-bottom:6px">Acceso Taller</h2>
+    <p style="color:#64748B;font-size:13px;margin-bottom:20px">PIN del Jefe de Taller</p>
+    <input class="pin-in" type="tel" id="pinin" maxlength="4" placeholder="&#8226;&#8226;&#8226;&#8226;" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocorrect="off" autocapitalize="off">
+    <div id="pin-mask" style="letter-spacing:12px;font-size:24px;color:#10B981;min-height:36px;margin-bottom:8px;text-align:center"></div>
+    <button class="btn btn-b" onclick="chkPin()">Ingresar</button>
+    <button class="btn btn-o" onclick="closePinOv()" style="margin-top:6px">Cancelar</button>
+  </div>
+</div>
+
+<div id="pg-reg" class="pg on">
+<div class="card">
+  <div class="ct">&#128308; Nueva Anomalia</div>
+  <div class="fg">
+    <label>Disponibilidad *</label>
+    <div class="rg">
+      <div class="rb on-v" id="dv" onclick="setDisp('Varada')" style="display:flex;align-items:center;justify-content:center;gap:7px"><svg width="22" height="22" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="varG" cx="45%" cy="35%" r="65%"><stop offset="0%" stop-color="#FF6B6B"/><stop offset="100%" stop-color="#C62828"/></radialGradient><filter id="vs"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#B71C1C" flood-opacity="0.5"/></filter></defs><circle cx="16" cy="16" r="14" fill="url(#varG)" stroke="#B71C1C" stroke-width="1.5" filter="url(#vs)"/><circle cx="16" cy="16" r="14" fill="white" opacity="0.08"/><rect x="11" y="10" width="3.5" height="12" rx="1.5" fill="white"/><rect x="17.5" y="10" width="3.5" height="12" rx="1.5" fill="white"/></svg>Varada</div>
+      <div class="rb" id="dd" onclick="setDisp('Disponible')" style="display:flex;align-items:center;justify-content:center;gap:7px"><svg width="22" height="22" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="dispG" cx="45%" cy="35%" r="65%"><stop offset="0%" stop-color="#4ADE80"/><stop offset="100%" stop-color="#15803D"/></radialGradient><filter id="ds"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#14532D" flood-opacity="0.5"/></filter></defs><circle cx="16" cy="16" r="14" fill="url(#dispG)" stroke="#15803D" stroke-width="1.5" filter="url(#ds)"/><circle cx="16" cy="16" r="14" fill="white" opacity="0.08"/><polyline points="9,16 14,21 23,11" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>Disponible</div>
+    </div>
+  </div>
+  <div class="fg"><label>Fecha y Hora *</label><input type="datetime-local" id="r-fecha"></div>
+  <div class="fg"><label>Operador *</label><select id="r-op"><option value="">Seleccionar operador...</option></select></div>
+  <div class="fg">
+    <label>Tipo *</label>
+    <div class="rg">
+      <div class="rb" id="te-eq" onclick="setTipoEq('EQUIPO')">&#128663; Equipo</div>
+      <div class="rb" id="te-im" onclick="setTipoEq('IMPLEMENTO')">&#128295; Implemento</div>
+    </div>
+  </div>
+  <div class="fg"><label>Equipo / Implemento *</label><select id="r-eq"><option value="">Selecciona el tipo primero...</option></select></div>
+  <div class="sep"></div>
+  <div style="font-size:11px;font-weight:700;color:#60A5FA;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">&#128205; Ubicacion</div>
+  <div class="fg"><label>Sede / Finca *</label><select id="r-sede" onchange="onFincaChange()"><option value="">Seleccionar sede...</option></select></div>
+  <div class="fg"><label>Lote</label><select id="r-lote"><option value="">Seleccionar lote...</option></select></div>
+  <div class="fg"><label>Area de trabajo</label><select id="r-area"><option value="">Seleccionar area...</option></select></div>
+  <div class="sep"></div>
+  <div style="font-size:12px;font-weight:700;color:#60A5FA;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">&#128295; Componente afectado</div>
+  <div class="fg">
+    <label>Parte / Componente *</label>
+    <select id="r-parte" onchange="autoSisSub()"><option value="">Seleccionar parte...</option></select>
+  </div>
+  <div id="r-multi" style="display:none;background:#1a2535;border:1px solid #F59E0B;border-radius:8px;padding:10px;margin-bottom:12px">
+    <div style="font-size:11px;color:#F59E0B;margin-bottom:8px;font-weight:700">&#9888; Esta parte pertenece a varios sistemas. Selecciona el correcto:</div>
+    <div id="r-multi-lista"></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    <div class="fg"><label>Sistema (automatico)</label>
+      <input type="text" id="r-sis" readonly placeholder="Se llena al seleccionar parte" style="background:#0A1628;color:#60A5FA;font-size:12px;cursor:default">
+    </div>
+    <div class="fg"><label>Subsistema (automatico)</label>
+      <input type="text" id="r-sub" readonly placeholder="Se llena al seleccionar parte" style="background:#0A1628;color:#60A5FA;font-size:12px;cursor:default">
+    </div>
+  </div>
+  <div class="fg">
+    <label>Prioridad</label>
+    <div class="rg">
+      <div class="rb on-a" id="pa" onclick="setPrio('Alta')" style="display:flex;align-items:center;justify-content:center;gap:6px"><svg width="20" height="20" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="triA" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FF5252"/><stop offset="100%" stop-color="#C62828"/></linearGradient></defs><polygon points="14,2 26,24 2,24" fill="url(#triA)" stroke="#B71C1C" stroke-width="1.5" stroke-linejoin="round"/><polygon points="14,2 26,24 2,24" fill="white" opacity="0.07"/><text x="14" y="21" text-anchor="middle" font-size="11" font-weight="900" fill="white" font-family="Arial">!</text></svg>Alta</div>
+      <div class="rb" id="pm" onclick="setPrio('Media')" style="display:flex;align-items:center;justify-content:center;gap:6px"><svg width="20" height="20" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="triM" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFD740"/><stop offset="100%" stop-color="#F57F17"/></linearGradient></defs><polygon points="14,2 26,24 2,24" fill="url(#triM)" stroke="#E65100" stroke-width="1.5" stroke-linejoin="round"/><polygon points="14,2 26,24 2,24" fill="white" opacity="0.07"/><text x="14" y="21" text-anchor="middle" font-size="11" font-weight="900" fill="white" font-family="Arial">!</text></svg>Media</div>
+      <div class="rb" id="pb" onclick="setPrio('Baja')" style="display:flex;align-items:center;justify-content:center;gap:6px"><svg width="20" height="20" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="triB" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4ADE80"/><stop offset="100%" stop-color="#15803D"/></linearGradient></defs><polygon points="14,2 26,24 2,24" fill="url(#triB)" stroke="#14532D" stroke-width="1.5" stroke-linejoin="round"/><polygon points="14,2 26,24 2,24" fill="white" opacity="0.07"/><text x="14" y="21" text-anchor="middle" font-size="11" font-weight="900" fill="white" font-family="Arial">!</text></svg>Baja</div>
+    </div>
+  </div>
+  <div class="fg"><label>Descripcion de la Falla *</label><textarea id="r-falla" placeholder="Describe la falla observada..."></textarea></div>
+  <div class="fg"><label>Observaciones</label><textarea id="r-obs" placeholder="Opcional..." style="min-height:60px"></textarea></div>
+  <button class="btn btn-r" onclick="guardar()">&#128308; Registrar Anomalia</button>
+</div>
+</div>
+
+<div id="pg-tall" class="pg">
+  <div style="display:flex;gap:8px;margin-bottom:12px">
+    <button class="btn btn-b" onclick="cargarServidor()" style="margin-top:0;flex:1">&#9729;&#65039; Cargar servidor</button>
+    <button class="btn btn-o" onclick="renderTaller()" style="margin-top:0;flex:1">&#128260; Actualizar</button>
+  </div>
+  <div style="margin-bottom:14px;background:#0F172A;border-radius:10px;padding:12px;border:1px solid #334155">
+    <div style="font-size:11px;font-weight:700;color:#94A3B8;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">&#128272; Herramientas Admin</div>
+    <button class="btn btn-o" onclick="resetCompleto()" style="margin-top:0;border-color:#EF4444;color:#EF4444;font-size:12px;padding:10px">
+      &#9940; Reset celular — borrar registros locales
+    </button>
+    <p style="font-size:10px;color:#64748B;margin-top:6px">Solo usar cuando el servidor ya tiene todos los datos. Sincroniza antes de resetear.</p>
+  </div>
+  <div id="tall-info" style="font-size:11px;color:#64748B;margin-bottom:10px;text-align:center"></div>
+  <div id="tall-wrap"></div>
+</div>
+
+<div id="pg-exp" class="pg">
+<div class="card">
+  <div class="ct">&#128202; Estado de Datos</div>
+  <div id="expstats"></div>
+  <button class="btn btn-g" onclick="exportCSV()" style="margin-top:14px;display:flex;align-items:center;justify-content:center;gap:8px"><svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="csvG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6EE7B7"/><stop offset="100%" stop-color="#059669"/></linearGradient></defs><rect x="3" y="3" width="18" height="14" rx="2.5" fill="url(#csvG)" opacity="0.25" stroke="#059669" stroke-width="1.2"/><line x1="12" y1="5" x2="12" y2="14" stroke="white" stroke-width="2" stroke-linecap="round"/><polyline points="8,11 12,15 16,11" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><rect x="4" y="17" width="16" height="3.5" rx="1.5" fill="white" opacity="0.9"/></svg>Descargar CSV</button>
+  <button class="btn btn-b" onclick="syncNow()" style="margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px"><svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="syncG" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#60A5FA"/><stop offset="100%" stop-color="#1D4ED8"/></linearGradient></defs><circle cx="12" cy="12" r="9" fill="url(#syncG)" opacity="0.2" stroke="#3B82F6" stroke-width="1"/><path d="M8 8.5 A5.5 5.5 0 0 1 17 11" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/><polygon points="17,8 17,12 13,10" fill="white"/><path d="M16 15.5 A5.5 5.5 0 0 1 7 13" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/><polygon points="7,16 7,12 11,14" fill="white"/></svg>Sincronizar Ahora</button>
+  <button class="btn btn-b" onclick="reenviarTodo()" style="margin-top:8px;background:linear-gradient(135deg,#7C3AED,#6D28D9);display:flex;align-items:center;justify-content:center;gap:8px"><svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 12 L3 10 L5 8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M3 10 Q8 4 15 7 Q19 9 20 14" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M19 12 L21 14 L19 16" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M21 14 Q16 20 9 17 Q5 15 4 10" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/></svg>Reenviar TODO al servidor</button>
+  <button class="btn btn-o" onclick="limpiarDuplicadosLocal()" style="margin-top:8px;border-color:#F59E0B;color:#F59E0B">&#129529; Limpiar duplicados locales</button>
+  <button class="btn btn-o" onclick="limpiar()" style="margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px"><svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="trashG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#94A3B8"/><stop offset="100%" stop-color="#475569"/></linearGradient></defs><rect x="5" y="7" width="14" height="14" rx="2" fill="url(#trashG)" stroke="#64748B" stroke-width="1.2"/><line x1="3" y1="7" x2="21" y2="7" stroke="#94A3B8" stroke-width="1.8" stroke-linecap="round"/><rect x="9" y="3" width="6" height="4" rx="1" fill="#64748B" stroke="#475569" stroke-width="1"/><line x1="9.5" y1="11" x2="9.5" y2="17" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/><line x1="12" y1="11" x2="12" y2="17" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/><line x1="14.5" y1="11" x2="14.5" y2="17" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/></svg>Limpiar enviados</button>
+</div>
+<div class="card">
+  <p style="color:#94A3B8;font-size:13px;line-height:1.7">
+    &#128245; <b style="color:#F1F5F9">Sin wifi:</b> datos guardados en el celular.<br>
+    &#128246; <b style="color:#F1F5F9">Con wifi:</b> se sincronizan solos a Google Sheets.<br>
+    &#128295; <b style="color:#F1F5F9">Jefe de Taller:</b> ve anomalias pendientes desde su celular.<br>
+    &#128229; <b style="color:#F1F5F9">CSV:</b> descarga para analizar en Excel.
+  </p>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="application/json" id="_datos">{"sistemas": ["Cabina", "Chasis-estructura", "Climatización HVAC", "Combustible", "Dirección", "Electrico-electronico", "Frenos", "Hidraulico", "Implementos", "Lubricación", "Motobomba de agua 1", "Motobomba de agua 2", "Motobomba de agua 3", "Motobomba de agua 4", "Motor", "Seguridad", "Traccion-tren de rodaje", "Transmision", "chasis-estructura", "combustible", "transmision"], "jerarquia": {"Chasis-estructura": {"Subsistema 3: Sistema de enganche": ["Abrazadera de boom", "Barra de tiro", "Base de tres puntos", "Corbata superior (bola de enganche)", "Estructura de enganche", "Guaya", "Guaya de acelerador", "Ojo de barra de tiro", "Palanca de mando", "Pasador de barra de tiro", "Pasador de tensor", "Pasador de tiro", "Pasador del brazo", "Pernos de barra de tiro", "Pernos de joystick", "Pernos y bujes del enganche", "Tanque de fibra", "Tensor de barra de tiro", "Tensor de enganche", "Tensor de enganche de tres puntos", "Tensor del enlace fracturante", "tensor izquierdo", "terminal de enganche", "Terminal de enganche de tres puntos", "tirante", "Tornillo de barra de tiro", "Tornillo de tensor", "Tornillo de tiro", "tornillo del tirante", "Tornillos", "tornillos de barra de tiro", "Tornillos de enganche", "Tornillos de pasador", "Tuerca de tensor"], "Subsistema 8: Sistema de peso y lastre estructural": ["Asegurador de lastre", "Pernos de pesas", "Pesas", "Placa de lastre", "Platina de pesas", "Soporte de pesas", "Tornillo de pesas"], "Subsistema 11: Articulaciones, soportes y elementos estructurales": ["Baranda de soporte", "Baranda de tanque", "Base de soporte de tubo de llenado", "Base del paral", "Brida de anclaje del brazo", "buje", "Fractura por fatiga", "Guaya de cierre", "Palanca de cambios", "Palanca de soporte hidráulico", "Paral de torre", "Pasador del brazo", "Persiana de cabina", "Platina de guardabarro", "Platina de montaje", "Punto de engrase", "Seguro de capó", "Soporte de sensor derecho", "Soporte de tensor", "Tensor", "Tensor de tres puntos roscado", "Tornillo de guiado de guaya", "Tornillo de tensor", "Tornillo/Tuerca", "Tornillos", "Tornillos de desbarreador", "Tornillos de fijación", "Tornillos de guía del ecualizador", "Tornillos de platina de tiro", "Torre de llenado", "Tubo de llenado", "Tuerca de anclaje", "Tuerca de brazo", "Tuerca de palanca de cambios", "Cuchillas"], "Subsistema 2: Estructura de protección": ["Base de soporte de repuesto", "Riel de madera", "Seguro de pesas / escalón de pies / cerradura de puerta"], "Subsistema 1: Bastidor principal": ["Bastidor", "Bastidor de torre", "Chasis principal", "Estructura del techo", "Soporte del capó", "Tornillos de bastidor", "Tornillos de torre"], "Subsistema 4: Ejes y soportes estructurales": ["Bastidor de barra de tiro", "Correa de seguridad", "Cuerda motobomba", "Parrilla delantera"], "Subsistema 6: Estructura de soporte del sistema hidráulico": ["Bastidor lateral"], "Subsistema 7: Componentes de protección y cobertura estructural": ["Capó superior", "Guardabarro", "Pernos de tubo", "Planchon", "Protector de tanque", "Resorte de capó", "Seguro de capó", "Soporte de capó", "Soporte de exploradora", "Soporte de faro", "Soporte de tubo", "Soporte del mofle", "tornillo del capó", "Tornillos", "tornillos y arandelas"]}, "Hidraulico": {"Subsistema 2: Depósito y gestión del fluido": ["Aceite hidráulico", "Acople rápido", "Cárter hidráulico", "Depósito de aceite hidráulico", "Filtro hidráulico", "Línea hidráulica", "Tapa de depósito", "Tuberías y mangueras"], "Subsistema 4: Sistema de lubricación": ["Aceite hidráulico"], "Subsistema 1: Bomba hidráulica principal": ["Acople rápido", "Bomba hidráulica", "Circuito de suministro", "Conjunto de empaque de bomba", "Freno de mano", "línea hidráulica", "Pasador de piñón de bomba", "Racor de bomba", "Tuberías y mangueras"], "Subsistema 3: Distribuidor hidráulico trasero": ["Acople rápido", "Electroválvulas", "guaya de acople", "Guaya de control hidráulico", "Palanca de control hidráulico", "Palanca de mando", "Panel de acoples rápidos", "Soporte de tubería de boom", "Tuberías y mangueras", "válvulas"], "Subsistema 5: Elevador hidráulico de 3 puntos": ["Cilindro hidráulico", "cuerpo tensor", "Gato", "Palanca de bloqueo de bajada", "Retenedores del gato", "Tensor de elevador hidráulico", "Tornillos de brazo hidráulico", "Tuberías y mangueras"], "Subsistema 7: Retorno libre y drenaje hidráulico": ["Tuberías y mangueras"]}, "Transmision": {"Subsistema 4: Toma de fuerza (PTO)": ["Acople hidráulico de PTO", "acople rápido", "Acople rápido", "Caja reductora PTO", "Eje de la toma fuerza", "Eje de salida PTO", "Eje de toma de fuerza", "Eje de toma de fuerza (PTO)", "Embrague PTO", "Engranaje interno de PTO", "Retén de eje de PTO", "Retenedor lateral", "Sello de eje PTO", "tornillo de enganche PTO"], "Subsistema 2: Caja de cambios": ["Caja de cambios", "carcasa de caja", "Eje de selector", "Módulo de cambios powershift", "Palanca de cambios", "Palanca de modos de velocidad", "Retén de eje delantero", "Retenedor bajante", "Retenedor bajante derecho", "Retenedor de llanta delantera", "Retenedor trasero", "Tornillo de caja de cambios", "Tornillos de rótula", "Unidad de variación continua (CVT)"], "Subsistema 5: Diferencial trasero": ["Ejes laterales", "Retén de diferencial trasero"], "Subsistema 3: Reversor": ["Guaya de inversión (cable)", "Palanca de reversión"], "Subsistema 9: Sistema hidráulico de transmisión": ["Retén de eje de brazo hidráulico"], "Subsistema 7: Transmisión delantera": ["Retén de eje delantero derecho", "Retén de eje delantero izquierdo", "Retén lateral de transmisión", "Retenes de eje delantero", "Sello de eje delantero", "Tornillo de caja de cambios", "Tuerca de rótula"], "Subsistema 6: Ejes de transmisión": ["Retenedor", "Retenedor delantero", "Retenedor izquierdo", "Retenedor lateral"], "Subsistema 8: Sistema electrónico de asistencia y control": ["Sensor de velocidad"]}, "Climatización HVAC": {"Subsistema 2: Sistema de aire acondicionado": ["Aire acondicionado", "Compresor A/C", "Tuberías y mangueras A/C", "Ventilador"], "Subsistema 1: Unidad de control HVAC": ["Compresor A/C"]}, "Electrico-electronico": {"Subsistema 3: Sistema de sensores y entradas electrónicas": ["alarma acústica", "Batería", "Botón de Joystick", "Fusible", "Indicador de temperatura (panel de instrumentos)", "Panel de instrumentos", "Tablero de instrumentos", "Unidad ECM"], "Subsistema 1: Alimentación eléctrica": ["Alternador", "Batería", "Bornes de batería", "Fusible", "Portafusible", "Terminal de batería", "Terminal de cable"], "Subsistema 6: Sistema de encendido y control electrónico": ["Batería", "Fusible"], "Subsistema 5: Iluminación y señalización": ["Fusible", "Interruptor de luces", "luces", "Soporte de luces"], "Subsistema 9: Seguridad": ["Pito"]}, "Frenos": {"Subsistema 7: Indicadores y seguridad": ["Alarma de freno de estacionamiento"], "Subsistema 2: Freno de estacionamiento": ["Bomba de mano freno"], "Subsistema 1: Freno de servicio": ["Caja de frenos", "conjunto de freno multidisco", "Freno de mano", "Línea hidráulica de freno", "Panel de instrumentos"]}, "Traccion-tren de rodaje": {"Subsistema 7: Ruedas y llantas": ["Araña de rueda", "Barra con rótula", "Cadena de transmisión", "Eje de rueda", "Llanta", "Pernos de rueda", "Retenedor", "Rin", "Sprocket", "Tornillos de rótula"], "Subsistema 8: Ejes de transmisión intermedio": ["Barra con rótula", "Crucetas del cardán"], "Subsistema 3: Eje delantero": ["bujes de cardán", "Eje delantero", "Retenedor", "Terminal de eje delantero"], "Subsistema 9: Reductores finales": ["Carcasa de embrague", "Eje de transmisión delantero", "Perfiles de tornillos", "Punto de anclaje de transmisión", "Reductor derecho", "Reductor izquierdo", "Retenedor", "Tornillos de reductor"], "Subsistema 6: Ejes de transmisión intermedios": ["Crucetas del cardán", "Eje cardánico", "Embrague PTO", "Retenedor"], "Subsistema 2: Eje Trasero": ["Retenedor"]}, "Cabina": {"Subsistema 4: Asiento y confort del operador": ["Asiento", "Base del asiento", "Soporte de asiento"], "Subsistema 1: Estructura de la cabina": ["Base del asiento", "Bastidor de cabina", "Bastidor de techo", "Marco de la cabina", "Techo de cabina"], "Subsistema 2: Acceso y salidas": ["Cerradura de puerta", "Escalones de acceso antideslizantes", "Puerta"], "Subsistema 3: Vidrios y visibilidad": ["Cristal", "Puerta", "Ventana", "Plumilla"], "Subsistema 5: Controles e interfaz de usuario": ["Interruptor de luces", "Panel de instrumentos", "Pedal de acelerador", "Resorte del pedal"], "Subsistema 11: Suspensión de cabina": ["Resorte de asiento"]}, "transmision": {"Subsistema 7: Transmisión delantera": ["Barra con rótula"]}, "Dirección": {"Subsistema 1: Volante y columna de dirección": ["Barras de dirección", "Cilindro de dirección", "Palanca de dirección"], "Subsistema 2: Unidad de dirección hidrostática (Orbitrol)": ["Botella hidráulica", "Cilindro de dirección", "Manguera de dirección", "Orbitrol", "Retén del orbitrol"], "Subsistema 3: Bomba hidráulica de dirección": ["Cilindro de dirección", "Tuberías y mangueras"], "Subsistema 5: Mecanismo de dirección en el eje delantero": ["Rótula de dirección"]}, "Motor": {"Subsistema 4: Sistema de lubricación": ["Bomba de aceite", "Carcasa del motor", "Cárter de aceite", "Panel de instrumentos", "Tapón de cárter"], "Subsistema 5: Sistema de refrigeracion y enfriamiento": ["Bomba de agua", "Bomba de agua (tapaválvula)", "Correa de alternador", "Correa del ventilador", "Depósito de expansión", "Líquido refrigerante", "Manguera de radiador", "Manguera de refrigerante", "Radiador", "Sensor de temperatura del radiador", "soportes de ventilador", "Tapón de radiador", "Ventilador"], "Subsistema 9: Estructura interna del motor": ["Eje del pistón y el cigüeñal", "Pernos de platina", "Retén de cigüeñal", "Tornillos de bloque"], "Subsistema 1: Sistema de admisión de aire": ["Filtro de aire"], "Subsistema 7: Sistema de arranque": ["Motor de arranque"], "Subsistema 2: Sistema de escape": ["Silenciador (mofle)"], "Subsistema 8: Sistema de alimentación de aire forzada (turboalimentación)": ["Turbocompresor"]}, "Combustible": {"Subsistema 3: Inyección de alta presión": ["Bomba de alta presión", "Bomba de inyección", "Inyector", "Tubo de inyección"], "Subsistema 1: Almacenamiento y suministro primario": ["Bomba de combustible", "Panel de instrumentos", "Tanque de combustible", "Tapón de llenado", "Tubería de alimentación", "tubería de alimentación", "Tubería de combustible", "Tubería de retorno"], "Subsistema 2: Pre-filtrado y alimentación de baja presión": ["Boquilla de drenaje", "Filtro de combustible", "Filtro de combustible primario", "Tubería de alimentación"]}, "Motobomba de agua 2": {"Subsistema 2: Arranque": ["Bujía", "Cuerda de arranque", "Sistema de encendido"]}, "Lubricación": {"Subsistema 2: Depósito y gestión del fluido": ["Cárter de aceite"], "Subsistema 4: Sistema de lubricación": ["Cárter de aceite", "punto de engrase", "Tapón de cárter", "Visor de nivel de aceite"]}, "Implementos": {"Subsistema 1: Implemento cargador frontal": ["Diente de valde", "Pasadores de valde", "Tornillos de valde"]}, "Motobomba de agua 3": {"Subsistema 3: Circuito hidráulico de bombeo": ["Empaquetadura de eje", "Impulsor", "Polea de transmisión", "Tornillos de fijación", "Unión de sellado"]}, "Motobomba de agua 4": {"Subsistema 4: Control y seguridad": ["Interruptor"]}, "combustible": {"Subsistema 2: Pre-filtrado y alimentación de baja presión": ["Manguera de retorno"]}, "Motobomba de agua 1": {"Subsistema 1: Unidad motriz": ["Motor de combustión"]}, "chasis-estructura": {"Subsistema 3: Sistema de enganche": ["pernos de barra de tiro", "Rosca del brazo derecho", "Rosca del tensor", "tornillo de barra de tiro", "Tornillos de barra de tiro", "Tuerca de tensor"], "Subsistema 2: Estructura de protección": ["tornillos de torre"]}, "Seguridad": {"Evento": []}}, "inv_partes": {"abrazadera de boom": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Abrazadera de boom"}], "barra de tiro": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Barra de tiro"}], "base de tres puntos": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Base de tres puntos"}], "corbata superior (bola de enganche)": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Corbata superior (bola de enganche)"}], "estructura de enganche": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Estructura de enganche"}], "guaya": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Guaya"}], "guaya de acelerador": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Guaya de acelerador"}], "ojo de barra de tiro": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Ojo de barra de tiro"}], "palanca de mando": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Palanca de mando"}, {"sistema": "Hidraulico", "subsistema": "Subsistema 3: Distribuidor hidráulico trasero", "parte": "Palanca de mando"}], "pasador de barra de tiro": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Pasador de barra de tiro"}], "pasador de tensor": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Pasador de tensor"}], "pasador de tiro": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Pasador de tiro"}], "pasador del brazo": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Pasador del brazo"}, {"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Pasador del brazo"}], "pernos de barra de tiro": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Pernos de barra de tiro"}, {"sistema": "chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "pernos de barra de tiro"}], "pernos de joystick": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Pernos de joystick"}], "pernos y bujes del enganche": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Pernos y bujes del enganche"}], "tanque de fibra": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Tanque de fibra"}], "tensor de barra de tiro": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Tensor de barra de tiro"}], "tensor de enganche": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Tensor de enganche"}], "tensor de enganche de tres puntos": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Tensor de enganche de tres puntos"}], "tensor del enlace fracturante": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Tensor del enlace fracturante"}], "tensor izquierdo": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "tensor izquierdo"}], "terminal de enganche": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "terminal de enganche"}], "terminal de enganche de tres puntos": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Terminal de enganche de tres puntos"}], "tirante": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "tirante"}], "tornillo de barra de tiro": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Tornillo de barra de tiro"}, {"sistema": "chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "tornillo de barra de tiro"}], "tornillo de tensor": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Tornillo de tensor"}, {"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Tornillo de tensor"}], "tornillo de tiro": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Tornillo de tiro"}], "tornillo del tirante": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "tornillo del tirante"}], "tornillos": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Tornillos"}, {"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Tornillos"}, {"sistema": "Chasis-estructura", "subsistema": "Subsistema 7: Componentes de protección y cobertura estructural", "parte": "Tornillos"}], "tornillos de barra de tiro": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "tornillos de barra de tiro"}, {"sistema": "chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Tornillos de barra de tiro"}], "tornillos de enganche": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Tornillos de enganche"}], "tornillos de pasador": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Tornillos de pasador"}], "tuerca de tensor": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Tuerca de tensor"}, {"sistema": "chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Tuerca de tensor"}], "asegurador de lastre": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 8: Sistema de peso y lastre estructural", "parte": "Asegurador de lastre"}], "pernos de pesas": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 8: Sistema de peso y lastre estructural", "parte": "Pernos de pesas"}], "pesas": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 8: Sistema de peso y lastre estructural", "parte": "Pesas"}], "placa de lastre": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 8: Sistema de peso y lastre estructural", "parte": "Placa de lastre"}], "platina de pesas": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 8: Sistema de peso y lastre estructural", "parte": "Platina de pesas"}], "soporte de pesas": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 8: Sistema de peso y lastre estructural", "parte": "Soporte de pesas"}], "tornillo de pesas": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 8: Sistema de peso y lastre estructural", "parte": "Tornillo de pesas"}], "baranda de soporte": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Baranda de soporte"}], "baranda de tanque": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Baranda de tanque"}], "base de soporte de tubo de llenado": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Base de soporte de tubo de llenado"}], "base del paral": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Base del paral"}], "brida de anclaje del brazo": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Brida de anclaje del brazo"}], "buje": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "buje"}], "fractura por fatiga": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Fractura por fatiga"}], "guaya de cierre": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Guaya de cierre"}], "palanca de cambios": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Palanca de cambios"}, {"sistema": "Transmision", "subsistema": "Subsistema 2: Caja de cambios", "parte": "Palanca de cambios"}], "palanca de soporte hidráulico": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Palanca de soporte hidráulico"}], "paral de torre": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Paral de torre"}], "persiana de cabina": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Persiana de cabina"}], "platina de guardabarro": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Platina de guardabarro"}], "platina de montaje": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Platina de montaje"}], "punto de engrase": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Punto de engrase"}, {"sistema": "Lubricación", "subsistema": "Subsistema 4: Sistema de lubricación", "parte": "punto de engrase"}], "seguro de capó": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Seguro de capó"}, {"sistema": "Chasis-estructura", "subsistema": "Subsistema 7: Componentes de protección y cobertura estructural", "parte": "Seguro de capó"}], "soporte de sensor derecho": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Soporte de sensor derecho"}], "soporte de tensor": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Soporte de tensor"}], "tensor": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Tensor"}], "tensor de tres puntos roscado": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Tensor de tres puntos roscado"}], "tornillo de guiado de guaya": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Tornillo de guiado de guaya"}], "tornillo/tuerca": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Tornillo/Tuerca"}], "tornillos de desbarreador": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Tornillos de desbarreador"}], "tornillos de fijación": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Tornillos de fijación"}, {"sistema": "Motobomba de agua 3", "subsistema": "Subsistema 3: Circuito hidráulico de bombeo", "parte": "Tornillos de fijación"}], "tornillos de guía del ecualizador": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Tornillos de guía del ecualizador"}], "tornillos de platina de tiro": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Tornillos de platina de tiro"}], "torre de llenado": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Torre de llenado"}], "tubo de llenado": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Tubo de llenado"}], "tuerca de anclaje": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Tuerca de anclaje"}], "tuerca de brazo": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Tuerca de brazo"}], "tuerca de palanca de cambios": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Tuerca de palanca de cambios"}], "cuchillas": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 11: Articulaciones, soportes y elementos estructurales", "parte": "Cuchillas"}], "base de soporte de repuesto": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 2: Estructura de protección", "parte": "Base de soporte de repuesto"}], "riel de madera": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 2: Estructura de protección", "parte": "Riel de madera"}], "seguro de pesas / escalón de pies / cerradura de puerta": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 2: Estructura de protección", "parte": "Seguro de pesas / escalón de pies / cerradura de puerta"}], "bastidor": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 1: Bastidor principal", "parte": "Bastidor"}], "bastidor de torre": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 1: Bastidor principal", "parte": "Bastidor de torre"}], "chasis principal": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 1: Bastidor principal", "parte": "Chasis principal"}], "estructura del techo": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 1: Bastidor principal", "parte": "Estructura del techo"}], "soporte del capó": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 1: Bastidor principal", "parte": "Soporte del capó"}], "tornillos de bastidor": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 1: Bastidor principal", "parte": "Tornillos de bastidor"}], "tornillos de torre": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 1: Bastidor principal", "parte": "Tornillos de torre"}, {"sistema": "chasis-estructura", "subsistema": "Subsistema 2: Estructura de protección", "parte": "tornillos de torre"}], "bastidor de barra de tiro": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 4: Ejes y soportes estructurales", "parte": "Bastidor de barra de tiro"}], "correa de seguridad": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 4: Ejes y soportes estructurales", "parte": "Correa de seguridad"}], "cuerda motobomba": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 4: Ejes y soportes estructurales", "parte": "Cuerda motobomba"}], "parrilla delantera": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 4: Ejes y soportes estructurales", "parte": "Parrilla delantera"}], "bastidor lateral": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 6: Estructura de soporte del sistema hidráulico", "parte": "Bastidor lateral"}], "capó superior": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 7: Componentes de protección y cobertura estructural", "parte": "Capó superior"}], "guardabarro": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 7: Componentes de protección y cobertura estructural", "parte": "Guardabarro"}], "pernos de tubo": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 7: Componentes de protección y cobertura estructural", "parte": "Pernos de tubo"}], "planchon": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 7: Componentes de protección y cobertura estructural", "parte": "Planchon"}], "protector de tanque": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 7: Componentes de protección y cobertura estructural", "parte": "Protector de tanque"}], "resorte de capó": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 7: Componentes de protección y cobertura estructural", "parte": "Resorte de capó"}], "soporte de capó": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 7: Componentes de protección y cobertura estructural", "parte": "Soporte de capó"}], "soporte de exploradora": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 7: Componentes de protección y cobertura estructural", "parte": "Soporte de exploradora"}], "soporte de faro": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 7: Componentes de protección y cobertura estructural", "parte": "Soporte de faro"}], "soporte de tubo": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 7: Componentes de protección y cobertura estructural", "parte": "Soporte de tubo"}], "soporte del mofle": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 7: Componentes de protección y cobertura estructural", "parte": "Soporte del mofle"}], "tornillo del capó": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 7: Componentes de protección y cobertura estructural", "parte": "tornillo del capó"}], "tornillos y arandelas": [{"sistema": "Chasis-estructura", "subsistema": "Subsistema 7: Componentes de protección y cobertura estructural", "parte": "tornillos y arandelas"}], "aceite hidráulico": [{"sistema": "Hidraulico", "subsistema": "Subsistema 2: Depósito y gestión del fluido", "parte": "Aceite hidráulico"}, {"sistema": "Hidraulico", "subsistema": "Subsistema 4: Sistema de lubricación", "parte": "Aceite hidráulico"}], "acople rápido": [{"sistema": "Hidraulico", "subsistema": "Subsistema 2: Depósito y gestión del fluido", "parte": "Acople rápido"}, {"sistema": "Hidraulico", "subsistema": "Subsistema 1: Bomba hidráulica principal", "parte": "Acople rápido"}, {"sistema": "Hidraulico", "subsistema": "Subsistema 3: Distribuidor hidráulico trasero", "parte": "Acople rápido"}, {"sistema": "Transmision", "subsistema": "Subsistema 4: Toma de fuerza (PTO)", "parte": "acople rápido"}, {"sistema": "Transmision", "subsistema": "Subsistema 4: Toma de fuerza (PTO)", "parte": "Acople rápido"}], "cárter hidráulico": [{"sistema": "Hidraulico", "subsistema": "Subsistema 2: Depósito y gestión del fluido", "parte": "Cárter hidráulico"}], "depósito de aceite hidráulico": [{"sistema": "Hidraulico", "subsistema": "Subsistema 2: Depósito y gestión del fluido", "parte": "Depósito de aceite hidráulico"}], "filtro hidráulico": [{"sistema": "Hidraulico", "subsistema": "Subsistema 2: Depósito y gestión del fluido", "parte": "Filtro hidráulico"}], "línea hidráulica": [{"sistema": "Hidraulico", "subsistema": "Subsistema 2: Depósito y gestión del fluido", "parte": "Línea hidráulica"}, {"sistema": "Hidraulico", "subsistema": "Subsistema 1: Bomba hidráulica principal", "parte": "línea hidráulica"}], "tapa de depósito": [{"sistema": "Hidraulico", "subsistema": "Subsistema 2: Depósito y gestión del fluido", "parte": "Tapa de depósito"}], "tuberías y mangueras": [{"sistema": "Hidraulico", "subsistema": "Subsistema 2: Depósito y gestión del fluido", "parte": "Tuberías y mangueras"}, {"sistema": "Hidraulico", "subsistema": "Subsistema 1: Bomba hidráulica principal", "parte": "Tuberías y mangueras"}, {"sistema": "Hidraulico", "subsistema": "Subsistema 3: Distribuidor hidráulico trasero", "parte": "Tuberías y mangueras"}, {"sistema": "Hidraulico", "subsistema": "Subsistema 5: Elevador hidráulico de 3 puntos", "parte": "Tuberías y mangueras"}, {"sistema": "Hidraulico", "subsistema": "Subsistema 7: Retorno libre y drenaje hidráulico", "parte": "Tuberías y mangueras"}, {"sistema": "Dirección", "subsistema": "Subsistema 3: Bomba hidráulica de dirección", "parte": "Tuberías y mangueras"}], "bomba hidráulica": [{"sistema": "Hidraulico", "subsistema": "Subsistema 1: Bomba hidráulica principal", "parte": "Bomba hidráulica"}], "circuito de suministro": [{"sistema": "Hidraulico", "subsistema": "Subsistema 1: Bomba hidráulica principal", "parte": "Circuito de suministro"}], "conjunto de empaque de bomba": [{"sistema": "Hidraulico", "subsistema": "Subsistema 1: Bomba hidráulica principal", "parte": "Conjunto de empaque de bomba"}], "freno de mano": [{"sistema": "Hidraulico", "subsistema": "Subsistema 1: Bomba hidráulica principal", "parte": "Freno de mano"}, {"sistema": "Frenos", "subsistema": "Subsistema 1: Freno de servicio", "parte": "Freno de mano"}], "pasador de piñón de bomba": [{"sistema": "Hidraulico", "subsistema": "Subsistema 1: Bomba hidráulica principal", "parte": "Pasador de piñón de bomba"}], "racor de bomba": [{"sistema": "Hidraulico", "subsistema": "Subsistema 1: Bomba hidráulica principal", "parte": "Racor de bomba"}], "electroválvulas": [{"sistema": "Hidraulico", "subsistema": "Subsistema 3: Distribuidor hidráulico trasero", "parte": "Electroválvulas"}], "guaya de acople": [{"sistema": "Hidraulico", "subsistema": "Subsistema 3: Distribuidor hidráulico trasero", "parte": "guaya de acople"}], "guaya de control hidráulico": [{"sistema": "Hidraulico", "subsistema": "Subsistema 3: Distribuidor hidráulico trasero", "parte": "Guaya de control hidráulico"}], "palanca de control hidráulico": [{"sistema": "Hidraulico", "subsistema": "Subsistema 3: Distribuidor hidráulico trasero", "parte": "Palanca de control hidráulico"}], "panel de acoples rápidos": [{"sistema": "Hidraulico", "subsistema": "Subsistema 3: Distribuidor hidráulico trasero", "parte": "Panel de acoples rápidos"}], "soporte de tubería de boom": [{"sistema": "Hidraulico", "subsistema": "Subsistema 3: Distribuidor hidráulico trasero", "parte": "Soporte de tubería de boom"}], "válvulas": [{"sistema": "Hidraulico", "subsistema": "Subsistema 3: Distribuidor hidráulico trasero", "parte": "válvulas"}], "cilindro hidráulico": [{"sistema": "Hidraulico", "subsistema": "Subsistema 5: Elevador hidráulico de 3 puntos", "parte": "Cilindro hidráulico"}], "cuerpo tensor": [{"sistema": "Hidraulico", "subsistema": "Subsistema 5: Elevador hidráulico de 3 puntos", "parte": "cuerpo tensor"}], "gato": [{"sistema": "Hidraulico", "subsistema": "Subsistema 5: Elevador hidráulico de 3 puntos", "parte": "Gato"}], "palanca de bloqueo de bajada": [{"sistema": "Hidraulico", "subsistema": "Subsistema 5: Elevador hidráulico de 3 puntos", "parte": "Palanca de bloqueo de bajada"}], "retenedores del gato": [{"sistema": "Hidraulico", "subsistema": "Subsistema 5: Elevador hidráulico de 3 puntos", "parte": "Retenedores del gato"}], "tensor de elevador hidráulico": [{"sistema": "Hidraulico", "subsistema": "Subsistema 5: Elevador hidráulico de 3 puntos", "parte": "Tensor de elevador hidráulico"}], "tornillos de brazo hidráulico": [{"sistema": "Hidraulico", "subsistema": "Subsistema 5: Elevador hidráulico de 3 puntos", "parte": "Tornillos de brazo hidráulico"}], "acople hidráulico de pto": [{"sistema": "Transmision", "subsistema": "Subsistema 4: Toma de fuerza (PTO)", "parte": "Acople hidráulico de PTO"}], "caja reductora pto": [{"sistema": "Transmision", "subsistema": "Subsistema 4: Toma de fuerza (PTO)", "parte": "Caja reductora PTO"}], "eje de la toma fuerza": [{"sistema": "Transmision", "subsistema": "Subsistema 4: Toma de fuerza (PTO)", "parte": "Eje de la toma fuerza"}], "eje de salida pto": [{"sistema": "Transmision", "subsistema": "Subsistema 4: Toma de fuerza (PTO)", "parte": "Eje de salida PTO"}], "eje de toma de fuerza": [{"sistema": "Transmision", "subsistema": "Subsistema 4: Toma de fuerza (PTO)", "parte": "Eje de toma de fuerza"}], "eje de toma de fuerza (pto)": [{"sistema": "Transmision", "subsistema": "Subsistema 4: Toma de fuerza (PTO)", "parte": "Eje de toma de fuerza (PTO)"}], "embrague pto": [{"sistema": "Transmision", "subsistema": "Subsistema 4: Toma de fuerza (PTO)", "parte": "Embrague PTO"}, {"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 6: Ejes de transmisión intermedios", "parte": "Embrague PTO"}], "engranaje interno de pto": [{"sistema": "Transmision", "subsistema": "Subsistema 4: Toma de fuerza (PTO)", "parte": "Engranaje interno de PTO"}], "retén de eje de pto": [{"sistema": "Transmision", "subsistema": "Subsistema 4: Toma de fuerza (PTO)", "parte": "Retén de eje de PTO"}], "retenedor lateral": [{"sistema": "Transmision", "subsistema": "Subsistema 4: Toma de fuerza (PTO)", "parte": "Retenedor lateral"}, {"sistema": "Transmision", "subsistema": "Subsistema 6: Ejes de transmisión", "parte": "Retenedor lateral"}], "sello de eje pto": [{"sistema": "Transmision", "subsistema": "Subsistema 4: Toma de fuerza (PTO)", "parte": "Sello de eje PTO"}], "tornillo de enganche pto": [{"sistema": "Transmision", "subsistema": "Subsistema 4: Toma de fuerza (PTO)", "parte": "tornillo de enganche PTO"}], "caja de cambios": [{"sistema": "Transmision", "subsistema": "Subsistema 2: Caja de cambios", "parte": "Caja de cambios"}], "carcasa de caja": [{"sistema": "Transmision", "subsistema": "Subsistema 2: Caja de cambios", "parte": "carcasa de caja"}], "eje de selector": [{"sistema": "Transmision", "subsistema": "Subsistema 2: Caja de cambios", "parte": "Eje de selector"}], "módulo de cambios powershift": [{"sistema": "Transmision", "subsistema": "Subsistema 2: Caja de cambios", "parte": "Módulo de cambios powershift"}], "palanca de modos de velocidad": [{"sistema": "Transmision", "subsistema": "Subsistema 2: Caja de cambios", "parte": "Palanca de modos de velocidad"}], "retén de eje delantero": [{"sistema": "Transmision", "subsistema": "Subsistema 2: Caja de cambios", "parte": "Retén de eje delantero"}], "retenedor bajante": [{"sistema": "Transmision", "subsistema": "Subsistema 2: Caja de cambios", "parte": "Retenedor bajante"}], "retenedor bajante derecho": [{"sistema": "Transmision", "subsistema": "Subsistema 2: Caja de cambios", "parte": "Retenedor bajante derecho"}], "retenedor de llanta delantera": [{"sistema": "Transmision", "subsistema": "Subsistema 2: Caja de cambios", "parte": "Retenedor de llanta delantera"}], "retenedor trasero": [{"sistema": "Transmision", "subsistema": "Subsistema 2: Caja de cambios", "parte": "Retenedor trasero"}], "tornillo de caja de cambios": [{"sistema": "Transmision", "subsistema": "Subsistema 2: Caja de cambios", "parte": "Tornillo de caja de cambios"}, {"sistema": "Transmision", "subsistema": "Subsistema 7: Transmisión delantera", "parte": "Tornillo de caja de cambios"}], "tornillos de rótula": [{"sistema": "Transmision", "subsistema": "Subsistema 2: Caja de cambios", "parte": "Tornillos de rótula"}, {"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 7: Ruedas y llantas", "parte": "Tornillos de rótula"}], "unidad de variación continua (cvt)": [{"sistema": "Transmision", "subsistema": "Subsistema 2: Caja de cambios", "parte": "Unidad de variación continua (CVT)"}], "ejes laterales": [{"sistema": "Transmision", "subsistema": "Subsistema 5: Diferencial trasero", "parte": "Ejes laterales"}], "retén de diferencial trasero": [{"sistema": "Transmision", "subsistema": "Subsistema 5: Diferencial trasero", "parte": "Retén de diferencial trasero"}], "guaya de inversión (cable)": [{"sistema": "Transmision", "subsistema": "Subsistema 3: Reversor", "parte": "Guaya de inversión (cable)"}], "palanca de reversión": [{"sistema": "Transmision", "subsistema": "Subsistema 3: Reversor", "parte": "Palanca de reversión"}], "retén de eje de brazo hidráulico": [{"sistema": "Transmision", "subsistema": "Subsistema 9: Sistema hidráulico de transmisión", "parte": "Retén de eje de brazo hidráulico"}], "retén de eje delantero derecho": [{"sistema": "Transmision", "subsistema": "Subsistema 7: Transmisión delantera", "parte": "Retén de eje delantero derecho"}], "retén de eje delantero izquierdo": [{"sistema": "Transmision", "subsistema": "Subsistema 7: Transmisión delantera", "parte": "Retén de eje delantero izquierdo"}], "retén lateral de transmisión": [{"sistema": "Transmision", "subsistema": "Subsistema 7: Transmisión delantera", "parte": "Retén lateral de transmisión"}], "retenes de eje delantero": [{"sistema": "Transmision", "subsistema": "Subsistema 7: Transmisión delantera", "parte": "Retenes de eje delantero"}], "sello de eje delantero": [{"sistema": "Transmision", "subsistema": "Subsistema 7: Transmisión delantera", "parte": "Sello de eje delantero"}], "tuerca de rótula": [{"sistema": "Transmision", "subsistema": "Subsistema 7: Transmisión delantera", "parte": "Tuerca de rótula"}], "retenedor": [{"sistema": "Transmision", "subsistema": "Subsistema 6: Ejes de transmisión", "parte": "Retenedor"}, {"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 7: Ruedas y llantas", "parte": "Retenedor"}, {"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 3: Eje delantero", "parte": "Retenedor"}, {"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 9: Reductores finales", "parte": "Retenedor"}, {"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 6: Ejes de transmisión intermedios", "parte": "Retenedor"}, {"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 2: Eje Trasero", "parte": "Retenedor"}], "retenedor delantero": [{"sistema": "Transmision", "subsistema": "Subsistema 6: Ejes de transmisión", "parte": "Retenedor delantero"}], "retenedor izquierdo": [{"sistema": "Transmision", "subsistema": "Subsistema 6: Ejes de transmisión", "parte": "Retenedor izquierdo"}], "sensor de velocidad": [{"sistema": "Transmision", "subsistema": "Subsistema 8: Sistema electrónico de asistencia y control", "parte": "Sensor de velocidad"}], "aire acondicionado": [{"sistema": "Climatización HVAC", "subsistema": "Subsistema 2: Sistema de aire acondicionado", "parte": "Aire acondicionado"}], "compresor a/c": [{"sistema": "Climatización HVAC", "subsistema": "Subsistema 2: Sistema de aire acondicionado", "parte": "Compresor A/C"}, {"sistema": "Climatización HVAC", "subsistema": "Subsistema 1: Unidad de control HVAC", "parte": "Compresor A/C"}], "tuberías y mangueras a/c": [{"sistema": "Climatización HVAC", "subsistema": "Subsistema 2: Sistema de aire acondicionado", "parte": "Tuberías y mangueras A/C"}], "ventilador": [{"sistema": "Climatización HVAC", "subsistema": "Subsistema 2: Sistema de aire acondicionado", "parte": "Ventilador"}, {"sistema": "Motor", "subsistema": "Subsistema 5: Sistema de refrigeracion y enfriamiento", "parte": "Ventilador"}], "alarma acústica": [{"sistema": "Electrico-electronico", "subsistema": "Subsistema 3: Sistema de sensores y entradas electrónicas", "parte": "alarma acústica"}], "batería": [{"sistema": "Electrico-electronico", "subsistema": "Subsistema 3: Sistema de sensores y entradas electrónicas", "parte": "Batería"}, {"sistema": "Electrico-electronico", "subsistema": "Subsistema 1: Alimentación eléctrica", "parte": "Batería"}, {"sistema": "Electrico-electronico", "subsistema": "Subsistema 6: Sistema de encendido y control electrónico", "parte": "Batería"}], "botón de joystick": [{"sistema": "Electrico-electronico", "subsistema": "Subsistema 3: Sistema de sensores y entradas electrónicas", "parte": "Botón de Joystick"}], "fusible": [{"sistema": "Electrico-electronico", "subsistema": "Subsistema 3: Sistema de sensores y entradas electrónicas", "parte": "Fusible"}, {"sistema": "Electrico-electronico", "subsistema": "Subsistema 1: Alimentación eléctrica", "parte": "Fusible"}, {"sistema": "Electrico-electronico", "subsistema": "Subsistema 6: Sistema de encendido y control electrónico", "parte": "Fusible"}, {"sistema": "Electrico-electronico", "subsistema": "Subsistema 5: Iluminación y señalización", "parte": "Fusible"}], "indicador de temperatura (panel de instrumentos)": [{"sistema": "Electrico-electronico", "subsistema": "Subsistema 3: Sistema de sensores y entradas electrónicas", "parte": "Indicador de temperatura (panel de instrumentos)"}], "panel de instrumentos": [{"sistema": "Electrico-electronico", "subsistema": "Subsistema 3: Sistema de sensores y entradas electrónicas", "parte": "Panel de instrumentos"}, {"sistema": "Frenos", "subsistema": "Subsistema 1: Freno de servicio", "parte": "Panel de instrumentos"}, {"sistema": "Cabina", "subsistema": "Subsistema 5: Controles e interfaz de usuario", "parte": "Panel de instrumentos"}, {"sistema": "Motor", "subsistema": "Subsistema 4: Sistema de lubricación", "parte": "Panel de instrumentos"}, {"sistema": "Combustible", "subsistema": "Subsistema 1: Almacenamiento y suministro primario", "parte": "Panel de instrumentos"}], "tablero de instrumentos": [{"sistema": "Electrico-electronico", "subsistema": "Subsistema 3: Sistema de sensores y entradas electrónicas", "parte": "Tablero de instrumentos"}], "unidad ecm": [{"sistema": "Electrico-electronico", "subsistema": "Subsistema 3: Sistema de sensores y entradas electrónicas", "parte": "Unidad ECM"}], "alternador": [{"sistema": "Electrico-electronico", "subsistema": "Subsistema 1: Alimentación eléctrica", "parte": "Alternador"}], "bornes de batería": [{"sistema": "Electrico-electronico", "subsistema": "Subsistema 1: Alimentación eléctrica", "parte": "Bornes de batería"}], "portafusible": [{"sistema": "Electrico-electronico", "subsistema": "Subsistema 1: Alimentación eléctrica", "parte": "Portafusible"}], "terminal de batería": [{"sistema": "Electrico-electronico", "subsistema": "Subsistema 1: Alimentación eléctrica", "parte": "Terminal de batería"}], "terminal de cable": [{"sistema": "Electrico-electronico", "subsistema": "Subsistema 1: Alimentación eléctrica", "parte": "Terminal de cable"}], "interruptor de luces": [{"sistema": "Electrico-electronico", "subsistema": "Subsistema 5: Iluminación y señalización", "parte": "Interruptor de luces"}, {"sistema": "Cabina", "subsistema": "Subsistema 5: Controles e interfaz de usuario", "parte": "Interruptor de luces"}], "luces": [{"sistema": "Electrico-electronico", "subsistema": "Subsistema 5: Iluminación y señalización", "parte": "luces"}], "soporte de luces": [{"sistema": "Electrico-electronico", "subsistema": "Subsistema 5: Iluminación y señalización", "parte": "Soporte de luces"}], "pito": [{"sistema": "Electrico-electronico", "subsistema": "Subsistema 9: Seguridad", "parte": "Pito"}], "alarma de freno de estacionamiento": [{"sistema": "Frenos", "subsistema": "Subsistema 7: Indicadores y seguridad", "parte": "Alarma de freno de estacionamiento"}], "bomba de mano freno": [{"sistema": "Frenos", "subsistema": "Subsistema 2: Freno de estacionamiento", "parte": "Bomba de mano freno"}], "caja de frenos": [{"sistema": "Frenos", "subsistema": "Subsistema 1: Freno de servicio", "parte": "Caja de frenos"}], "conjunto de freno multidisco": [{"sistema": "Frenos", "subsistema": "Subsistema 1: Freno de servicio", "parte": "conjunto de freno multidisco"}], "línea hidráulica de freno": [{"sistema": "Frenos", "subsistema": "Subsistema 1: Freno de servicio", "parte": "Línea hidráulica de freno"}], "araña de rueda": [{"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 7: Ruedas y llantas", "parte": "Araña de rueda"}], "barra con rótula": [{"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 7: Ruedas y llantas", "parte": "Barra con rótula"}, {"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 8: Ejes de transmisión intermedio", "parte": "Barra con rótula"}, {"sistema": "transmision", "subsistema": "Subsistema 7: Transmisión delantera", "parte": "Barra con rótula"}], "cadena de transmisión": [{"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 7: Ruedas y llantas", "parte": "Cadena de transmisión"}], "eje de rueda": [{"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 7: Ruedas y llantas", "parte": "Eje de rueda"}], "llanta": [{"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 7: Ruedas y llantas", "parte": "Llanta"}], "pernos de rueda": [{"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 7: Ruedas y llantas", "parte": "Pernos de rueda"}], "rin": [{"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 7: Ruedas y llantas", "parte": "Rin"}], "sprocket": [{"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 7: Ruedas y llantas", "parte": "Sprocket"}], "crucetas del cardán": [{"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 8: Ejes de transmisión intermedio", "parte": "Crucetas del cardán"}, {"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 6: Ejes de transmisión intermedios", "parte": "Crucetas del cardán"}], "bujes de cardán": [{"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 3: Eje delantero", "parte": "bujes de cardán"}], "eje delantero": [{"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 3: Eje delantero", "parte": "Eje delantero"}], "terminal de eje delantero": [{"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 3: Eje delantero", "parte": "Terminal de eje delantero"}], "carcasa de embrague": [{"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 9: Reductores finales", "parte": "Carcasa de embrague"}], "eje de transmisión delantero": [{"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 9: Reductores finales", "parte": "Eje de transmisión delantero"}], "perfiles de tornillos": [{"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 9: Reductores finales", "parte": "Perfiles de tornillos"}], "punto de anclaje de transmisión": [{"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 9: Reductores finales", "parte": "Punto de anclaje de transmisión"}], "reductor derecho": [{"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 9: Reductores finales", "parte": "Reductor derecho"}], "reductor izquierdo": [{"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 9: Reductores finales", "parte": "Reductor izquierdo"}], "tornillos de reductor": [{"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 9: Reductores finales", "parte": "Tornillos de reductor"}], "eje cardánico": [{"sistema": "Traccion-tren de rodaje", "subsistema": "Subsistema 6: Ejes de transmisión intermedios", "parte": "Eje cardánico"}], "asiento": [{"sistema": "Cabina", "subsistema": "Subsistema 4: Asiento y confort del operador", "parte": "Asiento"}], "base del asiento": [{"sistema": "Cabina", "subsistema": "Subsistema 4: Asiento y confort del operador", "parte": "Base del asiento"}, {"sistema": "Cabina", "subsistema": "Subsistema 1: Estructura de la cabina", "parte": "Base del asiento"}], "soporte de asiento": [{"sistema": "Cabina", "subsistema": "Subsistema 4: Asiento y confort del operador", "parte": "Soporte de asiento"}], "bastidor de cabina": [{"sistema": "Cabina", "subsistema": "Subsistema 1: Estructura de la cabina", "parte": "Bastidor de cabina"}], "bastidor de techo": [{"sistema": "Cabina", "subsistema": "Subsistema 1: Estructura de la cabina", "parte": "Bastidor de techo"}], "marco de la cabina": [{"sistema": "Cabina", "subsistema": "Subsistema 1: Estructura de la cabina", "parte": "Marco de la cabina"}], "techo de cabina": [{"sistema": "Cabina", "subsistema": "Subsistema 1: Estructura de la cabina", "parte": "Techo de cabina"}], "cerradura de puerta": [{"sistema": "Cabina", "subsistema": "Subsistema 2: Acceso y salidas", "parte": "Cerradura de puerta"}], "escalones de acceso antideslizantes": [{"sistema": "Cabina", "subsistema": "Subsistema 2: Acceso y salidas", "parte": "Escalones de acceso antideslizantes"}], "puerta": [{"sistema": "Cabina", "subsistema": "Subsistema 2: Acceso y salidas", "parte": "Puerta"}, {"sistema": "Cabina", "subsistema": "Subsistema 3: Vidrios y visibilidad", "parte": "Puerta"}], "cristal": [{"sistema": "Cabina", "subsistema": "Subsistema 3: Vidrios y visibilidad", "parte": "Cristal"}], "ventana": [{"sistema": "Cabina", "subsistema": "Subsistema 3: Vidrios y visibilidad", "parte": "Ventana"}], "plumilla": [{"sistema": "Cabina", "subsistema": "Subsistema 3: Vidrios y visibilidad", "parte": "Plumilla"}], "pedal de acelerador": [{"sistema": "Cabina", "subsistema": "Subsistema 5: Controles e interfaz de usuario", "parte": "Pedal de acelerador"}], "resorte del pedal": [{"sistema": "Cabina", "subsistema": "Subsistema 5: Controles e interfaz de usuario", "parte": "Resorte del pedal"}], "resorte de asiento": [{"sistema": "Cabina", "subsistema": "Subsistema 11: Suspensión de cabina", "parte": "Resorte de asiento"}], "barras de dirección": [{"sistema": "Dirección", "subsistema": "Subsistema 1: Volante y columna de dirección", "parte": "Barras de dirección"}], "cilindro de dirección": [{"sistema": "Dirección", "subsistema": "Subsistema 1: Volante y columna de dirección", "parte": "Cilindro de dirección"}, {"sistema": "Dirección", "subsistema": "Subsistema 2: Unidad de dirección hidrostática (Orbitrol)", "parte": "Cilindro de dirección"}, {"sistema": "Dirección", "subsistema": "Subsistema 3: Bomba hidráulica de dirección", "parte": "Cilindro de dirección"}], "palanca de dirección": [{"sistema": "Dirección", "subsistema": "Subsistema 1: Volante y columna de dirección", "parte": "Palanca de dirección"}], "botella hidráulica": [{"sistema": "Dirección", "subsistema": "Subsistema 2: Unidad de dirección hidrostática (Orbitrol)", "parte": "Botella hidráulica"}], "manguera de dirección": [{"sistema": "Dirección", "subsistema": "Subsistema 2: Unidad de dirección hidrostática (Orbitrol)", "parte": "Manguera de dirección"}], "orbitrol": [{"sistema": "Dirección", "subsistema": "Subsistema 2: Unidad de dirección hidrostática (Orbitrol)", "parte": "Orbitrol"}], "retén del orbitrol": [{"sistema": "Dirección", "subsistema": "Subsistema 2: Unidad de dirección hidrostática (Orbitrol)", "parte": "Retén del orbitrol"}], "rótula de dirección": [{"sistema": "Dirección", "subsistema": "Subsistema 5: Mecanismo de dirección en el eje delantero", "parte": "Rótula de dirección"}], "bomba de aceite": [{"sistema": "Motor", "subsistema": "Subsistema 4: Sistema de lubricación", "parte": "Bomba de aceite"}], "carcasa del motor": [{"sistema": "Motor", "subsistema": "Subsistema 4: Sistema de lubricación", "parte": "Carcasa del motor"}], "cárter de aceite": [{"sistema": "Motor", "subsistema": "Subsistema 4: Sistema de lubricación", "parte": "Cárter de aceite"}, {"sistema": "Lubricación", "subsistema": "Subsistema 2: Depósito y gestión del fluido", "parte": "Cárter de aceite"}, {"sistema": "Lubricación", "subsistema": "Subsistema 4: Sistema de lubricación", "parte": "Cárter de aceite"}], "tapón de cárter": [{"sistema": "Motor", "subsistema": "Subsistema 4: Sistema de lubricación", "parte": "Tapón de cárter"}, {"sistema": "Lubricación", "subsistema": "Subsistema 4: Sistema de lubricación", "parte": "Tapón de cárter"}], "bomba de agua": [{"sistema": "Motor", "subsistema": "Subsistema 5: Sistema de refrigeracion y enfriamiento", "parte": "Bomba de agua"}], "bomba de agua (tapaválvula)": [{"sistema": "Motor", "subsistema": "Subsistema 5: Sistema de refrigeracion y enfriamiento", "parte": "Bomba de agua (tapaválvula)"}], "correa de alternador": [{"sistema": "Motor", "subsistema": "Subsistema 5: Sistema de refrigeracion y enfriamiento", "parte": "Correa de alternador"}], "correa del ventilador": [{"sistema": "Motor", "subsistema": "Subsistema 5: Sistema de refrigeracion y enfriamiento", "parte": "Correa del ventilador"}], "depósito de expansión": [{"sistema": "Motor", "subsistema": "Subsistema 5: Sistema de refrigeracion y enfriamiento", "parte": "Depósito de expansión"}], "líquido refrigerante": [{"sistema": "Motor", "subsistema": "Subsistema 5: Sistema de refrigeracion y enfriamiento", "parte": "Líquido refrigerante"}], "manguera de radiador": [{"sistema": "Motor", "subsistema": "Subsistema 5: Sistema de refrigeracion y enfriamiento", "parte": "Manguera de radiador"}], "manguera de refrigerante": [{"sistema": "Motor", "subsistema": "Subsistema 5: Sistema de refrigeracion y enfriamiento", "parte": "Manguera de refrigerante"}], "radiador": [{"sistema": "Motor", "subsistema": "Subsistema 5: Sistema de refrigeracion y enfriamiento", "parte": "Radiador"}], "sensor de temperatura del radiador": [{"sistema": "Motor", "subsistema": "Subsistema 5: Sistema de refrigeracion y enfriamiento", "parte": "Sensor de temperatura del radiador"}], "soportes de ventilador": [{"sistema": "Motor", "subsistema": "Subsistema 5: Sistema de refrigeracion y enfriamiento", "parte": "soportes de ventilador"}], "tapón de radiador": [{"sistema": "Motor", "subsistema": "Subsistema 5: Sistema de refrigeracion y enfriamiento", "parte": "Tapón de radiador"}], "eje del pistón y el cigüeñal": [{"sistema": "Motor", "subsistema": "Subsistema 9: Estructura interna del motor", "parte": "Eje del pistón y el cigüeñal"}], "pernos de platina": [{"sistema": "Motor", "subsistema": "Subsistema 9: Estructura interna del motor", "parte": "Pernos de platina"}], "retén de cigüeñal": [{"sistema": "Motor", "subsistema": "Subsistema 9: Estructura interna del motor", "parte": "Retén de cigüeñal"}], "tornillos de bloque": [{"sistema": "Motor", "subsistema": "Subsistema 9: Estructura interna del motor", "parte": "Tornillos de bloque"}], "filtro de aire": [{"sistema": "Motor", "subsistema": "Subsistema 1: Sistema de admisión de aire", "parte": "Filtro de aire"}], "motor de arranque": [{"sistema": "Motor", "subsistema": "Subsistema 7: Sistema de arranque", "parte": "Motor de arranque"}], "silenciador (mofle)": [{"sistema": "Motor", "subsistema": "Subsistema 2: Sistema de escape", "parte": "Silenciador (mofle)"}], "turbocompresor": [{"sistema": "Motor", "subsistema": "Subsistema 8: Sistema de alimentación de aire forzada (turboalimentación)", "parte": "Turbocompresor"}], "bomba de alta presión": [{"sistema": "Combustible", "subsistema": "Subsistema 3: Inyección de alta presión", "parte": "Bomba de alta presión"}], "bomba de inyección": [{"sistema": "Combustible", "subsistema": "Subsistema 3: Inyección de alta presión", "parte": "Bomba de inyección"}], "inyector": [{"sistema": "Combustible", "subsistema": "Subsistema 3: Inyección de alta presión", "parte": "Inyector"}], "tubo de inyección": [{"sistema": "Combustible", "subsistema": "Subsistema 3: Inyección de alta presión", "parte": "Tubo de inyección"}], "bomba de combustible": [{"sistema": "Combustible", "subsistema": "Subsistema 1: Almacenamiento y suministro primario", "parte": "Bomba de combustible"}], "tanque de combustible": [{"sistema": "Combustible", "subsistema": "Subsistema 1: Almacenamiento y suministro primario", "parte": "Tanque de combustible"}], "tapón de llenado": [{"sistema": "Combustible", "subsistema": "Subsistema 1: Almacenamiento y suministro primario", "parte": "Tapón de llenado"}], "tubería de alimentación": [{"sistema": "Combustible", "subsistema": "Subsistema 1: Almacenamiento y suministro primario", "parte": "Tubería de alimentación"}, {"sistema": "Combustible", "subsistema": "Subsistema 1: Almacenamiento y suministro primario", "parte": "tubería de alimentación"}, {"sistema": "Combustible", "subsistema": "Subsistema 2: Pre-filtrado y alimentación de baja presión", "parte": "Tubería de alimentación"}], "tubería de combustible": [{"sistema": "Combustible", "subsistema": "Subsistema 1: Almacenamiento y suministro primario", "parte": "Tubería de combustible"}], "tubería de retorno": [{"sistema": "Combustible", "subsistema": "Subsistema 1: Almacenamiento y suministro primario", "parte": "Tubería de retorno"}], "boquilla de drenaje": [{"sistema": "Combustible", "subsistema": "Subsistema 2: Pre-filtrado y alimentación de baja presión", "parte": "Boquilla de drenaje"}], "filtro de combustible": [{"sistema": "Combustible", "subsistema": "Subsistema 2: Pre-filtrado y alimentación de baja presión", "parte": "Filtro de combustible"}], "filtro de combustible primario": [{"sistema": "Combustible", "subsistema": "Subsistema 2: Pre-filtrado y alimentación de baja presión", "parte": "Filtro de combustible primario"}], "bujía": [{"sistema": "Motobomba de agua 2", "subsistema": "Subsistema 2: Arranque", "parte": "Bujía"}], "cuerda de arranque": [{"sistema": "Motobomba de agua 2", "subsistema": "Subsistema 2: Arranque", "parte": "Cuerda de arranque"}], "sistema de encendido": [{"sistema": "Motobomba de agua 2", "subsistema": "Subsistema 2: Arranque", "parte": "Sistema de encendido"}], "visor de nivel de aceite": [{"sistema": "Lubricación", "subsistema": "Subsistema 4: Sistema de lubricación", "parte": "Visor de nivel de aceite"}], "diente de valde": [{"sistema": "Implementos", "subsistema": "Subsistema 1: Implemento cargador frontal", "parte": "Diente de valde"}], "pasadores de valde": [{"sistema": "Implementos", "subsistema": "Subsistema 1: Implemento cargador frontal", "parte": "Pasadores de valde"}], "tornillos de valde": [{"sistema": "Implementos", "subsistema": "Subsistema 1: Implemento cargador frontal", "parte": "Tornillos de valde"}], "empaquetadura de eje": [{"sistema": "Motobomba de agua 3", "subsistema": "Subsistema 3: Circuito hidráulico de bombeo", "parte": "Empaquetadura de eje"}], "impulsor": [{"sistema": "Motobomba de agua 3", "subsistema": "Subsistema 3: Circuito hidráulico de bombeo", "parte": "Impulsor"}], "polea de transmisión": [{"sistema": "Motobomba de agua 3", "subsistema": "Subsistema 3: Circuito hidráulico de bombeo", "parte": "Polea de transmisión"}], "unión de sellado": [{"sistema": "Motobomba de agua 3", "subsistema": "Subsistema 3: Circuito hidráulico de bombeo", "parte": "Unión de sellado"}], "interruptor": [{"sistema": "Motobomba de agua 4", "subsistema": "Subsistema 4: Control y seguridad", "parte": "Interruptor"}], "manguera de retorno": [{"sistema": "combustible", "subsistema": "Subsistema 2: Pre-filtrado y alimentación de baja presión", "parte": "Manguera de retorno"}], "motor de combustión": [{"sistema": "Motobomba de agua 1", "subsistema": "Subsistema 1: Unidad motriz", "parte": "Motor de combustión"}], "rosca del brazo derecho": [{"sistema": "chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Rosca del brazo derecho"}], "rosca del tensor": [{"sistema": "chasis-estructura", "subsistema": "Subsistema 3: Sistema de enganche", "parte": "Rosca del tensor"}]}, "partes": ["Abrazadera de boom", "Aceite hidráulico", "Acople hidráulico de PTO", "Acople rápido", "Aire acondicionado", "Alarma de freno de estacionamiento", "Alternador", "Araña de rueda", "Asegurador de lastre", "Asiento", "Baranda de soporte", "Baranda de tanque", "Barra con rótula", "Barra de tiro", "Barras de dirección", "Base de soporte de repuesto", "Base de soporte de tubo de llenado", "Base de tres puntos", "Base del asiento", "Base del paral", "Bastidor", "Bastidor de barra de tiro", "Bastidor de cabina", "Bastidor de techo", "Bastidor de torre", "Bastidor lateral", "Batería", "Bomba de aceite", "Bomba de agua", "Bomba de agua (tapaválvula)", "Bomba de alta presión", "Bomba de combustible", "Bomba de inyección", "Bomba de mano freno", "Bomba hidráulica", "Boquilla de drenaje", "Bornes de batería", "Botella hidráulica", "Botón de Joystick", "Brida de anclaje del brazo", "Bujía", "Cadena de transmisión", "Caja de cambios", "Caja de frenos", "Caja reductora PTO", "Capó superior", "Carcasa de embrague", "Carcasa del motor", "Cerradura de puerta", "Chasis principal", "Cilindro de dirección", "Cilindro hidráulico", "Circuito de suministro", "Compresor A/C", "Conjunto de empaque de bomba", "Corbata superior (bola de enganche)", "Correa de alternador", "Correa de seguridad", "Correa del ventilador", "Cristal", "Crucetas del cardán", "Cuchillas", "Cuerda de arranque", "Cuerda motobomba", "Cárter de aceite", "Cárter hidráulico", "Depósito de aceite hidráulico", "Depósito de expansión", "Diente de valde", "Eje cardánico", "Eje de la toma fuerza", "Eje de rueda", "Eje de salida PTO", "Eje de selector", "Eje de toma de fuerza", "Eje de toma de fuerza (PTO)", "Eje de transmisión delantero", "Eje del pistón y el cigüeñal", "Eje delantero", "Ejes laterales", "Electroválvulas", "Embrague PTO", "Empaquetadura de eje", "Engranaje interno de PTO", "Escalones de acceso antideslizantes", "Estructura de enganche", "Estructura del techo", "Filtro de aire", "Filtro de combustible", "Filtro de combustible primario", "Filtro hidráulico", "Fractura por fatiga", "Freno de mano", "Fusible", "Gato", "Guardabarro", "Guaya", "Guaya de acelerador", "Guaya de cierre", "Guaya de control hidráulico", "Guaya de inversión (cable)", "Impulsor", "Indicador de temperatura (panel de instrumentos)", "Interruptor", "Interruptor de luces", "Inyector", "Llanta", "Línea hidráulica", "Línea hidráulica de freno", "Líquido refrigerante", "Manguera de dirección", "Manguera de radiador", "Manguera de refrigerante", "Manguera de retorno", "Marco de la cabina", "Motor de arranque", "Motor de combustión", "Módulo de cambios powershift", "Ojo de barra de tiro", "Orbitrol", "Palanca de bloqueo de bajada", "Palanca de cambios", "Palanca de control hidráulico", "Palanca de dirección", "Palanca de mando", "Palanca de modos de velocidad", "Palanca de reversión", "Palanca de soporte hidráulico", "Panel de acoples rápidos", "Panel de instrumentos", "Paral de torre", "Parrilla delantera", "Pasador de barra de tiro", "Pasador de piñón de bomba", "Pasador de tensor", "Pasador de tiro", "Pasador del brazo", "Pasadores de valde", "Pedal de acelerador", "Perfiles de tornillos", "Pernos de barra de tiro", "Pernos de joystick", "Pernos de pesas", "Pernos de platina", "Pernos de rueda", "Pernos de tubo", "Pernos y bujes del enganche", "Persiana de cabina", "Pesas", "Pito", "Placa de lastre", "Planchon", "Platina de guardabarro", "Platina de montaje", "Platina de pesas", "Plumilla", "Polea de transmisión", "Portafusible", "Protector de tanque", "Puerta", "Punto de anclaje de transmisión", "Punto de engrase", "Racor de bomba", "Radiador", "Reductor derecho", "Reductor izquierdo", "Resorte de asiento", "Resorte de capó", "Resorte del pedal", "Retenedor", "Retenedor bajante", "Retenedor bajante derecho", "Retenedor de llanta delantera", "Retenedor delantero", "Retenedor izquierdo", "Retenedor lateral", "Retenedor trasero", "Retenedores del gato", "Retenes de eje delantero", "Retén de cigüeñal", "Retén de diferencial trasero", "Retén de eje de PTO", "Retén de eje de brazo hidráulico", "Retén de eje delantero", "Retén de eje delantero derecho", "Retén de eje delantero izquierdo", "Retén del orbitrol", "Retén lateral de transmisión", "Riel de madera", "Rin", "Rosca del brazo derecho", "Rosca del tensor", "Rótula de dirección", "Seguro de capó", "Seguro de pesas / escalón de pies / cerradura de puerta", "Sello de eje PTO", "Sello de eje delantero", "Sensor de temperatura del radiador", "Sensor de velocidad", "Silenciador (mofle)", "Sistema de encendido", "Soporte de asiento", "Soporte de capó", "Soporte de exploradora", "Soporte de faro", "Soporte de luces", "Soporte de pesas", "Soporte de sensor derecho", "Soporte de tensor", "Soporte de tubería de boom", "Soporte de tubo", "Soporte del capó", "Soporte del mofle", "Sprocket", "Tablero de instrumentos", "Tanque de combustible", "Tanque de fibra", "Tapa de depósito", "Tapón de cárter", "Tapón de llenado", "Tapón de radiador", "Techo de cabina", "Tensor", "Tensor de barra de tiro", "Tensor de elevador hidráulico", "Tensor de enganche", "Tensor de enganche de tres puntos", "Tensor de tres puntos roscado", "Tensor del enlace fracturante", "Terminal de batería", "Terminal de cable", "Terminal de eje delantero", "Terminal de enganche de tres puntos", "Tornillo de barra de tiro", "Tornillo de caja de cambios", "Tornillo de guiado de guaya", "Tornillo de pesas", "Tornillo de tensor", "Tornillo de tiro", "Tornillo/Tuerca", "Tornillos", "Tornillos de barra de tiro", "Tornillos de bastidor", "Tornillos de bloque", "Tornillos de brazo hidráulico", "Tornillos de desbarreador", "Tornillos de enganche", "Tornillos de fijación", "Tornillos de guía del ecualizador", "Tornillos de pasador", "Tornillos de platina de tiro", "Tornillos de reductor", "Tornillos de rótula", "Tornillos de torre", "Tornillos de valde", "Torre de llenado", "Tubería de alimentación", "Tubería de combustible", "Tubería de retorno", "Tuberías y mangueras", "Tuberías y mangueras A/C", "Tubo de inyección", "Tubo de llenado", "Tuerca de anclaje", "Tuerca de brazo", "Tuerca de palanca de cambios", "Tuerca de rótula", "Tuerca de tensor", "Turbocompresor", "Unidad ECM", "Unidad de variación continua (CVT)", "Unión de sellado", "Ventana", "Ventilador", "Visor de nivel de aceite", "acople rápido", "alarma acústica", "buje", "bujes de cardán", "carcasa de caja", "conjunto de freno multidisco", "cuerpo tensor", "guaya de acople", "luces", "línea hidráulica", "pernos de barra de tiro", "punto de engrase", "soportes de ventilador", "tensor izquierdo", "terminal de enganche", "tirante", "tornillo de barra de tiro", "tornillo de enganche PTO", "tornillo del capó", "tornillo del tirante", "tornillos de barra de tiro", "tornillos de torre", "tornillos y arandelas", "tubería de alimentación", "válvulas"], "operadores": [{"codigo": "1", "nombre": "MADERA AVILA AMAURIS"}, {"codigo": "3", "nombre": "ZAPATA PEÑA ALIRIO"}, {"codigo": "4", "nombre": "VELASQUEZ ESCOBAR ANIBAL EDUARDO"}, {"codigo": "6", "nombre": "ESPITIA DIAZ DANYS DANIEL"}, {"codigo": "8", "nombre": "BEDOYA GONZALEZ DENIS LEONCIO"}, {"codigo": "9", "nombre": "MORALES VILLA DIEGO JESUS"}, {"codigo": "11", "nombre": "MORENO QUINTERO ELBER"}, {"codigo": "12", "nombre": "MOSQUERA CÓRDOBA EUCLIDES"}, {"codigo": "15", "nombre": "ZAPATA OSORIO JOSE FREDY"}, {"codigo": "17", "nombre": "QUINTERO GERMIN ARLEY"}, {"codigo": "18", "nombre": "GARCIA QUINTERO GILBERTO ANTONIO"}, {"codigo": "20", "nombre": "ARROYO MONTALVO JESUS MARIA"}, {"codigo": "21", "nombre": "GRACIANO SEPULVEDA JOSE ANGEL"}, {"codigo": "22", "nombre": "DURANGO USUGA LUIS ALBERTO"}, {"codigo": "23", "nombre": "PÉREZ MOSQUERA LUIS EDUARDO"}, {"codigo": "24", "nombre": "ESPITIA LUGO LUIS ENRIQUE"}, {"codigo": "25", "nombre": "VARGAS MEDARDO"}, {"codigo": "28", "nombre": "MENDOZA ARGEL OSNAIDER RAFAEL"}, {"codigo": "29", "nombre": "MONTIEL BERRIO PEDRO PABLO"}, {"codigo": "33", "nombre": "BENITEZ VIDAL JUAN DAVID"}, {"codigo": "34", "nombre": "NUÑEZ VILLALBA EDUARDO ANTONIO"}, {"codigo": "36", "nombre": "YAÑEZ RIOS GERMAN LEON"}, {"codigo": "67", "nombre": "GAVIRIA DIAZ CRISTIAN DANIEL"}, {"codigo": "77", "nombre": "MERCADO MONTES NILSON DE JESUS"}, {"codigo": "83", "nombre": "SERNA ARIAS RAUL ALBERTO"}, {"codigo": "87", "nombre": "GONZALEZ PATIÑO KEVIN STIVEN"}, {"codigo": "88", "nombre": "ALVAREZ SILGADO JORGE EMILIO"}, {"codigo": "103", "nombre": "AGUIRRE OSORIO DINEY"}, {"codigo": "104", "nombre": "LLORENTE GUERRA JANIO ALBERTO"}, {"codigo": "105", "nombre": "RODRIGUEZ JIMENEZ JENRY"}, {"codigo": "106", "nombre": "TORRES VELASQUEZ WILSON ALEJANDRO"}, {"codigo": "110", "nombre": "BENITEZ PADILLA LUIS MANUEL"}, {"codigo": "112", "nombre": "MENA ORDOÑEZ JUAN FELIPE"}, {"codigo": "118", "nombre": "ORTEGA MONTERROZA VICENTE RAFAEL"}, {"codigo": "122", "nombre": "LOPEZ GUISAO LUIS"}, {"codigo": "134", "nombre": "LUIS FERNANDO DIAZ"}, {"codigo": "135", "nombre": "COGOLLO QUINTERO LUIS ELIAS"}, {"codigo": "136", "nombre": "USUGA CARTAGENA JOHN EDWIN"}, {"codigo": "140", "nombre": "MELGAREJO GUAPACHA HERMES GABRIEL"}, {"codigo": "142", "nombre": "URIBE RAMBAY JORGE HERNAN"}, {"codigo": "148", "nombre": "VERGARA DIAZ PEDRO JAVIER"}, {"codigo": "154", "nombre": "TORRES NOREÑA KEVIN DAVID"}, {"codigo": "160", "nombre": "CASTAÑO TAPASCO JUAQUIN EDUARDO"}, {"codigo": "162", "nombre": "URANGO HERNANDEZ UBISNEY"}, {"codigo": "163", "nombre": "PADILLA PADILLA RICHAR MANUEL"}, {"codigo": "174", "nombre": "ARCO CHAMORRO JHON BAIRO"}, {"codigo": "175", "nombre": "JIMENEZ SAEZ WILTON RAFAEL"}, {"codigo": "179", "nombre": "GUZMAN NISPERUZA NORBEY"}, {"codigo": "180", "nombre": "VEGA BARON CLEIBER ESTIVEN"}, {"codigo": "185", "nombre": "FLOREZ PADIERNA VICTOR ALONSO"}, {"codigo": "186", "nombre": "BANQUETH HERNANDEZ JAVIER"}, {"codigo": "187", "nombre": "PEREZ ARTEAGA FRANCISCO MIGUEL"}, {"codigo": "191", "nombre": "DURANGO BENITEZ ALEXANDER"}, {"codigo": "192", "nombre": "ESCOBAR MACHADO ANDRUS LEON"}], "tecnicos": ["Alfredo Castellar", "Arley Serrano", "Cesar Manco", "David Urrego", "Diego Silva", "Esteban Correa", "Faber  Leal", "Fabian correa", "Fernando Fernandez", "Ibarguen Martinez", "Jhon Fredy Toro", "Julian  A", "Marco Parada", "Nilton Castaño", "Rafael  Perez", "Roger Cipamocha", "Samir Martinez", "Tercero", "Wagner Segura", "Yeison Alvarez"], "equipos": [{"codigo": "IA-01", "descripcion": "RASTRA ROMPEDORA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-02", "descripcion": "RASTRA ROMPEDORA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-03", "descripcion": "RASTRA AFINADORA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-04", "descripcion": "RASTRA AFINADORA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-05", "descripcion": "RASTRA ROMPEDORA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-06", "descripcion": "PICO SOMCHO (MODIFICACIÓN DE ENCAMADORA)", "tipo": "IMPLEMENTO"}, {"codigo": "IA-07", "descripcion": "ENCAMADORA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-08", "descripcion": "SUBSOLADOR", "tipo": "IMPLEMENTO"}, {"codigo": "IA-09", "descripcion": "SUBSOLADOR", "tipo": "IMPLEMENTO"}, {"codigo": "IA-10", "descripcion": "ZANJADORA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-11", "descripcion": "ZANJADORA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-12", "descripcion": "CARRETA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-13", "descripcion": "CARRETA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-14", "descripcion": "BOOM SPRAYER", "tipo": "IMPLEMENTO"}, {"codigo": "IA-15", "descripcion": "PALA TRASERA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-16", "descripcion": "PALA TRASERA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-17", "descripcion": "BOMBA ESTACIONARIA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-18", "descripcion": "TANQUETA ABASTECEDOR", "tipo": "IMPLEMENTO"}, {"codigo": "IA-19", "descripcion": "CARRETA DE SEMILLA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-20", "descripcion": "CHASIS DE COSECHA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-21", "descripcion": "CHASIS DE COSECHA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-22", "descripcion": "CHASIS DE COSECHA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-23", "descripcion": "COSECHADORA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-24", "descripcion": "CHASIS", "tipo": "IMPLEMENTO"}, {"codigo": "IA-25", "descripcion": "STROLLER", "tipo": "IMPLEMENTO"}, {"codigo": "IA-26", "descripcion": "CORTA MALEZA TA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-27", "descripcion": "CARRETA/PLATAFORMA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-28", "descripcion": "BOOM SPRAYER 2", "tipo": "IMPLEMENTO"}, {"codigo": "IA-29", "descripcion": "CARRETA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-30", "descripcion": "CHASIS DE COSECHA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-31", "descripcion": "CARRETA DE SEMILLA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-32", "descripcion": "COSECHADORA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-33", "descripcion": "CHASIS DE COSECHA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-34", "descripcion": "TRENCILLO", "tipo": "IMPLEMENTO"}, {"codigo": "IA-35", "descripcion": "DESBROZADORA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-36", "descripcion": "SURQUIADOR", "tipo": "IMPLEMENTO"}, {"codigo": "IA-37", "descripcion": "SUBSOLADOR", "tipo": "IMPLEMENTO"}, {"codigo": "IA-38", "descripcion": "RASTRILLO PARA BASURA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-39", "descripcion": "TANQUETA DE ABASTO", "tipo": "IMPLEMENTO"}, {"codigo": "IA-40", "descripcion": "CARRETA PARA BIN 5TA RUEDA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-41", "descripcion": "CARRETA PARA BIN 5TA RUEDA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-42", "descripcion": "PLUMA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-43", "descripcion": "PALA HIDRAULICA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-44", "descripcion": "ZANJADORA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-45", "descripcion": "SUBSOLADOR/CINCEL DE TRES PUNTAS", "tipo": "IMPLEMENTO"}, {"codigo": "IA-46", "descripcion": "PLATAFORMA DE CARGA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-47", "descripcion": "SUBSOLADOR/CINCEL DE TRES PUNTAS", "tipo": "IMPLEMENTO"}, {"codigo": "IA-48", "descripcion": "DESBROZADORA (CUCHILLAS)", "tipo": "IMPLEMENTO"}, {"codigo": "IA-49", "descripcion": "DESBROZADORA (CUCHILLAS)", "tipo": "IMPLEMENTO"}, {"codigo": "IA-50", "descripcion": "TANQUETA ABASTECIMIENTO", "tipo": "IMPLEMENTO"}, {"codigo": "IA-51", "descripcion": "ZANAJADORA DONDI", "tipo": "IMPLEMENTO"}, {"codigo": "IA-52", "descripcion": "TANQUETA DE ABASTECIMIENTO", "tipo": "IMPLEMENTO"}, {"codigo": "IA-53", "descripcion": "BOOM SPRAYER 3", "tipo": "IMPLEMENTO"}, {"codigo": "IA-54", "descripcion": "MOTOBOMBA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-55", "descripcion": "ZANJADORA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-56", "descripcion": "ENCAMADORA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-57", "descripcion": "COSECHADORA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-58", "descripcion": "CHASIS DE COSECHA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-59", "descripcion": "CHASIS DE COSECHA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-60", "descripcion": "CHASIS DE COSECHA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-61", "descripcion": "CHASIS DE COSECHA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-62", "descripcion": "DESBROZADORA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-63", "descripcion": "COSECHADORA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-64", "descripcion": "BOOM", "tipo": "IMPLEMENTO"}, {"codigo": "IA-65", "descripcion": "COSECHADORA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-66", "descripcion": "TANQUETA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-67", "descripcion": "BOOM", "tipo": "IMPLEMENTO"}, {"codigo": "IA-68", "descripcion": "PALA TRASERA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-69", "descripcion": "INSTRUCTURA BOMBA ESTACIONARIA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-70", "descripcion": "ENCAMADORA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-71", "descripcion": "ENCALADORA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-72", "descripcion": "CARRETA DE SEMILLA 4 RUEDAS", "tipo": "IMPLEMENTO"}, {"codigo": "IA-73", "descripcion": "PALA CUCHILLA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-74", "descripcion": "RASTRA PESADA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-75", "descripcion": "CARRETA DE VOLTEO", "tipo": "IMPLEMENTO"}, {"codigo": "IA-76", "descripcion": "VIBRO COMPACTADOR", "tipo": "IMPLEMENTO"}, {"codigo": "IA-77", "descripcion": "SUBSUELO", "tipo": "IMPLEMENTO"}, {"codigo": "IA-78", "descripcion": "DONDY", "tipo": "IMPLEMENTO"}, {"codigo": "IA-79", "descripcion": "CHASIS CARRETA PARA BIN", "tipo": "IMPLEMENTO"}, {"codigo": "IA-80", "descripcion": "PALA TRASERA", "tipo": "IMPLEMENTO"}, {"codigo": "IA-81", "descripcion": "BOOM SPRAYER 4", "tipo": "IMPLEMENTO"}, {"codigo": "IA-82", "descripcion": "BOOM SPRAYER 5", "tipo": "IMPLEMENTO"}, {"codigo": "TA-01", "descripcion": "TRACTOR", "tipo": "EQUIPO"}, {"codigo": "TA-02", "descripcion": "TRACTOR", "tipo": "EQUIPO"}, {"codigo": "TA-03", "descripcion": "TRACTOR", "tipo": "EQUIPO"}, {"codigo": "TA-04", "descripcion": "TRACTOR", "tipo": "EQUIPO"}, {"codigo": "TA-05", "descripcion": "TRACTOR", "tipo": "EQUIPO"}, {"codigo": "TA-06", "descripcion": "TRACTOR", "tipo": "EQUIPO"}, {"codigo": "TA-07", "descripcion": "TRACTOR", "tipo": "EQUIPO"}, {"codigo": "TA-13", "descripcion": "TRACTOR", "tipo": "EQUIPO"}, {"codigo": "TA-14", "descripcion": "TRACTOR", "tipo": "EQUIPO"}, {"codigo": "TA-15", "descripcion": "TRACTOR", "tipo": "EQUIPO"}, {"codigo": "TA-16", "descripcion": "TRACTOR", "tipo": "EQUIPO"}, {"codigo": "TA-17", "descripcion": "TRACTOR", "tipo": "EQUIPO"}, {"codigo": "TA-18", "descripcion": "MONTACARGA", "tipo": "EQUIPO"}, {"codigo": "TA-19", "descripcion": "TRACTOR", "tipo": "EQUIPO"}, {"codigo": "TA-20", "descripcion": "TRACTOR", "tipo": "EQUIPO"}, {"codigo": "TA-21", "descripcion": "TRACTOR", "tipo": "EQUIPO"}, {"codigo": "TA-22", "descripcion": "CAMION DE BINES", "tipo": "EQUIPO"}, {"codigo": "TA-24", "descripcion": "TRACTOR", "tipo": "EQUIPO"}, {"codigo": "TA-25", "descripcion": "TRACTOR", "tipo": "EQUIPO"}, {"codigo": "TA-26", "descripcion": "TRACTOR", "tipo": "EQUIPO"}, {"codigo": "TA-27", "descripcion": "RETROEXCAVADORA", "tipo": "EQUIPO"}, {"codigo": "TA-28", "descripcion": "RETROEXCAVADORA", "tipo": "EQUIPO"}, {"codigo": "TA-29", "descripcion": "CAMIÓN", "tipo": "EQUIPO"}, {"codigo": "TA-30", "descripcion": "CAMIÓN", "tipo": "EQUIPO"}, {"codigo": "TA-31", "descripcion": "CAMIÓN", "tipo": "EQUIPO"}, {"codigo": "TA-32", "descripcion": "CAMIÓN", "tipo": "EQUIPO"}, {"codigo": "TA-33", "descripcion": "TRACTOR", "tipo": "EQUIPO"}, {"codigo": "TA-34", "descripcion": "TRACTOR", "tipo": "EQUIPO"}, {"codigo": "TA-35", "descripcion": "MONTACARGA", "tipo": "EQUIPO"}, {"codigo": "TA-36", "descripcion": "TRACTOR", "tipo": "EQUIPO"}, {"codigo": "TA-37", "descripcion": "TRACTOR", "tipo": "EQUIPO"}, {"codigo": "TA-38", "descripcion": "RETROEXCAVADORA", "tipo": "EQUIPO"}, {"codigo": "TA-51", "descripcion": "MONTACARGA", "tipo": "EQUIPO"}], "modos": ["Baja carga", "Bloqueo/Obstruccion", "Contaminacion", "Deformacion", "Degradación química", "Desacople", "Desprendimiento", "Evento", "Falla funcional", "No enciende", "Perdida", "Perdida de presion", "Pinchazo/Presion baja", "Rigidez", "Ruido", "Sistema de encendido", "Sobrecalentamiento", "alarma activa", "desacople", "desajuste", "desgaste", "falla eléctrica", "fractura / rotura", "fuga", "vibracion"], "mecanismos": ["Abrasion/envejicimiento/fatiga", "Accidente humano", "Adhesivo fallido", "Bajo voltaje/Autodescarga", "Bloqueo mecánico/contaminacion/suciedad", "Cavitación", "Circuito abierto", "Condensación", "Contacto con objeto punzante/fuga progresiva", "Corrosión", "Cortocircuito", "Desalineacion/Fatiga por desalineación", "Desbalance de aspas", "Desgaste", "Desgaste de discos/embrague", "Desgaste de engranajes/dientes/estriado", "Desgaste de pasador", "Desgaste de sincronizadores", "Desgaste interno/carga variable/mecanico/uso", "Desgaste por tensión", "Deslizamiento tensión", "Deterioro de sincronizadores", "Embrague PTO desgastado", "Empaque/Sello dañado/desgastado/roto", "Falla interna de válvula", "Falla mecánica interna", "Fallo de pestillo", "Fallo eléctrico (fusible/cableado/circuito)", "Fatiga por carga cíclica/repetida, fatiga mecanica", "Fatiga por manipulación frecuente", "Fibras desgastadas", "Fisura por fatiga/previa/previa no detectada", "Fricción sin lubricación", "Holgura/juego en rotula/radial/axial,Desgaste interno/carga variable/mecanico/uso", "Impacto", "Instalación incorrecta/defectuosa/insuficiente", "Insuficiente voltaje para giro de arranque;Engranajes o escobillas gastados impiden giro;No cierra el circuito de potencia de arranque;Circuito abierto priva de alimentación al arranque;No envía señal de sincronismo al ECM;Falta de combustible en la bomba;Restricción de flujo hacia la bomba;No genera presión en el riel;Pulverización deficiente del combustible;Fugas de compresión por anillos o válvulas desgastadas", "Junta desgastada/deteriorada", "Mal contacto eléctrico", "Obstrucción por sedimentos/suciedad", "Pendiente de lubricación", "Presión baja de fluido/Perdida de presion", "Presión excesiva en línea", "Pérdida de espesor y perfil en los dientes por fricción continua; Dificultad o imposibilidad de acoplar marchas por fricción interna dañada; Insuficiente película de lubricación genera contacto metal-metal; Abrasión y bloqueo de canales por partículas extrañas; Incremento de temperatura que degrada componentes y lubricante; Vibraciones y cargas desiguales provocan fatiga de material; Imposibilidad de regular presión hidráulica para cambio de marchas; Pérdida de fluido reduce presión y lubricación; Inhabilidad para accionar marchas por fallo mecánico o eléctrico; Flujo restringido de aceite interrumpe presión de cambio de marchas", "Regulador defectuoso", "Retenedor desgastado/defectuoso", "Rotura/fractura por fatiga", "Sensor activado por bajo nivel o presion", "Sensor o circuito defectuoso", "Señal intermitente/ errática", "Sobrecarga mecánica/impacto/torque", "Soldadura corroida/deficiente, Remaches", "Sulfatación de placas", "Tensión excesiva y fricción interna", "Vibraciones/fatiga/desajuste", "codigo activo", "desgaste de garganta", "desgaste de paletas", "electrodo desgastado", "falla eléctrica", "fractura / rotura", "fuga de fluido", "juego en rótula/radial/axial", "rosca dañada por desgaste"], "areas": ["Aplicaciones", "Cosecha", "Desarrollo de cultivo", "Preparacion", "Semillero", "Siembra", "Taller", "CTIA"], "sedes": ["Argentina", "Brasil", "Egipto", "Jamaica", "La Fe", "Las Americas", "Taller"], "lotes": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60", "61", "62", "63", "64", "65", "66", "67", "68", "69", "70", "71", "72", "73", "74", "75", "76", "77", "78", "79", "80", "81", "82", "83", "84", "85", "86", "87", "Mayoria", "Taller"], "lotes_por_finca": {"La Fé": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "Mayoria"], "Jamaica": ["28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "Mayoria"], "Egipto": ["40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "Mayoria"], "Las Américas": ["56", "57", "58", "59", "60", "61", "62", "63", "64", "65", "Mayoria"], "Brasil": ["66", "67", "68", "69", "70", "71", "72", "73", "74", "75", "76", "Mayoria"], "Argentina": ["77", "78", "79", "80", "81", "82", "83", "84", "85", "86", "87", "Mayoria"], "Taller": ["Taller"]}, "estados": ["Abierta", "Diagnostico", "En Reparacion", "Espera de Repuestos", "Espera Tercero", "Sin MO Disponible (Propia)", "Cerrada"], "pin": "1234"}</script>
+
+<script>
+var D = null;
+var disp = 'Varada';
+var prio = 'Alta';
+var tallerOK = false;
+var API = 'https://script.google.com/macros/s/AKfycbyL1ZTEVzwYUBNFnzp0JyoPggFRe6sl1p0uSGF28yo-FV_zZfnX_yiNwpB8mW0IoVH8/exec';
+var RESET_V = '2026-06-10-v1';
+
+window.onerror = function(msg, src, line) {
+  var ss = document.getElementById('ss');
+  if (ss) ss.innerHTML = '<span style="color:#EF4444;font-size:10px">ERR L' + line + ': ' + msg + '</span>';
+};
+
+function checkReset() {
+  if (localStorage.getItem('anom1_rv') !== RESET_V) {
+    localStorage.removeItem('anom1');
+    localStorage.removeItem('anom1_sync');
+    localStorage.removeItem('anom1_updates');
+    localStorage.setItem('anom1_rv', RESET_V);
+  }
+}
+
+function setStatus(msg, color) {
+  var ss = document.getElementById('ss');
+  if (ss) ss.innerHTML = '<span style="color:' + (color||'#94A3B8') + '">' + msg + '</span>';
+}
+
+function init() {
+  setStatus('Paso 1: iniciando...');
+  checkReset();
+  setStatus('Paso 2: leyendo datos...');
+  try {
+    var el = document.getElementById('_datos');
+    if (!el) { setStatus('ERROR: no se encontro _datos', '#EF4444'); return; }
+    var txt = el.textContent || el.innerText || '';
+    if (!txt) { setStatus('ERROR: _datos esta vacio', '#EF4444'); return; }
+    setStatus('Paso 3: parseando JSON (' + txt.length + ' chars)...');
+    D = JSON.parse(txt);
+    setStatus('Paso 4: JSON ok, cargando listas...');
+  } catch(e) {
+    setStatus('Error JSON: ' + e.message, '#EF4444');
+    return;
+  }
+
+  // Usar hora LOCAL (no UTC) para el campo datetime-local
+  var ahora = new Date();
+  var yy  = ahora.getFullYear();
+  var mm  = String(ahora.getMonth()+1).padStart(2,'0');
+  var dd  = String(ahora.getDate()).padStart(2,'0');
+  var hh  = String(ahora.getHours()).padStart(2,'0');
+  var min = String(ahora.getMinutes()).padStart(2,'0');
+  document.getElementById('r-fecha').value = yy+'-'+mm+'-'+dd+'T'+hh+':'+min;
+
+  fill('r-op', D.operadores, function(o){ return o.codigo + ' - ' + o.nombre; });
+  // r-eq se llena al seleccionar tipo con setTipoEq()
+  fill('r-sede',  D.sedes);
+  fill('r-lote',  D.lotes);
+  fill('r-area',  D.areas);
+  fill('r-parte', D.partes);
+
+  updCnt();
+
+  var st = navigator.onLine ? '<span style="color:#10B981">&#128246; En linea</span>' : '<span style="color:#EF4444">&#128245; Sin conexion</span>';
+  document.getElementById('ss').innerHTML = st;
+
+  setTimeout(function(){ if(navigator.onLine) syncData(); }, 2000);
+}
+
+function fill(id, items, fn) {
+  var s = document.getElementById(id);
+  if (!s) return;
+  while (s.options.length > 1) s.remove(1);
+  if (!items || !items.length) return;
+  for (var i = 0; i < items.length; i++) {
+    var item = items[i];
+    var val  = (typeof item === 'string') ? item : (item.codigo || item);
+    var lbl  = fn ? fn(item) : ((typeof item === 'string') ? item : item.nombre || item.codigo);
+    s.add(new Option(lbl, val));
+  }
+}
+
+function autoSisSub() {
+  var parte = document.getElementById('r-parte').value.trim().toLowerCase();
+  var multi = document.getElementById('r-multi');
+  if (!parte) {
+    document.getElementById('r-sis').value = '';
+    document.getElementById('r-sub').value = '';
+    if (multi) multi.style.display = 'none';
+    return;
+  }
+  var ops = D.inv_partes[parte] || [];
+  if (ops.length === 1) {
+    document.getElementById('r-sis').value = ops[0].sistema;
+    document.getElementById('r-sub').value = ops[0].subsistema;
+    if (multi) multi.style.display = 'none';
+  } else if (ops.length > 1) {
+    document.getElementById('r-sis').value = '';
+    document.getElementById('r-sub').value = '';
+    if (multi) {
+      multi.style.display = 'block';
+      var lista = document.getElementById('r-multi-lista');
+      lista.innerHTML = '';
+      ops.forEach(function(op) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = op.sistema + ' > ' + op.subsistema;
+        btn.style.cssText = 'display:block;width:100%;padding:8px 10px;margin-bottom:6px;background:#0F172A;border:1px solid #334155;border-radius:7px;color:#CBD5E1;font-size:12px;text-align:left;cursor:pointer';
+        btn.onclick = (function(o){ return function() {
+          document.getElementById('r-sis').value = o.sistema;
+          document.getElementById('r-sub').value = o.subsistema;
+          multi.style.display = 'none';
+        }; })(op);
+        lista.appendChild(btn);
+      });
+    }
+  } else {
+    document.getElementById('r-sis').value = '';
+    document.getElementById('r-sub').value = '';
+    if (multi) multi.style.display = 'none';
+  }
+}
+
+var tipoEq = '';
+
+function onFincaChange() {
+  var finca = document.getElementById('r-sede').value;
+  var sel   = document.getElementById('r-lote');
+  while (sel.options.length > 0) sel.remove(0);
+  sel.add(new Option('Seleccionar lote...', ''));
+  if (!finca) return;
+  var lotes = D.lotes_por_finca[finca] || [];
+  if (!lotes.length) {
+    // Si la finca no tiene mapa definido, mostrar todos
+    lotes = D.lotes;
+  }
+  for (var i = 0; i < lotes.length; i++) {
+    sel.add(new Option('Lote ' + lotes[i], lotes[i]));
+  }
+}
+
+function setTipoEq(tipo) {
+  tipoEq = tipo;
+  document.getElementById('te-eq').className = 'rb' + (tipo === 'EQUIPO'      ? ' on-b' : '');
+  document.getElementById('te-im').className = 'rb' + (tipo === 'IMPLEMENTO'  ? ' on-b' : '');
+  var filtrados = [];
+  for (var i = 0; i < D.equipos.length; i++) {
+    var t = (D.equipos[i].tipo || '').toUpperCase();
+    if (tipo === 'EQUIPO'     && t !== 'IMPLEMENTO') filtrados.push(D.equipos[i]);
+    if (tipo === 'IMPLEMENTO' && t === 'IMPLEMENTO') filtrados.push(D.equipos[i]);
+  }
+  var s = document.getElementById('r-eq');
+  while (s.options.length > 0) s.remove(0);
+  s.add(new Option('Seleccionar ' + (tipo === 'EQUIPO' ? 'equipo' : 'implemento') + '...', ''));
+  for (var j = 0; j < filtrados.length; j++) {
+    var e = filtrados[j];
+    var lbl = e.codigo + (e.descripcion ? ' - ' + e.descripcion : '');
+    s.add(new Option(lbl, e.codigo));
+  }
+}
+
+function setDisp(v) {
+  disp = v;
+  document.getElementById('dv').className = 'rb' + (v === 'Varada'     ? ' on-v' : '');
+  document.getElementById('dd').className = 'rb' + (v === 'Disponible' ? ' on-d' : '');
+}
+
+function setPrio(v) {
+  prio = v;
+  document.getElementById('pa').className = 'rb' + (v === 'Alta'  ? ' on-a' : '');
+  document.getElementById('pm').className = 'rb' + (v === 'Media' ? ' on-m' : '');
+  document.getElementById('pb').className = 'rb' + (v === 'Baja'  ? ' on-b' : '');
+}
+
+function marcarError(id, ok) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.style.borderColor = ok ? '#334155' : '#EF4444';
+  el.style.boxShadow   = ok ? 'none' : '0 0 0 3px rgba(239,68,68,.2)';
+}
+
+function guardar() {
+  var fe = document.getElementById('r-fecha').value;
+  var os = document.getElementById('r-op');
+  var es = document.getElementById('r-eq');
+  var sd = document.getElementById('r-sede');
+  var pa = document.getElementById('r-parte');
+  var fa = document.getElementById('r-falla').value.trim();
+
+  // Validar y resaltar en rojo los que faltan
+  var errores = [];
+  marcarError('r-fecha', !!fe);         if (!fe)          errores.push('Fecha y Hora');
+  marcarError('r-op',    !!os.value);   if (!os.value)    errores.push('Operador');
+  if (!tipoEq) errores.push('Tipo (Equipo / Implemento)');
+  marcarError('r-eq',    !!es.value);   if (!es.value)    errores.push('Equipo / Implemento');
+  marcarError('r-sede',  !!sd.value);   if (!sd.value)    errores.push('Sede / Finca');
+  marcarError('r-parte', !!pa.value);   if (!pa.value)    errores.push('Parte / Componente');
+  marcarError('r-falla', !!fa);         if (!fa)          errores.push('Descripcion de la Falla');
+
+  if (errores.length > 0) {
+    toast('Faltan: ' + errores.join(', '), '#EF4444');
+    return;
+  }
+
+  // Separar fecha y hora del campo datetime-local (formato: "2026-06-05T10:44")
+  var partesFecha = fe ? fe.split('T') : ['',''];
+  var soloFecha   = partesFecha[0] || '';
+  var soloHora    = partesFecha[1] || new Date().toTimeString().slice(0,5);
+
+  var reg = {
+    id:          Date.now(),
+    fecha:       soloFecha,
+    hora:        soloHora,
+    operador:    os.options[os.selectedIndex].text,
+    equipo:      es.options[es.selectedIndex].text,
+    disponibilidad: disp,
+    sede:        document.getElementById('r-sede').value,
+    lote:        document.getElementById('r-lote').value,
+    area:        document.getElementById('r-area').value,
+    sistema:     document.getElementById('r-sis').value,
+    subsistema:  document.getElementById('r-sub').value,
+    parte:       document.getElementById('r-parte').value,
+    modo_falla:  '',
+    prioridad:   prio,
+    falla:       fa,
+    observaciones: document.getElementById('r-obs').value,
+    estado:      'Abierta',
+    mecanismo:   '', tecnico: '', fecha_ini_rep: '', fecha_fin_rep: '', obs_taller: ''
+  };
+
+  var todo = JSON.parse(localStorage.getItem('anom1') || '[]');
+  todo.unshift(reg);
+  localStorage.setItem('anom1', JSON.stringify(todo));
+
+  var pend = JSON.parse(localStorage.getItem('anom1_sync') || '[]');
+  pend.push(reg);
+  localStorage.setItem('anom1_sync', JSON.stringify(pend));
+
+  if (navigator.onLine) syncData();
+
+  document.getElementById('r-falla').value = '';
+  document.getElementById('r-obs').value   = '';
+  var ids = ['r-op','r-eq','r-sede','r-lote','r-area','r-sis','r-sub','r-parte','r-modo'];
+  for (var i=0; i<ids.length; i++) document.getElementById(ids[i]).selectedIndex = 0;
+  loadSubs();
+  setDisp('Varada'); setPrio('Alta');
+  updCnt();
+  toast('Anomalia registrada correctamente');
+}
+
+function showPg(t) {
+  if (t === 'tall' && !tallerOK) {
+    document.getElementById('pinov').style.display = 'flex';
+    setTimeout(function(){ document.getElementById('pinin').focus(); }, 100);
+    return;
+  }
+  var tabs = document.querySelectorAll('.tab');
+  var pgs  = document.querySelectorAll('.pg');
+  for (var i=0; i<tabs.length; i++) tabs[i].className = 'tab';
+  for (var i=0; i<pgs.length; i++)  pgs[i].className  = 'pg';
+  document.querySelector('[onclick="showPg(\''+t+'\')"]').className = 'tab on';
+  document.getElementById('pg-'+t).className = 'pg on';
+  if (t === 'tall') renderTaller();
+  if (t === 'exp')  renderStats();
+}
+
+function chkPin() {
+  if (document.getElementById('pinin').value === D.pin) {
+    tallerOK = true;
+    document.getElementById('pinov').style.display = 'none';
+    document.getElementById('pinin').value = '';
+    showPg('tall');
+  } else {
+    document.getElementById('pinin').value = '';
+    toast('PIN incorrecto','#EF4444');
+  }
+}
+function closePinOv() {
+  document.getElementById('pinov').style.display = 'none';
+  document.getElementById('pinin').value = '';
+}
+
+function renderTaller() {
+  var datos = JSON.parse(localStorage.getItem('anom1') || '[]');
+  var pend  = [];
+  for (var i=0; i<datos.length; i++) { if (datos[i].estado !== 'Cerrada') pend.push(datos[i]); }
+  var c = document.getElementById('tall-wrap');
+  var info = document.getElementById('tall-info');
+  if (info) info.textContent = datos.length + ' total | ' + pend.length + ' pendientes';
+
+  if (!pend.length) { c.innerHTML = '<div class="emp"><div style="font-size:44px">&#9989;</div><p>No hay anomalias pendientes</p></div>'; return; }
+
+  var html = '';
+  for (var i=0; i<pend.length; i++) {
+    var a   = pend[i];
+    var cls = a.disponibilidad === 'Varada' ? 'v' : 'd';
+    var bc  = a.disponibilidad === 'Varada' ? 'badge-r' : 'badge-g';
+    var pc  = a.prioridad === 'Alta' ? 'badge-r' : (a.prioridad === 'Media' ? 'badge-y' : 'badge-g');
+
+    // Modos de falla
+    var modOpts = '<option value="' + (a.modo_falla||'') + '">' + (a.modo_falla||'Seleccionar...') + '</option>';
+    for (var j=0; j<D.modos.length; j++) {
+      modOpts += '<option value="' + D.modos[j].replace(/"/g,'&quot;') + '">' + D.modos[j] + '</option>';
+    }
+    // Mecanismos
+    var mecOpts = '<option value="' + (a.mecanismo||'') + '">' + (a.mecanismo||'Seleccionar...') + '</option>';
+    for (var j=0; j<D.mecanismos.length; j++) {
+      mecOpts += '<option value="' + D.mecanismos[j].replace(/"/g,'&quot;') + '">' + D.mecanismos[j] + '</option>';
+    }
+    // Tecnicos
+    var tecOpts = '<option value="' + (a.tecnico||'') + '">' + (a.tecnico||'Seleccionar...') + '</option>';
+    for (var j=0; j<D.tecnicos.length; j++) {
+      tecOpts += '<option value="' + D.tecnicos[j] + '">' + D.tecnicos[j] + '</option>';
+    }
+    // Estados con historial
+    var estOpts = '';
+    for (var j=0; j<D.estados.length; j++) {
+      estOpts += '<option value="' + D.estados[j] + '"' + (a.estado === D.estados[j] ? ' selected' : '') + '>' + D.estados[j] + '</option>';
+    }
+    // Historial de estados
+    var histHtml = '';
+    if (a.hist_estados && a.hist_estados.length) {
+      histHtml = '<div style="font-size:11px;color:#64748B;margin-top:6px;margin-bottom:10px">';
+      for (var j=0; j<a.hist_estados.length; j++) {
+        histHtml += '<div style="padding:3px 0;border-bottom:1px solid #1E293B">&#128340; ' + a.hist_estados[j].fecha + ' &rarr; <b style="color:#94A3B8">' + a.hist_estados[j].estado + '</b></div>';
+      }
+      histHtml += '</div>';
+    }
+
+    html += '<div class="ac ' + cls + '">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+    html += '<span style="font-size:16px;font-weight:700;color:#F1F5F9">' + a.equipo + '</span>';
+    html += '<span class="badge ' + bc + '">' + a.disponibilidad + '</span></div>';
+    html += '<div style="font-size:12px;color:#94A3B8;margin-bottom:3px">' + a.fecha + ' | ' + a.operador + '</div>';
+    html += '<div style="font-size:12px;color:#60A5FA;margin-bottom:3px">&#128205; ' + (a.sede||'-') + (a.lote ? ' | Lote ' + a.lote : '') + (a.area ? ' | ' + a.area : '') + '</div>';
+    html += '<div style="font-size:13px;color:#CBD5E1;margin-bottom:6px">' + a.falla + '</div>';
+    html += '<div style="font-size:12px;color:#64748B;margin-bottom:6px">' + (a.sistema||'') + (a.subsistema ? ' > ' + a.subsistema : '') + (a.parte ? ' > ' + a.parte : '') + '</div>';
+    html += '<span class="badge ' + pc + '">' + a.prioridad + '</span>';
+    html += '<div style="margin-top:12px;background:#0F172A;border-radius:10px;padding:12px">';
+    html += '<div style="font-size:11px;font-weight:700;color:#60A5FA;margin-bottom:10px;text-transform:uppercase">&#128295; Gestion Taller</div>';
+    html += '<div class="fg"><label>Modo de Falla</label><select id="mo' + a.id + '" style="background:#1E293B">' + modOpts + '</select></div>';
+    html += '<div class="fg"><label>Mecanismo de Falla</label><select id="mc' + a.id + '" style="background:#1E293B">' + mecOpts + '</select></div>';
+    html += '<div class="fg"><label>Tecnico Asignado</label><select id="tc' + a.id + '" style="background:#1E293B">' + tecOpts + '</select></div>';
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+    html += '<div class="fg"><label>Inicio Reparacion</label><input type="datetime-local" id="fi' + a.id + '" value="' + (a.fecha_ini_rep||'') + '" style="background:#1E293B"></div>';
+    html += '<div class="fg"><label>Fin Reparacion</label><input type="datetime-local" id="ff' + a.id + '" value="' + (a.fecha_fin_rep||'') + '" style="background:#1E293B"></div></div>';
+    html += '<div class="fg"><label>Codigo Requisicion</label><input type="text" id="rq' + a.id + '" value="' + (a.cod_requisicion||'') + '" placeholder="Ej: 5794889" style="background:#1E293B" inputmode="numeric"></div>';
+    html += '<div class="fg"><label>Obs. Taller</label><textarea id="ot' + a.id + '" style="background:#1E293B;min-height:55px">' + (a.obs_taller||'') + '</textarea></div>';
+    html += '<div class="fg"><label>Estado actual</label><select id="es' + a.id + '" style="background:#1E293B" onchange="onEstadoChange(' + a.id + ')">' + estOpts + '</select></div>';
+    html += '<div class="fg"><label>Fecha y hora de este estado</label><input type="datetime-local" id="fe' + a.id + '" value="' + (a.fecha_estado||'') + '" style="background:#1E293B"></div>';
+    if (histHtml) {
+      html += '<div style="font-size:11px;font-weight:700;color:#94A3B8;margin-top:8px;margin-bottom:4px">HISTORIAL</div>' + histHtml;
+    }
+    html += '<button class="btn btn-g" onclick="saveTaller(' + a.id + ')">&#128190; Guardar</button>';
+    html += '</div></div>';
+  }
+  c.innerHTML = html;
+}
+
+function onEstadoChange(id) {
+  // Al cambiar estado, poner fecha/hora actual automáticamente
+  var ahora = new Date(); ahora.setSeconds(0,0);
+  var el = document.getElementById('fe' + id);
+  if (el) el.value = ahora.toISOString().slice(0,16);
+}
+
+function saveTaller(id) {
+  var datos = JSON.parse(localStorage.getItem('anom1') || '[]');
+  var idx = -1;
+  for (var i=0; i<datos.length; i++) { if (datos[i].id === id) { idx=i; break; } }
+  if (idx === -1) return;
+
+  datos[idx].modo_falla   = (document.getElementById('mo'+id) && document.getElementById('mo'+id).value) || '';
+  datos[idx].mecanismo    = (document.getElementById('mc'+id) && document.getElementById('mc'+id).value) || '';
+  datos[idx].tecnico      = (document.getElementById('tc'+id) && document.getElementById('tc'+id).value) || '';
+  datos[idx].fecha_ini_rep= (document.getElementById('fi'+id) && document.getElementById('fi'+id).value) || '';
+  datos[idx].fecha_fin_rep= (document.getElementById('ff'+id) && document.getElementById('ff'+id).value) || '';
+  datos[idx].cod_requisicion = (document.getElementById('rq'+id) && document.getElementById('rq'+id).value) || '';
+  datos[idx].obs_taller      = (document.getElementById('ot'+id) && document.getElementById('ot'+id).value) || '';
+  var nuevoEstado = (document.getElementById('es'+id) && document.getElementById('es'+id).value) || 'Abierta';
+  var fechaEstado = (document.getElementById('fe'+id) && document.getElementById('fe'+id).value) || '';
+  // Guardar historial si cambió el estado
+  if (nuevoEstado !== datos[idx].estado) {
+    if (!datos[idx].hist_estados) datos[idx].hist_estados = [];
+    datos[idx].hist_estados.push({ estado: nuevoEstado, fecha: fechaEstado || new Date().toISOString().slice(0,16) });
+  }
+  datos[idx].estado       = nuevoEstado;
+  datos[idx].fecha_estado = fechaEstado;
+
+  localStorage.setItem('anom1', JSON.stringify(datos));
+
+  // Sincronizar cambio de taller al servidor usando URLSearchParams (compatible con file://)
+  if (navigator.onLine) {
+    var reg = datos[idx];
+    var params = new URLSearchParams();
+    params.append('action', 'updateAnomalia');
+    params.append('data',   JSON.stringify(reg));
+    fetch(API, { method: 'POST', body: params, mode: 'no-cors' })
+      .then(function() {
+        // También agregar a cola de sync por si acaso
+        var cola = JSON.parse(localStorage.getItem('anom1_updates') || '[]');
+        // Remover versión anterior del mismo ID
+        cola = cola.filter(function(r){ return String(r.id) !== String(reg.id); });
+        cola.push(reg);
+        localStorage.setItem('anom1_updates', JSON.stringify(cola));
+      })
+      .catch(function(){});
+  }
+  updCnt(); renderTaller(); toast('&#9989; Guardado y enviado al servidor');
+}
+
+function updCnt() {
+  var datos = JSON.parse(localStorage.getItem('anom1') || '[]');
+  var n = 0;
+  for (var i=0; i<datos.length; i++) { if (datos[i].estado !== 'Cerrada') n++; }
+  document.getElementById('cnt').textContent = n;
+}
+
+function renderStats() {
+  var datos  = JSON.parse(localStorage.getItem('anom1') || '[]');
+  var nosync = JSON.parse(localStorage.getItem('anom1_sync') || '[]');
+  var var_= 0;
+  for (var i=0; i<datos.length; i++) { if (datos[i].disponibilidad === 'Varada') var_++; }
+  document.getElementById('expstats').innerHTML =
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center;margin-bottom:8px">' +
+    '<div style="background:#0F172A;padding:12px;border-radius:10px"><div style="font-size:22px;font-weight:700;color:#3B82F6">'+datos.length+'</div><div style="font-size:10px;color:#64748B">Total</div></div>' +
+    '<div style="background:#0F172A;padding:12px;border-radius:10px"><div style="font-size:22px;font-weight:700;color:#EF4444">'+var_+'</div><div style="font-size:10px;color:#64748B">Varadas</div></div>' +
+    '<div style="background:#0F172A;padding:12px;border-radius:10px"><div style="font-size:22px;font-weight:700;color:#F59E0B">'+nosync.length+'</div><div style="font-size:10px;color:#64748B">Sin enviar</div></div>' +
+    '</div>';
+}
+
+async function syncData() {
+  var pend = JSON.parse(localStorage.getItem('anom1_sync') || '[]');
+  if (!pend.length) { toast('No hay datos pendientes'); return; }
+  var ss = document.getElementById('ss');
+  if (ss) ss.innerHTML = '<span style="color:#F59E0B">&#128260; Enviando ' + pend.length + '...</span>';
+  try {
+    // Enviar usando GET con datos en URL (evita CORS preflight completamente)
+    var encoded = encodeURIComponent(JSON.stringify(pend));
+    var url = API + '?action=saveLote&data=' + encoded;
+    var r = await fetch(url, { method: 'GET', mode: 'cors' });
+    var d = await r.json();
+    if (d.ok) {
+      localStorage.removeItem('anom1_sync');
+      if (ss) ss.innerHTML = '<span style="color:#10B981">&#9989; Sincronizado (' + pend.length + ')</span>';
+      setTimeout(function(){ if(ss) ss.innerHTML='<span style="color:#64748B">&#128246; En linea</span>'; }, 4000);
+      toast('Sincronizado: ' + pend.length + ' registros');
+    } else {
+      toast('Error del servidor: ' + (d.error||''), '#EF4444');
+    }
+  } catch(e) {
+    // Fallback: intentar con form POST (máxima compatibilidad)
+    try {
+      var form = document.createElement('form');
+      form.method = 'POST'; form.action = API; form.target = '_sync_iframe';
+      var inp1 = document.createElement('input'); inp1.name='action'; inp1.value='saveLote';
+      var inp2 = document.createElement('input'); inp2.name='data';   inp2.value=JSON.stringify(pend);
+      form.appendChild(inp1); form.appendChild(inp2);
+      var iframe = document.createElement('iframe'); iframe.name='_sync_iframe'; iframe.style.display='none';
+      document.body.appendChild(iframe); document.body.appendChild(form);
+      form.submit();
+      setTimeout(function(){ document.body.removeChild(form); document.body.removeChild(iframe); }, 3000);
+      localStorage.removeItem('anom1_sync');
+      toast('Enviado via formulario: ' + pend.length + ' registros');
+    } catch(e2) {
+      if (ss) ss.innerHTML = '<span style="color:#EF4444">Error: ' + e.message + '</span>';
+      toast('Sin conexion','#EF4444');
+    }
+  }
+}
+
+function syncNow() { syncData(); }
+
+async function cargarServidor() {
+  var info = document.getElementById('tall-info');
+  if (!navigator.onLine) { toast('Necesitas wifi para cargar','#EF4444'); return; }
+  if (info) info.textContent = '&#8987; Cargando del servidor...';
+  toast('Conectando...');
+  try {
+    // GET con CORS — funciona con Apps Script publicado como "Cualquier usuario"
+    var r = await fetch(API + '?action=getPendientes', {
+      method: 'GET',
+      cache:  'no-cache'
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    var d = await r.json();
+    if (d.ok && d.pendientes) {
+      var locales    = JSON.parse(localStorage.getItem('anom1') || '[]');
+      var mapaLocal  = {};
+      for (var i=0; i<locales.length; i++) mapaLocal[String(locales[i].id)] = i;
+      var nuevos = 0; var actual = 0;
+      for (var i=0; i<d.pendientes.length; i++) {
+        var reg = d.pendientes[i];
+        var rid = String(reg.id || '');
+        if (!rid) continue;
+        if (mapaLocal[rid] !== undefined) {
+          locales[mapaLocal[rid]] = reg; actual++;
+        } else {
+          locales.unshift(reg); nuevos++;
+        }
+      }
+      localStorage.setItem('anom1', JSON.stringify(locales));
+      if (info) info.textContent = nuevos + ' nuevos + ' + actual + ' actualizados. Total: ' + locales.length;
+      updCnt(); renderTaller();
+      toast('&#9989; ' + nuevos + ' nuevos del servidor');
+    } else {
+      toast('Sin pendientes en el servidor');
+      renderTaller();
+    }
+  } catch(e) {
+    if (info) info.textContent = 'Error: ' + e.message;
+    toast('Error de conexion: ' + e.message, '#EF4444');
+  }
+}
+
+function exportCSV() {
+  var datos = JSON.parse(localStorage.getItem('anom1') || '[]');
+  if (!datos.length) { toast('Sin datos para exportar','#EF4444'); return; }
+  var cols = ['ID','Fecha','Operador','Equipo','Disponibilidad','Sede','Lote','Area','Sistema','Subsistema','Parte','Modo Falla','Prioridad','Falla','Obs','Estado','Mecanismo','Tecnico','Ini Rep','Fin Rep','Cod Requisicion','Obs Taller'];
+  var rows = [];
+  for (var i=0; i<datos.length; i++) {
+    var d = datos[i];
+    rows.push([d.id,d.fecha,d.operador,d.equipo,d.disponibilidad,d.sede,d.lote,d.area,d.sistema,d.subsistema,d.parte,d.modo_falla,d.prioridad,d.falla,d.observaciones,d.estado,d.mecanismo,d.tecnico,d.fecha_ini_rep,d.fecha_fin_rep,d.cod_requisicion,d.obs_taller]
+      .map(function(v){ return '"' + (v||'').toString().replace(/"/g,'""') + '"'; }).join(','));
+  }
+  var csv = '\uFEFF' + cols.join(',') + '\n' + rows.join('\n');
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8;'}));
+  a.download = 'Anomalias_' + new Date().toISOString().split('T')[0] + '.csv';
+  a.click();
+  toast('CSV descargado');
+}
+
+function reenviarTodo() {
+  var datos = JSON.parse(localStorage.getItem('anom1') || '[]');
+  if (!datos.length) { toast('No hay datos locales','#EF4444'); return; }
+  // Poner TODOS los registros en la cola de sync
+  localStorage.setItem('anom1_sync', JSON.stringify(datos));
+  toast('Reenviando ' + datos.length + ' registros...');
+  syncData();
+}
+
+function limpiar() {
+  if (confirm('Limpiar registros ya sincronizados?')) {
+    localStorage.removeItem('anom1_sync');
+    toast('Listo'); renderStats();
+  }
+}
+
+function limpiarDuplicadosLocal() {
+  var datos = JSON.parse(localStorage.getItem('anom1') || '[]');
+  var vistos = {};
+  var limpios = [];
+  for (var i = 0; i < datos.length; i++) {
+    var id = String(datos[i].id);
+    if (!vistos[id]) { vistos[id] = true; limpios.push(datos[i]); }
+  }
+  var eliminados = datos.length - limpios.length;
+  localStorage.setItem('anom1', JSON.stringify(limpios));
+  // Tambien limpiar cola sync
+  var sync = JSON.parse(localStorage.getItem('anom1_sync') || '[]');
+  var syncVistos = {};
+  var syncLimpios = [];
+  for (var j = 0; j < sync.length; j++) {
+    var sid = String(sync[j].id);
+    if (!syncVistos[sid]) { syncVistos[sid] = true; syncLimpios.push(sync[j]); }
+  }
+  localStorage.setItem('anom1_sync', JSON.stringify(syncLimpios));
+  updCnt(); renderStats();
+  toast('Limpiados ' + eliminados + ' duplicados locales');
+}
+
+async function resetCompleto() {
+  // Primera confirmacion
+  if (!confirm('ADVERTENCIA\n\nEsto borra TODOS los registros locales de este celular.\n\nAntes de continuar asegurate de haber sincronizado.\n\n¿Continuar?')) return;
+  // Segunda confirmacion (doble seguridad)
+  if (!confirm('¿Estas SEGURO?\n\nEscribe OK en el campo de confirmacion para continuar.')) return;
+  var confirmacion = prompt('Ingresa el PIN (4 digitos) para confirmar el reset:');
+  if (!confirmacion || confirmacion.replace(/\D/g,'').trim() !== D.pin) {
+    toast('PIN incorrecto — reset cancelado', '#EF4444'); return;
+  }
+  // Intentar sincronizar antes de borrar
+  toast('Sincronizando antes de resetear...');
+  try { await reenviarTodo(); } catch(e) {}
+  // Esperar 3 segundos para dar tiempo al sync
+  await new Promise(function(r){ setTimeout(r, 3000); });
+  // Borrar local
+  localStorage.removeItem('anom1');
+  localStorage.removeItem('anom1_sync');
+  localStorage.removeItem('anom1_updates');
+  updCnt(); renderStats();
+  toast('Celular reseteado. Usa Cargar desde servidor.');
+}
+
+function toast(m, c) {
+  var t = document.getElementById('toast');
+  t.textContent = m; t.style.background = c || '#059669';
+  t.className = 'toast on';
+  setTimeout(function(){ t.className = 'toast'; }, 2500);
+}
+
+window.addEventListener('online',  function(){ document.getElementById('ss').innerHTML='<span style="color:#10B981">&#128246; En linea</span>';  syncData(); });
+window.addEventListener('offline', function(){ document.getElementById('ss').innerHTML='<span style="color:#EF4444">&#128245; Sin conexion</span>'; });
+var pinEl = document.getElementById('pinin');
+pinEl.addEventListener('keydown', function(e){ if(e.key==='Enter') chkPin(); });
+pinEl.addEventListener('input', function() {
+  // Solo deja números
+  this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4);
+  // Muestra puntos
+  var mask = document.getElementById('pin-mask');
+  if (mask) mask.textContent = '●'.repeat(this.value.length);
+  // Auto-ingresar cuando llega a 4 dígitos
+  if (this.value.length === 4) {
+    setTimeout(function(){ chkPin(); }, 150);
+  }
+});
+
+// INICIAR
+init();
+</script>
+</body>
+</html>

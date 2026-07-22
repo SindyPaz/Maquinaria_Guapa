@@ -1,0 +1,46 @@
+╔══════════════════════════════════════════════════════════════╗
+║        INSTRUCCIONES DE CONFIGURACIÓN — 5 PASOS             ║
+╚══════════════════════════════════════════════════════════════╝
+
+PASO 1 — Crear Google Sheet
+──────────────────────────────
+1. Ve a https://sheets.google.com y crea una hoja nueva
+2. Copia el ID de la URL (la parte larga entre /d/ y /edit)
+3. Guárdalo para el Paso 2
+
+PASO 2 — Crear Apps Script
+──────────────────────────────
+1. En tu Google Sheet: Extensiones > Apps Script
+2. Borra todo y pega el contenido de apps_script.js
+3. Cambia: const SHEET_ID = 'TU_SHEET_ID_AQUI';
+4. Guarda con Ctrl+S
+
+PASO 3 — Publicar como Web App
+──────────────────────────────
+1. Clic en "Implementar" > "Nueva implementación"
+2. Tipo: Aplicación web
+3. Ejecutar como: Yo (tu correo)
+4. Quién tiene acceso: Cualquier usuario
+5. Implementar > Autorizar > Copiar la URL (/exec)
+
+PASO 4 — Pegar URL en las Apps
+──────────────────────────────
+1. Abre APP1_Anomalias.html con el Bloc de notas
+2. Busca: var API = '...'
+3. Reemplaza la URL por la del Paso 3
+4. Guarda. Repite para APP2_Labores.html
+
+PASO 5 — Distribuir
+──────────────────────────────
+1. Comparte los .html por WhatsApp al equipo
+2. En celular: abrir con Chrome > 3 puntos > Añadir a inicio
+3. PIN del taller: 1234
+
+═══════════════════════════════════════════════
+⚡ SYNC: Sin wifi guarda en el celular.
+   Con wifi sincroniza a Google Sheets.
+═══════════════════════════════════════════════
+🔧 v3 Junio 2026: Corregido "Iniciando..." —
+   la app ahora espera que el navegador termine
+   de cargar antes de ejecutar el código.
+═══════════════════════════════════════════════

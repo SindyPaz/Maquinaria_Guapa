@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Test Mínimo APP1</title>
+<style>
+body{font-family:Arial,sans-serif;padding:20px;background:#0F172A;color:#E2E8F0}
+select,input,textarea{width:100%;padding:12px;margin:8px 0 16px 0;background:#1E293B;border:1.5px solid #334155;border-radius:8px;color:#F1F5F9;font-size:16px;display:block}
+button{width:100%;padding:14px;background:#2563EB;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;margin-top:8px}
+.ok{color:#10B981;font-weight:bold;padding:6px 0;display:block}
+label{font-size:12px;color:#94A3B8;font-weight:600;text-transform:uppercase}
+</style>
+</head>
+<body>
+
+<h2>🔧 Test Mínimo — Solo lo esencial</h2>
+<div id="estado">⏳</div>
+
+<label>Operador</label>
+<select id="r-op"><option value="">Seleccionar...</option></select>
+
+<label>Equipo</label>
+<select id="r-eq"><option value="">Seleccionar...</option></select>
+
+<label>Sistema</label>
+<select id="r-sis" onchange="loadSubs()"><option value="">Seleccionar...</option></select>
+
+<label>Subsistema</label>
+<select id="r-sub"><option value="">Seleccionar...</option></select>
+
+<label>Fecha y Hora</label>
+<input type="datetime-local" id="r-fecha">
+
+<label>Falla</label>
+<textarea id="r-falla" placeholder="Describe la falla..."></textarea>
+
+<button onclick="guardar()">🔴 Guardar</button>
+<div id="resultado" style="margin-top:16px;padding:14px;background:#1E293B;border-radius:10px;display:none"></div>
+
+<script type="application/json" id="_d">{
+  "operadores": [
+    {"codigo":"1","nombre":"MADERA AVILA AMAURIS"},
+    {"codigo":"8","nombre":"BEDOYA GONZALEZ DENIS LEONCIO"},
+    {"codigo":"9","nombre":"MORALES VILLA DIEGO JESUS"},
+    {"codigo":"67","nombre":"GAVIRIA DIAZ CRISTIAN DANIEL"},
+    {"codigo":"3","nombre":"ZAPATA PEÑA ALIRIO"}
+  ],
+  "equipos": [
+    {"codigo":"TA-01","descripcion":"TRACTOR"},
+    {"codigo":"TA-02","descripcion":"TRACTOR"},
+    {"codigo":"TA-26","descripcion":"TRACTOR"},
+    {"codigo":"TA-38","descripcion":"RETROEXCAVADORA"},
+    {"codigo":"AR01","descripcion":"RETROEXCAVADORA"}
+  ],
+  "sistemas": ["Motor","Hidraulico","Transmision","Electrico","Frenos"],
+  "subsistemas": {
+    "Motor": ["Sistema de lubricacion","Sistema de refrigeracion","Sistema de arranque"],
+    "Hidraulico": ["Bomba hidraulica","Deposito fluido","Distribuidor"],
+    "Transmision": ["Caja de cambios","PTO","Reversor"],
+    "Electrico": ["Alimentacion electrica","Sensores","Iluminacion"],
+    "Frenos": ["Freno de servicio","Freno de estacionamiento"]
+  }
+}</script>
+
+<script>
+var DATOS = null;
+
+function init() {
+  try {
+    var el = document.getElementById('_d');
+    var txt = el.textContent || el.innerText;
+    DATOS = JSON.parse(txt);
+
+    fill('r-op', DATOS.operadores, function(o){ return o.codigo + ' - ' + o.nombre; });
+    fill('r-eq', DATOS.equipos,    function(e){ return e.codigo + ' - ' + e.descripcion; });
+    fill('r-sis', DATOS.sistemas);
+
+    var ahora = new Date();
+    ahora.setSeconds(0,0);
+    document.getElementById('r-fecha').value = ahora.toISOString().slice(0,16);
+
+    document.getElementById('estado').innerHTML = '<span class="ok">✅ App iniciada correctamente — ' + DATOS.operadores.length + ' operadores cargados</span>';
+  } catch(e) {
+    document.getElementById('estado').innerHTML = '<span style="color:#EF4444;font-weight:bold">❌ ERROR: ' + e.message + '</span>';
+  }
+}
+
+function fill(id, items, labelFn) {
+  var s = document.getElementById(id);
+  if (!s) return;
+  while (s.options.length > 1) s.remove(1);
+  for (var i = 0; i < items.length; i++) {
+    var item = items[i];
+    var val  = typeof item === 'string' ? item : item.codigo;
+    var lbl  = labelFn ? labelFn(item) : item;
+    s.add(new Option(lbl, val));
+  }
+}
+
+function loadSubs() {
+  var sis = document.getElementById('r-sis').value;
+  var subs = (sis && DATOS && DATOS.subsistemas && DATOS.subsistemas[sis]) ? DATOS.subsistemas[sis] : [];
+  fill('r-sub', subs);
+}
+
+function guardar() {
+  var op  = document.getElementById('r-op');
+  var eq  = document.getElementById('r-eq');
+  var sis = document.getElementById('r-sis').value;
+  var fa  = document.getElementById('r-falla').value.trim();
+  var fe  = document.getElementById('r-fecha').value;
+
+  if (!op.value || !eq.value || !sis || !fa || !fe) {
+    alert('Completa todos los campos');
+    return;
+  }
+
+  var reg = {
+    fecha:     fe,
+    operador:  op.options[op.selectedIndex].text,
+    equipo:    eq.options[eq.selectedIndex].text,
+    sistema:   sis,
+    subsistema:document.getElementById('r-sub').value,
+    falla:     fa
+  };
+
+  var todos = JSON.parse(localStorage.getItem('test_anomalias') || '[]');
+  todos.unshift(reg);
+  localStorage.setItem('test_anomalias', JSON.stringify(todos));
+
+  var r = document.getElementById('resultado');
+  r.style.display = 'block';
+  r.innerHTML = '<span class="ok">✅ Guardado OK</span><br><small style="color:#64748B">' + JSON.stringify(reg) + '</small>';
+}
+
+// Iniciar
+init();
+</script>
+</body>
+</html>
