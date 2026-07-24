@@ -106,7 +106,7 @@ textarea{resize:vertical;min-height:70px}
     <input type="hidden" id="a-finca-act" value=""></div>
     <div class="fg"><label>Lote</label>
     <div class="ss-trig" id="a-lote-trig" onclick="openSS('a-lote','Buscar lote...')"><span id="a-lote-trig-txt" style="color:#4B7A5C">Sin lote...</span><span>&#9660;</span></div>
-    <select id="a-lote" style="display:none"><option value="">Sin lote...</option></select></div>
+    <input type="hidden" id="a-lote" value=""></div>
     <div class="fg"><label>Implemento</label>
     <div class="ss-trig" id="a-impl-trig" onclick="openSS('a-impl','Buscar implemento...')"><span id="a-impl-trig-txt" style="color:#4B7A5C">Sin implemento...</span><span>&#9660;</span></div>
     <select id="a-impl" style="display:none"><option value="">Sin implemento...</option></select></div>
@@ -611,7 +611,8 @@ function cerrarTurno() {
   turnoActivo.horometro_fin = parseFloat(hf) || 0;
   turnoActivo.acpm          = parseFloat(document.getElementById('c-acpm').value) || 0;
   turnoActivo.estado        = 'cerrado';
-  turnoActivo.fecha_cierre  = new Date().toISOString().slice(0,16);
+  var _nc = new Date(); var _pad = function(n){return n<10?'0'+n:n;};
+  turnoActivo.fecha_cierre  = _nc.getFullYear()+'-'+_pad(_nc.getMonth()+1)+'-'+_pad(_nc.getDate())+'T'+_pad(_nc.getHours())+':'+_pad(_nc.getMinutes());
 
   var todos = JSON.parse(localStorage.getItem(STORE) || '[]');
   todos.unshift(turnoActivo);
