@@ -45,6 +45,7 @@ textarea{resize:vertical;min-height:70px}
 .act-row .act-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .act-num{font-size:13px;font-weight:700;color:#10B981}
 .del-btn{background:#7F1D1D;border:none;color:#FCA5A5;border-radius:7px;padding:4px 10px;font-size:12px;cursor:pointer}
+.edit-btn{background:#1E3A5F;border:none;color:#93C5FD;border-radius:7px;padding:4px 10px;font-size:12px;cursor:pointer;margin-right:4px}
 .emp{text-align:center;padding:30px 16px;color:#2D6A40}
 .turno-info{background:#0F2318;border:1px solid #10B981;border-radius:11px;padding:13px;margin-bottom:12px}
 .turno-lbl{font-size:11px;font-weight:700;color:#10B981;text-transform:uppercase;margin-bottom:4px}
@@ -115,7 +116,7 @@ textarea{resize:vertical;min-height:70px}
       <div class="fg" style="flex:1"><label>Unidad</label><select id="a-unidad"><option value="">-</option></select></div>
     </div>
     <div class="fg"><label>Observaciones</label><textarea id="a-obs" placeholder="Opcional..."></textarea></div>
-    <button class="btn btn-act" onclick="agregarActividad()">&#10010; Agregar Actividad</button>
+    <button class="btn btn-act" id="btn-agregar-act" onclick="agregarActividad()">&#10010; Agregar Actividad</button>
   </div>
   <div class="card">
     <div class="ct">&#128203; Actividades del Turno <span class="cnt" id="cnt2">0</span></div>
@@ -529,7 +530,18 @@ function agregarActividad() {
     obs:            document.getElementById('a-obs').value
   };
 
-  turnoActivo.actividades.push(act);
+  // Si estamos editando, reemplazar en lugar de agregar
+  if (editandoIdx >= 0 && editandoIdx < turnoActivo.actividades.length) {
+    act.id = turnoActivo.actividades[editandoIdx].id; // conservar ID original
+    turnoActivo.actividades.splice(editandoIdx, 1, act);
+    editandoIdx = -1;
+    var btn = document.getElementById('btn-agregar-act');
+    if (btn) { btn.innerHTML = '&#10010; Agregar Actividad'; btn.style.background = ''; }
+    toast('Actividad actualizada');
+  } else {
+    turnoActivo.actividades.push(act);
+    toast('Actividad agregada');
+  }
   guardarTurnoActivo(turnoActivo);
   renderActividadesTurno();
   updCnt();
@@ -560,14 +572,54 @@ function agregarActividad() {
     var ft = document.getElementById('a-finca-act-trig-txt');
     if (ft) { ft.textContent = turnoActivo.finca || 'Finca del turno...'; ft.parentElement.classList.toggle('sel', !!turnoActivo.finca); }
   }
+}
 
-  toast('Actividad agregada');
+var editandoIdx = -1;
+
+function editarActividad(idx) {
+  if (!turnoActivo || idx < 0 || idx >= turnoActivo.actividades.length) return;
+  var a = turnoActivo.actividades[idx];
+  editandoIdx = idx;
+
+  document.getElementById('a-hora').value  = a.hora || '';
+  document.getElementById('a-labor').value = a.labor || '';
+  document.getElementById('a-lote').value  = a.lote || '';
+  document.getElementById('a-impl').value  = a.implemento || '';
+  document.getElementById('a-cant').value  = a.cantidad || '';
+  document.getElementById('a-obs').value   = a.obs || '';
+
+  // Actualizar displays de los searchable triggers
+  var lt = document.getElementById('a-labor-trig-txt');
+  if (lt) { lt.textContent = a.labor_desc || a.labor || 'Seleccionar labor...'; lt.parentElement.classList.toggle('sel', !!a.labor); }
+  var lot = document.getElementById('a-lote-trig-txt');
+  if (lot) { lot.textContent = a.lote || 'Sin lote...'; lot.parentElement.classList.toggle('sel', !!a.lote); }
+  var it = document.getElementById('a-impl-trig-txt');
+  if (it) { it.textContent = a.impl_desc || a.implemento || 'Sin implemento...'; it.parentElement.classList.toggle('sel', !!a.implemento); }
+
+  var us = document.getElementById('a-unidad');
+  if (us && a.unidad) us.value = a.unidad;
+
+  var fa = document.getElementById('a-finca-act');
+  if (fa) fa.value = a.finca || '';
+  var ft = document.getElementById('a-finca-act-trig-txt');
+  if (ft) { ft.textContent = a.finca || 'Finca del turno...'; ft.parentElement.classList.toggle('sel', !!a.finca); }
+
+  var btn = document.getElementById('btn-agregar-act');
+  if (btn) { btn.innerHTML = '&#9998; Guardar Cambios'; btn.style.background = 'linear-gradient(135deg,#D97706,#92400E)'; }
+
+  toast('Editando Act. ' + (idx+1) + ' — modifica y toca Guardar Cambios');
+  var top = document.getElementById('a-hora');
+  if (top) top.scrollIntoView({behavior:'smooth', block:'center'});
 }
 
 function eliminarActividad(idx) {
   if (!turnoActivo) return;
   if (!confirm('Eliminar esta actividad?')) return;
   turnoActivo.actividades.splice(idx, 1);
+  // Cancelar edición activa si aplica
+  editandoIdx = -1;
+  var btn = document.getElementById('btn-agregar-act');
+  if (btn) { btn.innerHTML = '&#10010; Agregar Actividad'; btn.style.background = ''; }
   guardarTurnoActivo(turnoActivo);
   renderActividadesTurno();
   updCnt();
@@ -588,7 +640,10 @@ function renderActividadesTurno() {
     var a = turnoActivo.actividades[i];
     html += '<div class="act-row">';
     html += '<div class="act-hdr"><span class="act-num">Act. ' + (i+1) + '</span>';
-    html += '<button class="del-btn" onclick="eliminarActividad(' + i + ')">&#10005; Quitar</button></div>';
+    html += '<span>';
+    html += '<button class="edit-btn" onclick="editarActividad(' + i + ')">&#9998; Editar</button>';
+    html += '<button class="del-btn" onclick="eliminarActividad(' + i + ')">&#10005; Quitar</button>';
+    html += '</span></div>';
     html += '<div style="font-size:13px;color:#F1F5F9;font-weight:600;margin-bottom:3px">' + a.labor_desc + '</div>';
     html += '<div style="font-size:11px;color:#6EE7B7">&#128336; ' + (a.hora || '-') + '</div>';
     if (a.lote) html += '<div style="font-size:11px;color:#94A3B8">Lote: ' + a.lote + '</div>';
@@ -606,9 +661,17 @@ function cerrarTurno() {
   marcarError('c-horo-fin', !!hf);
   if (!hf) { toast('Ingresa el horometro final', '#EF4444'); return; }
 
+  var hfNum = parseFloat(hf) || 0;
+  var hiNum = parseFloat(turnoActivo.horometro_ini) || 0;
+  if (hfNum < hiNum) {
+    marcarError('c-horo-fin', false);
+    toast('El horometro final (' + hfNum + ') no puede ser menor al inicial (' + hiNum + ')', '#EF4444');
+    return;
+  }
+
   if (!confirm('Cerrar este turno?')) return;
 
-  turnoActivo.horometro_fin = parseFloat(hf) || 0;
+  turnoActivo.horometro_fin = hfNum;
   turnoActivo.acpm          = parseFloat(document.getElementById('c-acpm').value) || 0;
   turnoActivo.estado        = 'cerrado';
   var _nc = new Date(); var _pad = function(n){return n<10?'0'+n:n;};
