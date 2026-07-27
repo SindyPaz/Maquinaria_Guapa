@@ -1,6 +1,6 @@
 // Service Worker - Labores Maquinaria PWA
 // Versión: cambia este número para forzar actualización en todos los dispositivos
-var CACHE_VERSION = 'labores-v1.2';
+var CACHE_VERSION = 'labores-v1.3';
 
 var APP_SHELL = [
   './APP2_Labores.html',
