@@ -296,7 +296,7 @@ var disp = 'Varada';
 var prio = 'Alta';
 var tallerOK = false;
 var API = 'https://script.google.com/macros/s/AKfycbyL1ZTEVzwYUBNFnzp0JyoPggFRe6sl1p0uSGF28yo-FV_zZfnX_yiNwpB8mW0IoVH8/exec';
-var RESET_V = '2026-06-10-v1';
+var RESET_V = '2026-07-27-v2';
 
 window.onerror = function(msg, src, line) {
   var ss = document.getElementById('ss');
@@ -695,16 +695,21 @@ function saveTaller(id) {
   updCnt(); renderTaller(); toast('&#9989; Guardado y enviado al servidor');
 }
 
+function safeParseLS(key) {
+  try { return JSON.parse(localStorage.getItem(key) || '[]'); }
+  catch(e) { localStorage.removeItem(key); return []; }
+}
+
 function updCnt() {
-  var datos = JSON.parse(localStorage.getItem('anom1') || '[]');
+  var datos = safeParseLS('anom1');
   var n = 0;
   for (var i=0; i<datos.length; i++) { if (datos[i].estado !== 'Cerrada') n++; }
   document.getElementById('cnt').textContent = n;
 }
 
 function renderStats() {
-  var datos  = JSON.parse(localStorage.getItem('anom1') || '[]');
-  var nosync = JSON.parse(localStorage.getItem('anom1_sync') || '[]');
+  var datos  = safeParseLS('anom1');
+  var nosync = safeParseLS('anom1_sync');
   var var_= 0;
   for (var i=0; i<datos.length; i++) { if (datos[i].disponibilidad === 'Varada') var_++; }
   document.getElementById('expstats').innerHTML =
@@ -716,7 +721,7 @@ function renderStats() {
 }
 
 async function syncData() {
-  var pend = JSON.parse(localStorage.getItem('anom1_sync') || '[]');
+  var pend = safeParseLS('anom1_sync');
   if (!pend.length) { toast('No hay datos pendientes'); return; }
   var ss = document.getElementById('ss');
   if (ss) ss.innerHTML = '<span style="color:#F59E0B">&#128260; Enviando ' + pend.length + '...</span>';
@@ -941,16 +946,34 @@ function filterSS() {
   renderSSList(filtered);
 }
 
+function escH(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+var SS_RENDERED_ITEMS = [];
+
 function renderSSList(items) {
   var list = document.getElementById('ss-list');
+  SS_RENDERED_ITEMS = items;
   if (!items.length) {
     list.innerHTML = '<div class="ss-empty">Sin resultados</div>';
+    list.onclick = null;
     return;
   }
-  list.innerHTML = items.map(function(it){
-    var sub = it.sub ? '<span class="ss-sub">' + it.sub + '</span>' : '';
-    return '<div class="ss-item" onclick="selectSS(' + JSON.stringify(it.value) + ',' + JSON.stringify(it.label) + ')">' + it.label + sub + '</div>';
+  list.innerHTML = items.map(function(it, idx){
+    var sub = it.sub ? '<span class="ss-sub">' + escH(it.sub) + '</span>' : '';
+    return '<div class="ss-item" data-ss="' + idx + '">' + escH(it.label) + sub + '</div>';
   }).join('');
+  // Event delegation: un solo listener evita conflictos de comillas en onclick
+  list.onclick = function(e) {
+    var el = e.target.closest ? e.target.closest('.ss-item') : (function(){
+      var t = e.target;
+      while (t && t !== list) { if (t.className && t.className.indexOf('ss-item') >= 0) return t; t = t.parentNode; }
+      return null;
+    })();
+    if (!el) return;
+    var idx = parseInt(el.getAttribute('data-ss'), 10);
+    var it = SS_RENDERED_ITEMS[idx];
+    if (it) selectSS(it.value, it.label);
+  };
 }
 
 function selectSS(value, label) {
