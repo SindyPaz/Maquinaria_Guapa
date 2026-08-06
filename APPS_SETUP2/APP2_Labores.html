@@ -92,9 +92,34 @@ textarea{resize:vertical;min-height:70px}
 <div id="pg-turno" class="pg on">
 
 <div id="div-turno-activo" style="display:none">
-  <div class="turno-info">
-    <div class="turno-lbl">&#128994; Turno Activo</div>
-    <div class="turno-val" id="turno-resumen">-</div>
+  <div class="turno-info" style="display:flex;align-items:center;gap:8px">
+    <div style="flex:1">
+      <div class="turno-lbl">&#128994; Turno Activo</div>
+      <div class="turno-val" id="turno-resumen">-</div>
+    </div>
+    <button onclick="editarTurnoActivo()" style="background:rgba(37,99,235,.25);border:1px solid #2563EB;color:#93C5FD;padding:7px 11px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">&#9998; Editar</button>
+  </div>
+  <!-- Panel de edición del turno activo -->
+  <div id="div-editar-turno" style="display:none">
+    <div class="card" style="border-color:#D97706;margin-top:12px">
+      <div class="ct" style="color:#FCD34D">&#9998; Editar Datos del Turno</div>
+      <div class="fg"><label>Fecha *</label><input type="date" id="et-fecha"></div>
+      <div class="fg"><label>Operador *</label>
+        <div class="ss-trig" id="et-op-trig" onclick="openSS('et-op','Buscar operador...')"><span id="et-op-trig-txt" style="color:#4B7A5C">Seleccionar operador...</span><span>&#9660;</span></div>
+        <select id="et-op" style="display:none"><option value="">Seleccionar operador...</option></select></div>
+      <div class="fg"><label>Equipo *</label>
+        <div class="ss-trig" id="et-eq-trig" onclick="openSS('et-eq','Buscar equipo...')"><span id="et-eq-trig-txt" style="color:#4B7A5C">Seleccionar equipo...</span><span>&#9660;</span></div>
+        <select id="et-eq" style="display:none"><option value="">Seleccionar equipo...</option></select></div>
+      <div class="fg"><label>Finca *</label>
+        <div class="ss-trig" id="et-finca-trig" onclick="openSS('et-finca','Buscar finca...')"><span id="et-finca-trig-txt" style="color:#4B7A5C">Seleccionar finca...</span><span>&#9660;</span></div>
+        <select id="et-finca" style="display:none"><option value="">Seleccionar finca...</option></select></div>
+      <div class="fg"><label>Area</label><select id="et-area"><option value="">Seleccionar area...</option></select></div>
+      <div class="fg"><label>Horometro Inicio *</label><input type="number" id="et-horo" placeholder="0.0" step="0.1" min="0"></div>
+      <div style="display:flex;gap:8px;margin-top:6px">
+        <button class="btn btn-g" style="flex:1;margin-top:0" onclick="guardarEdicionTurno()">&#9989; Guardar Cambios</button>
+        <button class="btn btn-o" style="flex:1;margin-top:0" onclick="cancelarEdicionTurno()">&#10005; Cancelar</button>
+      </div>
+    </div>
   </div>
   <div class="card">
     <div class="ct">&#10010; Nueva Actividad</div>
@@ -102,18 +127,18 @@ textarea{resize:vertical;min-height:70px}
     <div class="fg"><label>Codigo de Labor *</label>
     <div class="ss-trig" id="a-labor-trig" onclick="openSS('a-labor','Buscar labor...')"><span id="a-labor-trig-txt" style="color:#4B7A5C">Seleccionar labor...</span><span>&#9660;</span></div>
     <select id="a-labor" style="display:none"><option value="">Seleccionar labor...</option></select></div>
-  <div class="fg"><label>Finca</label>
+  <div class="fg"><label>Finca *</label>
     <div class="ss-trig" id="a-finca-act-trig" onclick="openSS('a-finca-act','Buscar finca...')"><span id="a-finca-act-trig-txt" style="color:#4B7A5C">Finca del turno...</span><span>&#9660;</span></div>
     <input type="hidden" id="a-finca-act" value=""></div>
-    <div class="fg"><label>Lote</label>
+    <div class="fg"><label>Lote *</label>
     <div class="ss-trig" id="a-lote-trig" onclick="openSS('a-lote','Buscar lote...')"><span id="a-lote-trig-txt" style="color:#4B7A5C">Sin lote...</span><span>&#9660;</span></div>
     <input type="hidden" id="a-lote" value=""></div>
-    <div class="fg"><label>Implemento</label>
-    <div class="ss-trig" id="a-impl-trig" onclick="openSS('a-impl','Buscar implemento...')"><span id="a-impl-trig-txt" style="color:#4B7A5C">Sin implemento...</span><span>&#9660;</span></div>
+    <div class="fg" id="fg-implemento"><label id="lbl-implemento">Implemento</label>
+    <div class="ss-trig" id="a-impl-trig" onclick="abrirImplemento()"><span id="a-impl-trig-txt" style="color:#4B7A5C">Sin implemento...</span><span>&#9660;</span></div>
     <select id="a-impl" style="display:none"><option value="">Sin implemento...</option></select></div>
     <div class="rg">
-      <div class="fg" style="flex:1"><label>Cantidad</label><input type="number" id="a-cant" placeholder="0.00" step="0.01" min="0"></div>
-      <div class="fg" style="flex:1"><label>Unidad</label><select id="a-unidad"><option value="">-</option></select></div>
+      <div class="fg" style="flex:1"><label>Cantidad *</label><input type="number" id="a-cant" placeholder="0.00" step="0.01" min="0"></div>
+      <div class="fg" style="flex:1"><label>Unidad *</label><select id="a-unidad"><option value="">-</option></select></div>
     </div>
     <div class="fg"><label>Observaciones</label><textarea id="a-obs" placeholder="Opcional..."></textarea></div>
     <button class="btn btn-act" id="btn-agregar-act" onclick="agregarActividad()">&#10010; Agregar Actividad</button>
@@ -124,10 +149,7 @@ textarea{resize:vertical;min-height:70px}
   </div>
   <div class="card" style="border-color:#DC2626">
     <div class="ct" style="color:#FCA5A5">&#128308; Cerrar Turno</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-      <div class="fg"><label>Horometro Final *</label><input type="number" id="c-horo-fin" placeholder="0.0" step="0.1" min="0"></div>
-      <div class="fg"><label>ACPM (galones)</label><input type="number" id="c-acpm" placeholder="0.0" step="0.1" min="0"></div>
-    </div>
+    <div class="fg"><label>Horometro Final *</label><input type="number" id="c-horo-fin" placeholder="0.0" step="0.1" min="0"></div>
     <button class="btn btn-r" onclick="cerrarTurno()">&#128308; Cerrar Turno</button>
   </div>
 </div>
@@ -235,13 +257,13 @@ function closeSS() {
 }
 
 function getSSItems(fid) {
-  if (fid === 't-op') {
+  if (fid === 't-op' || fid === 'et-op') {
     return D.operadores.map(function(o){ return {v:o.codigo, l:o.codigo+' - '+o.nombre}; });
   }
-  if (fid === 't-eq') {
+  if (fid === 't-eq' || fid === 'et-eq') {
     return D.equipos.map(function(e){ return {v:e.codigo, l:e.codigo+(e.descripcion?' - '+e.descripcion:'')}; });
   }
-  if (fid === 't-finca' || fid === 'a-finca-act') {
+  if (fid === 't-finca' || fid === 'a-finca-act' || fid === 'et-finca') {
     var items = [{v:'', l:'— Sin finca —'}];
     D.fincas.forEach(function(f){ items.push({v:f, l:f}); });
     return items;
@@ -308,6 +330,10 @@ function selectSSItem(item) {
     var lt = document.getElementById('a-lote-trig-txt');
     if (lt) { lt.textContent = 'Sin lote...'; document.getElementById('a-lote-trig').classList.remove('sel'); }
   }
+  if (fid === 't-eq') {
+    // Actualizar estado del campo implemento según el equipo seleccionado
+    actualizarEstadoImplemento(item.v);
+  }
   closeSS();
 }
 
@@ -340,6 +366,11 @@ function init() {
   fill('a-labor', D.labores,      function(l){ return l.codigo + ' - ' + l.descripcion; });
   fill('a-impl',  D.implementos,  function(i){ return i.codigo + ' - ' + i.descripcion; });
   fill('a-unidad', D.unidades);
+  // También llenar los selectores de edición de turno
+  fill('et-op',   D.operadores, function(o){ return o.codigo + ' - ' + o.nombre; });
+  fill('et-eq',   D.equipos,    function(e){ return e.codigo + (e.descripcion ? ' - ' + e.descripcion : ''); });
+  fill('et-finca', D.fincas);
+  fill('et-area',  D.areas);
   // Init finca de actividad con finca del turno al mostrar
   document.getElementById('a-finca-act').value = '';
 
@@ -381,6 +412,12 @@ function cargarListasServidor() {
       fill('a-labor', D.labores,     function(l){ return l.codigo + ' - ' + l.descripcion; });
       fill('a-impl',  D.implementos, function(i){ return i.codigo + ' - ' + i.descripcion; });
       fill('a-unidad', D.unidades);
+      fill('et-op',   D.operadores, function(o){ return o.codigo + ' - ' + o.nombre; });
+      fill('et-eq',   D.equipos,    function(e){ return e.codigo + (e.descripcion ? ' - ' + e.descripcion : ''); });
+      fill('et-finca', D.fincas);
+      fill('et-area',  D.areas);
+      // Re-evaluar implemento del turno activo si existe
+      if (turnoActivo) actualizarEstadoImplemento(turnoActivo.equipo);
       // Guardar en cache para uso offline
       try { localStorage.setItem('listas_cache', JSON.stringify({ts: Date.now(), listas: L})); } catch(e) {}
     })
@@ -438,6 +475,8 @@ function mostrarEstadoTurno() {
     document.getElementById('a-finca-act').value = turnoActivo.finca || '';
     var aft = document.getElementById('a-finca-act-trig-txt');
     if (aft) { aft.textContent = turnoActivo.finca || 'Finca del turno...'; aft.parentElement.classList.toggle('sel', !!turnoActivo.finca); }
+    // Actualizar estado de implemento según equipo del turno activo
+    actualizarEstadoImplemento(turnoActivo.equipo);
     renderActividadesTurno();
   } else {
     divActivo.style.display = 'none';
@@ -488,16 +527,39 @@ function iniciarTurno() {
 function agregarActividad() {
   if (!turnoActivo) { toast('Primero inicia un turno', '#EF4444'); return; }
 
-  var ho = document.getElementById('a-hora').value;
-  var ls = document.getElementById('a-labor');
+  var ho  = document.getElementById('a-hora').value;
+  var ls  = document.getElementById('a-labor');
+  var fi  = document.getElementById('a-finca-act').value;
+  var lo  = document.getElementById('a-lote').value;
+  var ca  = document.getElementById('a-cant').value;
+  var un  = document.getElementById('a-unidad').value;
+  var implTiene = turnoActivo ? equipoTieneImpl(turnoActivo.equipo) : true;
+  var implV = document.getElementById('a-impl').value;
 
   var errores = [];
-  marcarError('a-hora',  !!ho);      if (!ho)       errores.push('Hora Inicio');
-  marcarError('a-labor', !!ls.value); if (!ls.value) errores.push('Codigo de Labor');
+  marcarError('a-hora',      !!ho);       if (!ho)       errores.push('Hora Inicio');
+  marcarError('a-labor',     !!ls.value); if (!ls.value) errores.push('Codigo de Labor');
+  marcarError('a-finca-act', !!fi);       if (!fi)       errores.push('Finca');
+  marcarError('a-lote',      !!lo);       if (!lo)       errores.push('Lote');
+  marcarError('a-cant',      !!ca);       if (!ca)       errores.push('Cantidad');
+  marcarError('a-unidad',    !!un);       if (!un)       errores.push('Unidad');
+  if (implTiene) {
+    marcarError('a-impl', !!implV);       if (!implV)    errores.push('Implemento');
+  }
 
   if (errores.length > 0) {
     toast('Faltan: ' + errores.join(', '), '#EF4444');
     return;
+  }
+
+  // Validar que la hora no sea menor a la de la actividad anterior (solo al agregar, no al editar)
+  if (editandoIdx < 0 && turnoActivo.actividades.length > 0) {
+    var ultimaAct = turnoActivo.actividades[turnoActivo.actividades.length - 1];
+    if (ultimaAct.hora && ho < ultimaAct.hora) {
+      marcarError('a-hora', false);
+      toast('La hora (' + ho.slice(11) + ') no puede ser anterior a la última actividad (' + ultimaAct.hora.slice(11) + ')', '#EF4444');
+      return;
+    }
   }
 
   var us = document.getElementById('a-unidad');
@@ -672,7 +734,7 @@ function cerrarTurno() {
   if (!confirm('Cerrar este turno?')) return;
 
   turnoActivo.horometro_fin = hfNum;
-  turnoActivo.acpm          = parseFloat(document.getElementById('c-acpm').value) || 0;
+  turnoActivo.acpm          = 0;
   turnoActivo.estado        = 'cerrado';
   var _nc = new Date(); var _pad = function(n){return n<10?'0'+n:n;};
   turnoActivo.fecha_cierre  = _nc.getFullYear()+'-'+_pad(_nc.getMonth()+1)+'-'+_pad(_nc.getDate())+'T'+_pad(_nc.getHours())+':'+_pad(_nc.getMinutes());
@@ -688,7 +750,6 @@ function cerrarTurno() {
   if (navigator.onLine) syncData();
 
   document.getElementById('c-horo-fin').value = '';
-  document.getElementById('c-acpm').value     = '';
   turnoActivo = null;
   guardarTurnoActivo(null);
   mostrarEstadoTurno();
@@ -941,6 +1002,145 @@ window.addEventListener('appinstalled', function() {
   var btn = document.getElementById('btn-instalar');
   if (btn) btn.style.display = 'none';
 });
+
+// ── Mapa de equipos SIN implemento ───────────────────────────────────────────
+var SIN_IMPL = {
+  'TA-08':1,'TA-09':1,'TA-10':1,'TA-11':1,'TA-12':1,'TA-18':1,'TA-22':1,
+  'TA-27':1,'TA-28':1,'TA-29':1,'TA-30':1,'TA-31':1,'TA-32':1,'TA-35':1,
+  'TA-38':1,'TA-39':1,'TA-39 ':1,'TA-40':1,'TA-41':1,'TA-42':1,'TA-43':1,
+  'TA-44':1,'TA-45':1,'TA-46':1,'TA-47':1,'TA-48':1,'TA-49':1,'TA-50':1,'TA-51':1,
+  'Camión':1,'Camioneta':1,'Planchon':1,'Mula':1,'Camión SH':1,'NISSAN ':1,'NISSAN':1,'N/A':1,
+  'Montacarga - Toyota JP':1,'Montacarga HELI':1,'Hitachi -120':1,'Hitachi -130':1,
+  'Hunday - 60':1,'Hunday -220':1,'Hunday -220 ':1,'Lon Kin-60':1,
+  'Bulldozer 550':1,'Bulldozer D4C':1,'Bulldozer-D5-R':1,'ZOOMLION -75':1,'ZOOMLION -75 ':1
+};
+
+function equipoTieneImpl(codigoEquipo) {
+  if (!codigoEquipo) return true;
+  var cod = String(codigoEquipo).trim();
+  // Si el servidor envía campo explícito tiene_implemento
+  for (var i = 0; i < (D && D.equipos ? D.equipos.length : 0); i++) {
+    if (D.equipos[i].codigo === codigoEquipo && typeof D.equipos[i].tiene_implemento !== 'undefined') {
+      return !!D.equipos[i].tiene_implemento;
+    }
+  }
+  // Lista estática de equipos sin implemento
+  if (SIN_IMPL[cod]) return false;
+  // Heurística por descripción del equipo
+  for (var i = 0; i < (D && D.equipos ? D.equipos.length : 0); i++) {
+    if (D.equipos[i].codigo === codigoEquipo) {
+      var desc = (D.equipos[i].descripcion || '').toUpperCase();
+      if (desc.indexOf('RETRO') !== -1 || desc.indexOf('BULLDOZER') !== -1 ||
+          desc.indexOf('CAMION') !== -1 || desc.indexOf('CAMIONETA') !== -1 ||
+          desc.indexOf('MONTACARG') !== -1 || desc.indexOf('DRON') !== -1 ||
+          desc.indexOf('PLANTA') !== -1 || desc.indexOf('JIMMY') !== -1 ||
+          desc.indexOf('MOTOCARRO') !== -1 || desc.indexOf('PAJARITA') !== -1 ||
+          desc.indexOf('FORD CARGO') !== -1) return false;
+      break;
+    }
+  }
+  return true;
+}
+
+function actualizarEstadoImplemento(codigoEquipo) {
+  var tieneImpl = equipoTieneImpl(codigoEquipo);
+  var fg    = document.getElementById('fg-implemento');
+  var trig  = document.getElementById('a-impl-trig');
+  var lbl   = document.getElementById('lbl-implemento');
+  if (!fg || !trig) return;
+  if (tieneImpl) {
+    fg.style.opacity   = '1';
+    trig.style.pointerEvents = 'auto';
+    trig.style.opacity = '1';
+    if (lbl) lbl.textContent = 'Implemento *';
+  } else {
+    // Limpiar selección y deshabilitar
+    document.getElementById('a-impl').value = '';
+    var it = document.getElementById('a-impl-trig-txt');
+    if (it) { it.textContent = 'Sin implemento...'; trig.classList.remove('sel'); }
+    fg.style.opacity   = '0.4';
+    trig.style.pointerEvents = 'none';
+    trig.style.opacity = '0.4';
+    if (lbl) lbl.textContent = 'Implemento (N/A)';
+  }
+}
+
+function abrirImplemento() {
+  if (!turnoActivo || equipoTieneImpl(turnoActivo.equipo)) {
+    openSS('a-impl', 'Buscar implemento...');
+  }
+}
+
+// ── Editar datos generales del turno activo ───────────────────────────────────
+function editarTurnoActivo() {
+  if (!turnoActivo) return;
+  var panel = document.getElementById('div-editar-turno');
+  if (!panel) return;
+  // Pre-llenar con datos actuales
+  document.getElementById('et-fecha').value = turnoActivo.fecha || '';
+  document.getElementById('et-op').value    = turnoActivo.operador || '';
+  document.getElementById('et-eq').value    = turnoActivo.equipo   || '';
+  document.getElementById('et-finca').value = turnoActivo.finca    || '';
+  document.getElementById('et-area').value  = turnoActivo.area     || '';
+  document.getElementById('et-horo').value  = turnoActivo.horometro_ini || '';
+  // Actualizar textos de los triggers
+  var opNombre = turnoActivo.operador_nombre || turnoActivo.operador || '';
+  var eqDesc   = turnoActivo.equipo_desc     || turnoActivo.equipo   || '';
+  setTrigTxt('et-op-trig-txt',    opNombre,                  'Seleccionar operador...');
+  setTrigTxt('et-eq-trig-txt',    eqDesc,                    'Seleccionar equipo...');
+  setTrigTxt('et-finca-trig-txt', turnoActivo.finca || '',   'Seleccionar finca...');
+  document.getElementById('et-op-trig').classList.toggle('sel',    !!turnoActivo.operador);
+  document.getElementById('et-eq-trig').classList.toggle('sel',    !!turnoActivo.equipo);
+  document.getElementById('et-finca-trig').classList.toggle('sel', !!turnoActivo.finca);
+  panel.style.display = 'block';
+  panel.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function setTrigTxt(id, val, placeholder) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = val || placeholder;
+}
+
+function guardarEdicionTurno() {
+  var fe = document.getElementById('et-fecha').value;
+  var os = document.getElementById('et-op');
+  var es = document.getElementById('et-eq');
+  var fi = document.getElementById('et-finca');
+  var ho = document.getElementById('et-horo').value;
+
+  var errores = [];
+  marcarError('et-fecha', !!fe);     if (!fe)       errores.push('Fecha');
+  marcarError('et-op',    !!os.value); if (!os.value) errores.push('Operador');
+  marcarError('et-eq',    !!es.value); if (!es.value) errores.push('Equipo');
+  marcarError('et-finca', !!fi.value); if (!fi.value) errores.push('Finca');
+  marcarError('et-horo',  !!ho);      if (!ho)       errores.push('Horometro Inicio');
+
+  if (errores.length > 0) {
+    toast('Faltan: ' + errores.join(', '), '#EF4444');
+    return;
+  }
+
+  // Actualizar turno activo
+  turnoActivo.fecha           = fe;
+  turnoActivo.operador        = os.value;
+  turnoActivo.operador_nombre = os.options[os.selectedIndex].text;
+  turnoActivo.equipo          = es.value;
+  turnoActivo.equipo_desc     = es.options[es.selectedIndex].text;
+  turnoActivo.finca           = fi.value;
+  turnoActivo.area            = document.getElementById('et-area').value;
+  turnoActivo.horometro_ini   = parseFloat(ho) || 0;
+
+  guardarTurnoActivo(turnoActivo);
+  mostrarEstadoTurno();
+  cancelarEdicionTurno();
+  toast('Turno actualizado correctamente');
+}
+
+function cancelarEdicionTurno() {
+  var panel = document.getElementById('div-editar-turno');
+  if (panel) panel.style.display = 'none';
+}
 
 try { init(); } catch(e) {
   var ss = document.getElementById('ss');
