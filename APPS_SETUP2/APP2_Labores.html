@@ -137,8 +137,8 @@ textarea{resize:vertical;min-height:70px}
     <div class="ss-trig" id="a-impl-trig" onclick="abrirImplemento()"><span id="a-impl-trig-txt" style="color:#4B7A5C">Sin implemento...</span><span>&#9660;</span></div>
     <select id="a-impl" style="display:none"><option value="">Sin implemento...</option></select></div>
     <div class="rg">
-      <div class="fg" style="flex:1"><label>Cantidad *</label><input type="number" id="a-cant" placeholder="0.00" step="0.01" min="0"></div>
-      <div class="fg" style="flex:1"><label>Unidad *</label><select id="a-unidad"><option value="">-</option></select></div>
+      <div class="fg" style="flex:1"><label>Cantidad</label><input type="number" id="a-cant" placeholder="0.00" step="0.01" min="0"></div>
+      <div class="fg" style="flex:1"><label>Unidad</label><select id="a-unidad"><option value="">-</option></select></div>
     </div>
     <div class="fg"><label>Observaciones</label><textarea id="a-obs" placeholder="Opcional..."></textarea></div>
     <button class="btn btn-act" id="btn-agregar-act" onclick="agregarActividad()">&#10010; Agregar Actividad</button>
@@ -149,7 +149,9 @@ textarea{resize:vertical;min-height:70px}
   </div>
   <div class="card" style="border-color:#DC2626">
     <div class="ct" style="color:#FCA5A5">&#128308; Cerrar Turno</div>
-    <div class="fg"><label>Horometro Final *</label><input type="number" id="c-horo-fin" placeholder="0.0" step="0.1" min="0"></div>
+    <div style="display:grid;grid-template-columns:1fr;gap:8px">
+      <div class="fg"><label>Horometro Final *</label><input type="number" id="c-horo-fin" placeholder="0.0" step="0.1" min="0"></div>
+    </div>
     <button class="btn btn-r" onclick="cerrarTurno()">&#128308; Cerrar Turno</button>
   </div>
 </div>
@@ -331,7 +333,6 @@ function selectSSItem(item) {
     if (lt) { lt.textContent = 'Sin lote...'; document.getElementById('a-lote-trig').classList.remove('sel'); }
   }
   if (fid === 't-eq') {
-    // Actualizar estado del campo implemento según el equipo seleccionado
     actualizarEstadoImplemento(item.v);
   }
   closeSS();
@@ -366,7 +367,6 @@ function init() {
   fill('a-labor', D.labores,      function(l){ return l.codigo + ' - ' + l.descripcion; });
   fill('a-impl',  D.implementos,  function(i){ return i.codigo + ' - ' + i.descripcion; });
   fill('a-unidad', D.unidades);
-  // También llenar los selectores de edición de turno
   fill('et-op',   D.operadores, function(o){ return o.codigo + ' - ' + o.nombre; });
   fill('et-eq',   D.equipos,    function(e){ return e.codigo + (e.descripcion ? ' - ' + e.descripcion : ''); });
   fill('et-finca', D.fincas);
@@ -416,8 +416,6 @@ function cargarListasServidor() {
       fill('et-eq',   D.equipos,    function(e){ return e.codigo + (e.descripcion ? ' - ' + e.descripcion : ''); });
       fill('et-finca', D.fincas);
       fill('et-area',  D.areas);
-      // Re-evaluar implemento del turno activo si existe
-      if (turnoActivo) actualizarEstadoImplemento(turnoActivo.equipo);
       // Guardar en cache para uso offline
       try { localStorage.setItem('listas_cache', JSON.stringify({ts: Date.now(), listas: L})); } catch(e) {}
     })
@@ -475,7 +473,6 @@ function mostrarEstadoTurno() {
     document.getElementById('a-finca-act').value = turnoActivo.finca || '';
     var aft = document.getElementById('a-finca-act-trig-txt');
     if (aft) { aft.textContent = turnoActivo.finca || 'Finca del turno...'; aft.parentElement.classList.toggle('sel', !!turnoActivo.finca); }
-    // Actualizar estado de implemento según equipo del turno activo
     actualizarEstadoImplemento(turnoActivo.equipo);
     renderActividadesTurno();
   } else {
@@ -527,12 +524,11 @@ function iniciarTurno() {
 function agregarActividad() {
   if (!turnoActivo) { toast('Primero inicia un turno', '#EF4444'); return; }
 
-  var ho  = document.getElementById('a-hora').value;
-  var ls  = document.getElementById('a-labor');
+  var ho = document.getElementById('a-hora').value;
+  var ls = document.getElementById('a-labor');
+
   var fi  = document.getElementById('a-finca-act').value;
   var lo  = document.getElementById('a-lote').value;
-  var ca  = document.getElementById('a-cant').value;
-  var un  = document.getElementById('a-unidad').value;
   var implTiene = turnoActivo ? equipoTieneImpl(turnoActivo.equipo) : true;
   var implV = document.getElementById('a-impl').value;
 
@@ -541,8 +537,6 @@ function agregarActividad() {
   marcarError('a-labor',     !!ls.value); if (!ls.value) errores.push('Codigo de Labor');
   marcarError('a-finca-act', !!fi);       if (!fi)       errores.push('Finca');
   marcarError('a-lote',      !!lo);       if (!lo)       errores.push('Lote');
-  marcarError('a-cant',      !!ca);       if (!ca)       errores.push('Cantidad');
-  marcarError('a-unidad',    !!un);       if (!un)       errores.push('Unidad');
   if (implTiene) {
     marcarError('a-impl', !!implV);       if (!implV)    errores.push('Implemento');
   }
@@ -552,7 +546,7 @@ function agregarActividad() {
     return;
   }
 
-  // Validar que la hora no sea menor a la de la actividad anterior (solo al agregar, no al editar)
+  // Verificar que la hora no sea anterior a la última actividad
   if (editandoIdx < 0 && turnoActivo.actividades.length > 0) {
     var ultimaAct = turnoActivo.actividades[turnoActivo.actividades.length - 1];
     if (ultimaAct.hora && ho < ultimaAct.hora) {
@@ -1003,7 +997,7 @@ window.addEventListener('appinstalled', function() {
   if (btn) btn.style.display = 'none';
 });
 
-// ── Mapa de equipos SIN implemento ───────────────────────────────────────────
+// ── Implemento: equipos que NO usan implemento ──────────────────────────────
 var SIN_IMPL = {
   'TA-08':1,'TA-09':1,'TA-10':1,'TA-11':1,'TA-12':1,'TA-18':1,'TA-22':1,
   'TA-27':1,'TA-28':1,'TA-29':1,'TA-30':1,'TA-31':1,'TA-32':1,'TA-35':1,
@@ -1017,129 +1011,115 @@ var SIN_IMPL = {
 
 function equipoTieneImpl(codigoEquipo) {
   if (!codigoEquipo) return true;
-  var cod = String(codigoEquipo).trim();
-  // Si el servidor envía campo explícito tiene_implemento
-  for (var i = 0; i < (D && D.equipos ? D.equipos.length : 0); i++) {
-    if (D.equipos[i].codigo === codigoEquipo && typeof D.equipos[i].tiene_implemento !== 'undefined') {
-      return !!D.equipos[i].tiene_implemento;
+  if (SIN_IMPL[codigoEquipo]) return false;
+  // Verificar en D.equipos si tiene tiene_implemento
+  if (D && D.equipos) {
+    for (var i = 0; i < D.equipos.length; i++) {
+      if (D.equipos[i].codigo === codigoEquipo) {
+        if (typeof D.equipos[i].tiene_implemento !== 'undefined') {
+          return !!D.equipos[i].tiene_implemento;
+        }
+        break;
+      }
     }
   }
-  // Lista estática de equipos sin implemento
-  if (SIN_IMPL[cod]) return false;
-  // Heurística por descripción del equipo
-  for (var i = 0; i < (D && D.equipos ? D.equipos.length : 0); i++) {
-    if (D.equipos[i].codigo === codigoEquipo) {
-      var desc = (D.equipos[i].descripcion || '').toUpperCase();
-      if (desc.indexOf('RETRO') !== -1 || desc.indexOf('BULLDOZER') !== -1 ||
-          desc.indexOf('CAMION') !== -1 || desc.indexOf('CAMIONETA') !== -1 ||
-          desc.indexOf('MONTACARG') !== -1 || desc.indexOf('DRON') !== -1 ||
-          desc.indexOf('PLANTA') !== -1 || desc.indexOf('JIMMY') !== -1 ||
-          desc.indexOf('MOTOCARRO') !== -1 || desc.indexOf('PAJARITA') !== -1 ||
-          desc.indexOf('FORD CARGO') !== -1) return false;
-      break;
-    }
-  }
-  return true;
+  return true; // por defecto tiene implemento
 }
 
 function actualizarEstadoImplemento(codigoEquipo) {
-  var tieneImpl = equipoTieneImpl(codigoEquipo);
-  var fg    = document.getElementById('fg-implemento');
-  var trig  = document.getElementById('a-impl-trig');
-  var lbl   = document.getElementById('lbl-implemento');
-  if (!fg || !trig) return;
-  if (tieneImpl) {
-    fg.style.opacity   = '1';
-    trig.style.pointerEvents = 'auto';
-    trig.style.opacity = '1';
-    if (lbl) lbl.textContent = 'Implemento *';
-  } else {
-    // Limpiar selección y deshabilitar
+  var fg = document.getElementById('fg-implemento');
+  if (!fg) return;
+  var tiene = equipoTieneImpl(codigoEquipo);
+  fg.style.display = tiene ? '' : 'none';
+  var lbl = document.getElementById('lbl-implemento');
+  if (lbl) lbl.textContent = tiene ? 'Implemento *' : 'Implemento';
+  if (!tiene) {
     document.getElementById('a-impl').value = '';
-    var it = document.getElementById('a-impl-trig-txt');
-    if (it) { it.textContent = 'Sin implemento...'; trig.classList.remove('sel'); }
-    fg.style.opacity   = '0.4';
-    trig.style.pointerEvents = 'none';
-    trig.style.opacity = '0.4';
-    if (lbl) lbl.textContent = 'Implemento (N/A)';
+    var txt = document.getElementById('a-impl-trig-txt');
+    if (txt) { txt.textContent = 'Sin implemento...'; txt.parentElement.classList.remove('sel'); }
   }
 }
 
 function abrirImplemento() {
-  if (!turnoActivo || equipoTieneImpl(turnoActivo.equipo)) {
-    openSS('a-impl', 'Buscar implemento...');
-  }
+  var fg = document.getElementById('fg-implemento');
+  if (fg && fg.style.display === 'none') return;
+  openSS('a-impl', 'Buscar implemento...');
 }
 
-// ── Editar datos generales del turno activo ───────────────────────────────────
+// ── Editar turno activo ──────────────────────────────────────────────────────
+function setTrigTxt(id, val, placeholder) {
+  var el = document.getElementById(id + '-trig-txt');
+  if (!el) return;
+  var s = document.getElementById(id);
+  var lbl = val;
+  if (s && s.tagName === 'SELECT') {
+    for (var i = 0; i < s.options.length; i++) {
+      if (s.options[i].value === val) { lbl = s.options[i].text; break; }
+    }
+  }
+  el.textContent = val ? lbl : (placeholder || '— vacío —');
+  el.parentElement.classList.toggle('sel', !!val);
+}
+
 function editarTurnoActivo() {
   if (!turnoActivo) return;
-  var panel = document.getElementById('div-editar-turno');
-  if (!panel) return;
-  // Pre-llenar con datos actuales
+  var div = document.getElementById('div-editar-turno');
+  if (!div) return;
+  // Rellenar campos con datos actuales del turno
   document.getElementById('et-fecha').value = turnoActivo.fecha || '';
-  document.getElementById('et-op').value    = turnoActivo.operador || '';
-  document.getElementById('et-eq').value    = turnoActivo.equipo   || '';
-  document.getElementById('et-finca').value = turnoActivo.finca    || '';
-  document.getElementById('et-area').value  = turnoActivo.area     || '';
-  document.getElementById('et-horo').value  = turnoActivo.horometro_ini || '';
-  // Actualizar textos de los triggers
-  var opNombre = turnoActivo.operador_nombre || turnoActivo.operador || '';
-  var eqDesc   = turnoActivo.equipo_desc     || turnoActivo.equipo   || '';
-  setTrigTxt('et-op-trig-txt',    opNombre,                  'Seleccionar operador...');
-  setTrigTxt('et-eq-trig-txt',    eqDesc,                    'Seleccionar equipo...');
-  setTrigTxt('et-finca-trig-txt', turnoActivo.finca || '',   'Seleccionar finca...');
-  document.getElementById('et-op-trig').classList.toggle('sel',    !!turnoActivo.operador);
-  document.getElementById('et-eq-trig').classList.toggle('sel',    !!turnoActivo.equipo);
-  document.getElementById('et-finca-trig').classList.toggle('sel', !!turnoActivo.finca);
-  panel.style.display = 'block';
-  panel.scrollIntoView({behavior:'smooth', block:'start'});
-}
-
-function setTrigTxt(id, val, placeholder) {
-  var el = document.getElementById(id);
-  if (!el) return;
-  el.textContent = val || placeholder;
+  var etOp = document.getElementById('et-op');
+  if (etOp) { etOp.value = turnoActivo.operador || ''; setTrigTxt('et-op', turnoActivo.operador, 'Seleccionar operador...'); }
+  var etEq = document.getElementById('et-eq');
+  if (etEq) { etEq.value = turnoActivo.equipo || ''; setTrigTxt('et-eq', turnoActivo.equipo, 'Seleccionar equipo...'); }
+  var etFinca = document.getElementById('et-finca');
+  if (etFinca) { etFinca.value = turnoActivo.finca || ''; setTrigTxt('et-finca', turnoActivo.finca, 'Seleccionar finca...'); }
+  var etArea = document.getElementById('et-area');
+  if (etArea) etArea.value = turnoActivo.area || '';
+  document.getElementById('et-horo').value = turnoActivo.horometro_ini || '';
+  div.style.display = 'block';
 }
 
 function guardarEdicionTurno() {
-  var fe = document.getElementById('et-fecha').value;
-  var os = document.getElementById('et-op');
-  var es = document.getElementById('et-eq');
-  var fi = document.getElementById('et-finca');
-  var ho = document.getElementById('et-horo').value;
+  if (!turnoActivo) return;
+  var fecha = document.getElementById('et-fecha').value;
+  var op    = document.getElementById('et-op').value;
+  var eq    = document.getElementById('et-eq').value;
+  var finca = document.getElementById('et-finca').value;
+  var horo  = document.getElementById('et-horo').value;
 
   var errores = [];
-  marcarError('et-fecha', !!fe);     if (!fe)       errores.push('Fecha');
-  marcarError('et-op',    !!os.value); if (!os.value) errores.push('Operador');
-  marcarError('et-eq',    !!es.value); if (!es.value) errores.push('Equipo');
-  marcarError('et-finca', !!fi.value); if (!fi.value) errores.push('Finca');
-  marcarError('et-horo',  !!ho);      if (!ho)       errores.push('Horometro Inicio');
+  if (!fecha) errores.push('Fecha');
+  if (!op)    errores.push('Operador');
+  if (!eq)    errores.push('Equipo');
+  if (!finca) errores.push('Finca');
+  if (!horo)  errores.push('Horometro');
 
   if (errores.length > 0) {
     toast('Faltan: ' + errores.join(', '), '#EF4444');
     return;
   }
 
-  // Actualizar turno activo
-  turnoActivo.fecha           = fe;
-  turnoActivo.operador        = os.value;
-  turnoActivo.operador_nombre = os.options[os.selectedIndex].text;
-  turnoActivo.equipo          = es.value;
-  turnoActivo.equipo_desc     = es.options[es.selectedIndex].text;
-  turnoActivo.finca           = fi.value;
+  var etOp = document.getElementById('et-op');
+  var etEq = document.getElementById('et-eq');
+
+  turnoActivo.fecha           = fecha;
+  turnoActivo.operador        = op;
+  turnoActivo.operador_nombre = etOp ? etOp.options[etOp.selectedIndex].text : op;
+  turnoActivo.equipo          = eq;
+  turnoActivo.equipo_desc     = etEq ? etEq.options[etEq.selectedIndex].text : eq;
+  turnoActivo.finca           = finca;
   turnoActivo.area            = document.getElementById('et-area').value;
-  turnoActivo.horometro_ini   = parseFloat(ho) || 0;
+  turnoActivo.horometro_ini   = parseFloat(horo) || 0;
 
   guardarTurnoActivo(turnoActivo);
+  document.getElementById('div-editar-turno').style.display = 'none';
   mostrarEstadoTurno();
-  cancelarEdicionTurno();
   toast('Turno actualizado correctamente');
 }
 
 function cancelarEdicionTurno() {
-  var panel = document.getElementById('div-editar-turno');
-  if (panel) panel.style.display = 'none';
+  var div = document.getElementById('div-editar-turno');
+  if (div) div.style.display = 'none';
 }
 
 try { init(); } catch(e) {
