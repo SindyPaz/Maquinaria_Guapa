@@ -390,6 +390,23 @@ function init() {
   document.getElementById('ss').innerHTML = st;
 
   setTimeout(function(){ if(navigator.onLine) syncData(); }, 2000);
+
+  // ── Auto-sync al recuperar internet ────────────────────────────────────────
+  window.addEventListener('online', function() {
+    var st = document.getElementById('ss');
+    if (st) st.innerHTML = '<span style="color:#10B981">&#128246; Conexión recuperada — sincronizando...</span>';
+    setTimeout(function() {
+      syncData();
+      setTimeout(function() {
+        if (st) st.innerHTML = '<span style="color:#10B981">&#128246; En linea</span>';
+      }, 3000);
+    }, 1500);
+  });
+
+  window.addEventListener('offline', function() {
+    var st = document.getElementById('ss');
+    if (st) st.innerHTML = '<span style="color:#EF4444">&#128245; Sin conexion</span>';
+  });
   // Cargar listas actualizadas del servidor (sin cambiar URL)
   if (navigator.onLine) {
     setTimeout(function(){ cargarListasServidor(); }, 3000);
