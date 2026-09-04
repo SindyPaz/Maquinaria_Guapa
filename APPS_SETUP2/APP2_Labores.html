@@ -133,7 +133,15 @@ textarea{resize:vertical;min-height:70px}
     <div class="fg"><label>Lote *</label>
     <div class="ss-trig" id="a-lote-trig" onclick="openSS('a-lote','Buscar lote...')"><span id="a-lote-trig-txt" style="color:#4B7A5C">Sin lote...</span><span>&#9660;</span></div>
     <input type="hidden" id="a-lote" value=""></div>
-    <div class="fg" id="fg-implemento"><label id="lbl-implemento">Implemento</label>
+    <div class="fg" id="fg-tipo-cosecha" style="display:none">
+    <label>Tipo de Cosecha *</label>
+    <select id="a-tipo-cosecha">
+      <option value="">Seleccionar tipo...</option>
+      <option value="Induccion">Inducción</option>
+      <option value="Fruta adelantada">Fruta adelantada</option>
+    </select>
+  </div>
+  <div class="fg" id="fg-implemento"><label id="lbl-implemento">Implemento</label>
     <div class="ss-trig" id="a-impl-trig" onclick="abrirImplemento()"><span id="a-impl-trig-txt" style="color:#4B7A5C">Sin implemento...</span><span>&#9660;</span></div>
     <select id="a-impl" style="display:none"><option value="">Sin implemento...</option></select></div>
     <div class="rg">
@@ -342,6 +350,12 @@ function selectSSItem(item) {
       var uSel = document.getElementById('a-unidad');
       if (uSel) uSel.value = labor.unidad;
     }
+    // Mostrar/ocultar campo Tipo de cosecha
+    var esCosecha = labor && labor.area && labor.area.toLowerCase() === 'cosecha';
+    var fgCosecha = document.getElementById('fg-tipo-cosecha');
+    var selCosecha = document.getElementById('a-tipo-cosecha');
+    if (fgCosecha) fgCosecha.style.display = esCosecha ? 'block' : 'none';
+    if (selCosecha && !esCosecha) selCosecha.value = '';
   }
   closeSS();
 }
@@ -557,6 +571,10 @@ function agregarActividad() {
   var implTiene = turnoActivo ? equipoTieneImpl(turnoActivo.equipo) : true;
   var implV = document.getElementById('a-impl').value;
 
+  var laborActual = D.labores.find(function(l){ return l.codigo === ls.value; });
+  var esCosechaLabor = laborActual && laborActual.area && laborActual.area.toLowerCase() === 'cosecha';
+  var tipoCosechaV = document.getElementById('a-tipo-cosecha').value;
+
   var errores = [];
   marcarError('a-hora',      !!ho);       if (!ho)       errores.push('Hora Inicio');
   marcarError('a-labor',     !!ls.value); if (!ls.value) errores.push('Codigo de Labor');
@@ -564,6 +582,9 @@ function agregarActividad() {
   marcarError('a-lote',      !!lo);       if (!lo)       errores.push('Lote');
   if (implTiene) {
     marcarError('a-impl', !!implV);       if (!implV)    errores.push('Implemento');
+  }
+  if (esCosechaLabor) {
+    marcarError('a-tipo-cosecha', !!tipoCosechaV); if (!tipoCosechaV) errores.push('Tipo de Cosecha');
   }
 
   if (errores.length > 0) {
@@ -599,6 +620,7 @@ function agregarActividad() {
     id:             Date.now(),
     hora:           ho,
     labor:          ls.value,
+    tipo_cosecha:   tipoCosechaV || '',
     labor_desc:     laborObj.descripcion || ls.value,
     clasificacion:  laborObj.clasificacion  || '',
     distribucion:   laborObj.distribucion   || '',
@@ -635,6 +657,8 @@ function agregarActividad() {
   document.getElementById('a-lote').value  = '';
   document.getElementById('a-impl').value  = '';
   document.getElementById('a-unidad').selectedIndex = 0;
+  document.getElementById('a-tipo-cosecha').value = '';
+  document.getElementById('fg-tipo-cosecha').style.display = 'none';
   document.getElementById('a-cant').value = '';
   document.getElementById('a-obs').value  = '';
   // Reset triggers
