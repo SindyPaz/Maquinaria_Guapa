@@ -335,6 +335,14 @@ function selectSSItem(item) {
   if (fid === 't-eq') {
     actualizarEstadoImplemento(item.v);
   }
+  if (fid === 'a-labor') {
+    // Auto-llenar Unidad según la labor seleccionada
+    var labor = D.labores.find(function(l){ return l.codigo === item.v; });
+    if (labor && labor.unidad) {
+      var uSel = document.getElementById('a-unidad');
+      if (uSel) uSel.value = labor.unidad;
+    }
+  }
   closeSS();
 }
 
