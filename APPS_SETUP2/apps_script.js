@@ -18,8 +18,8 @@ function getSheet(nombre) {
     } else if (nombre === 'Labores') {
       sheet.appendRow(['ID Turno','Fecha','Operador','Equipo','Area','Finca','Horometro Ini',
         'Fecha Cierre','Horometro Fin','ACPM','Hora Labor','Cod Labor','Desc Labor',
-        'Lote','Implemento','Desc Implemento','Cantidad','Unidad','Obs','Sincronizado']);
-      sheet.getRange(1,1,1,20).setFontWeight('bold').setBackground('#065F46').setFontColor('#FFFFFF');
+        'Clasificacion','Distribucion','Lote','Implemento','Cantidad','Unidad','Tipo Cosecha','Obs','Sincronizado']);
+      sheet.getRange(1,1,1,21).setFontWeight('bold').setBackground('#065F46').setFontColor('#FFFFFF');
     }
   }
   return sheet;
@@ -124,27 +124,33 @@ function doPost(e) {
               '','','','','','','','','', new Date().toISOString()]);
           } else {
             acts.forEach(a => {
+              // Combinar implemento código + descripción en un solo campo
+              const implText = a.implemento
+                ? (a.implemento + (a.impl_desc ? ' - ' + a.impl_desc : ''))
+                : '';
               sheet.appendRow([
                 tid,
                 t.fecha,
-                t.operador_nombre || t.operador,  // nombre del operador
-                t.equipo_desc     || t.equipo,     // descripcion del equipo
-                t.area            || '',
-                t.finca           || '',
-                t.horometro_ini   || '',
-                t.fecha_cierre    || '',           // hora cierre turno
-                t.horometro_fin   || '',
-                t.acpm            || '',
-                a.hora            || '',           // hora actividad
-                a.labor           || '',           // codigo labor
-                a.labor_desc      || '',           // descripcion labor
-                a.lote            || '',
-                a.implemento      || '',
-                a.impl_desc       || '',
-                a.cantidad        || '',
-                a.unidad          || '',           // HA / METROS / UNIDAD
-                a.obs             || '',
-                new Date().toISOString()
+                t.operador_nombre || t.operador,   // Operador
+                t.equipo_desc     || t.equipo,      // Equipo
+                t.area            || '',             // Area
+                a.finca || t.finca || '',            // Finca (actividad o turno)
+                t.horometro_ini   || '',             // Horometro Ini
+                t.fecha_cierre    || '',             // Fecha Cierre
+                t.horometro_fin   || '',             // Horometro Fin
+                t.acpm            || '',             // ACPM
+                a.hora            || '',             // Hora Labor
+                a.labor           || '',             // Cod Labor
+                a.labor_desc      || '',             // Desc Labor
+                a.clasificacion   || '',             // Clasificacion (de la labor)
+                a.distribucion    || '',             // Distribucion (de la labor)
+                a.lote            || '',             // Lote
+                implText,                            // Implemento (código - descripción)
+                a.cantidad        || '',             // Cantidad
+                a.unidad          || '',             // Unidad
+                a.tipo_cosecha    || '',             // Tipo Cosecha
+                a.obs             || '',             // Obs
+                new Date().toISOString()             // Sincronizado
               ]);
             });
           }
@@ -225,6 +231,226 @@ function doGet(e) {
     }
 
     if (action === 'ping') return jsonOk({msg:'OK'});
+
+    // ── Devolver listas dinámicas para el APP2
+    if (action === 'getListas') {
+      const ss = SpreadsheetApp.openById(SHEET_ID);
+      const listas = {};
+
+      // Helper para leer una hoja
+      const leerHoja = (nombre) => {
+        const sh = ss.getSheetByName(nombre);
+        return sh ? sh.getDataRange().getValues() : null;
+      };
+
+      // Operadores
+      const opRows = leerHoja('Lista_operadores');
+      if (opRows) {
+        listas.operadores = opRows.slice(1)
+          .filter(r => r[0] && String(r[2]||'').trim().toUpperCase() === 'ACTIVO')
+          .map(r => ({codigo: String(parseInt(r[0])), nombre: String(r[1]).trim()}));
+      }
+
+      // Equipos
+      const eqRows = leerHoja('Lista_equipos');
+      if (eqRows) {
+        // Encontrar índice de columna Tiene_Implemento (col 6 = índice 6)
+        const eqHeader = eqRows[0] || [];
+        const implColIdx = eqHeader.map(c => String(c||'').trim()).indexOf('Tiene_Implemento');
+        listas.equipos = eqRows.slice(1)
+          .filter(r => r[0])
+          .map(r => {
+            const obj = {codigo: String(r[0]).trim(), tipo: String(r[1]||'').trim(), descripcion: String(r[4]||'').trim()};
+            if (implColIdx >= 0) {
+              obj.tiene_implemento = String(r[implColIdx]||'').trim().toUpperCase() === 'SI';
+            }
+            return obj;
+          });
+      }
+
+      // Implementos
+      const implRows = leerHoja('Lista_implementos');
+      if (implRows) {
+        listas.implementos = implRows.slice(1)
+          .filter(r => r[0])
+          .map(r => ({codigo: String(r[0]).trim(), descripcion: String(r[1]||'').trim()}));
+      }
+
+      // Labores (con clasificacion y distribucion)
+      const labRows = leerHoja('Codigo_labor');
+      if (labRows) {
+        listas.labores = labRows.slice(1)
+          .filter(r => r[0])
+          .map(r => ({
+            codigo: String(parseInt(r[0])),
+            descripcion: String(r[1]||'').trim().replace(/ /g,''),
+            clasificacion: String(r[2]||'').trim(),
+            distribucion: String(r[3]||'').trim(),
+            area: String(r[4]||'').trim(),
+            unidad: String(r[5]||'').trim()
+          }));
+      }
+
+      // Lotes
+      const loteRows = leerHoja('Lista_lotes');
+      if (loteRows) {
+        listas.lotes = [];
+        listas.lotes_por_finca = {};
+        loteRows.slice(1).forEach(r => {
+          if (!r[0]) return;
+          const loteStr = String(r[0]).trim();
+          const finca   = String(r[4]||'').trim() || 'General';
+          listas.lotes.push({
+            lote: loteStr,
+            area_neta: parseFloat(r[1]) || 0,
+            area_ef:   parseFloat(r[2]) || 0,
+            estado:    String(r[3]||'').trim(),
+            finca:     finca,
+            distrito:  String(r[5]||'').trim()
+          });
+          if (!listas.lotes_por_finca[finca]) listas.lotes_por_finca[finca] = [];
+          listas.lotes_por_finca[finca].push(loteStr);
+        });
+        const fincasSort = Object.keys(listas.lotes_por_finca).filter(f => f !== 'General').sort();
+        if (listas.lotes_por_finca['General']) fincasSort.push('General');
+        listas.fincas = fincasSort;
+      }
+
+      // Unidades
+      const unidRows = leerHoja('Unidad');
+      listas.unidades = unidRows
+        ? unidRows.slice(1).filter(r => r[0]).map(r => String(r[0]).trim())
+        : ['UNIDAD','METROS','HAS','BULTOS','UNIDADES','LITROS','BINES','VIAJES','KILOS','TONELADAS'];
+
+      // Areas
+      const areaRows = leerHoja('Lista_areas');
+      listas.areas = areaRows
+        ? areaRows.slice(1).filter(r => r[0]).map(r => String(r[0]).trim())
+        : ["Aplicaciones","CTIA","Control operaciones","Cosecha","Desarrollo de cultivo","Empaque","Preparación","Taller","semillero","siembra"];
+
+      return jsonOk({listas: listas, timestamp: new Date().toISOString()});
+    }
+
+    // ── Devolver listas dinámicas para el APP1 (Anomalías)
+    if (action === 'getListasApp1') {
+      const ss = SpreadsheetApp.openById(SHEET_ID);
+      const L  = {};
+
+      const leerHoja = (nombre) => {
+        const sh = ss.getSheetByName(nombre);
+        return sh ? sh.getDataRange().getValues() : null;
+      };
+
+      // Operadores (activos)
+      const opRows = leerHoja('Lista_operadores');
+      if (opRows) {
+        L.operadores = opRows.slice(1)
+          .filter(r => r[0] && String(r[2]||'').trim().toUpperCase() === 'ACTIVO')
+          .map(r => ({codigo: String(parseInt(r[0])), nombre: String(r[1]).trim()}));
+      }
+
+      // Equipos (tipo != IMPLEMENTO)
+      const eqRows = leerHoja('Lista_equipos');
+      if (eqRows) {
+        L.equipos = eqRows.slice(1)
+          .filter(r => r[0] && String(r[3]||'').trim().toUpperCase() !== 'IMPLEMENTO')
+          .map(r => ({codigo: String(r[0]).trim(), descripcion: String(r[1]||'').trim(), tipo: 'EQUIPO'}));
+      }
+
+      // Implementos (de Lista_implementos)
+      const implRows = leerHoja('Lista_implementos');
+      if (implRows) {
+        L.implementos = implRows.slice(1)
+          .filter(r => r[0])
+          .map(r => ({codigo: String(r[0]).trim(), descripcion: String(r[1]||'').trim(), tipo: 'IMPLEMENTO'}));
+      }
+
+      // Lotes + Fincas
+      const loteRows = leerHoja('Lista_lotes');
+      if (loteRows) {
+        L.lotes = [];
+        L.lotes_por_finca = {};
+        loteRows.slice(1).forEach(r => {
+          if (!r[0]) return;
+          const loteStr = String(r[0]).trim();
+          const finca   = String(r[4]||'').trim() || 'General';
+          L.lotes.push(loteStr);
+          if (!L.lotes_por_finca[finca]) L.lotes_por_finca[finca] = [];
+          L.lotes_por_finca[finca].push(loteStr);
+        });
+        L.sedes = Object.keys(L.lotes_por_finca).sort();
+      }
+
+      // Áreas (intentar 'Lista_areas' primero, luego 'Areas' como fallback)
+      const areaRows = leerHoja('Lista_areas') || leerHoja('Areas');
+      L.areas = areaRows
+        ? areaRows.slice(1).filter(r => r[0]).map(r => String(r[0]).trim())
+        : ['Aplicaciones','CTIA','Control operaciones','Cosecha','Desarrollo de cultivo','Empaque','Preparación','Taller','semillero','siembra'];
+
+      // Técnicos
+      const tecRows = leerHoja('Técnico');
+      L.tecnicos = tecRows
+        ? tecRows.slice(1).filter(r => r[0]).map(r => String(r[0]).trim())
+        : [];
+
+      // Prioridades
+      const prioRows = leerHoja('Prioridad');
+      L.prioridades = prioRows
+        ? prioRows.slice(1).filter(r => r[0]).map(r => String(r[0]).trim())
+        : ['Alta','Media','Baja'];
+
+      // Disponibilidades
+      const dispRows = leerHoja('Disponibilidad');
+      L.disponibilidades = dispRows
+        ? dispRows.slice(1).filter(r => r[0]).map(r => String(r[0]).trim())
+        : ['Varada','Disponible'];
+
+      // Fallas → partes, sistemas, jerarquía, inv_partes, modos, mecanismos
+      const fallaRows = leerHoja('Fallas');
+      if (fallaRows) {
+        const partesSet    = new Set();
+        const sistemasSet  = new Set();
+        const modosSet     = new Set();
+        const mecSet       = new Set();
+        const jerarquia    = {};
+        const inv_partes   = {};
+
+        fallaRows.slice(1).forEach(r => {
+          const sis  = String(r[0]||'').trim();
+          const sub  = String(r[1]||'').trim();
+          const prt  = String(r[2]||'').trim();
+          const modo = String(r[3]||'').trim();
+          const mec  = String(r[4]||'').trim();
+          if (!sis || !prt) return;
+
+          partesSet.add(prt);
+          sistemasSet.add(sis);
+          if (modo) modosSet.add(modo);
+          if (mec)  mecSet.add(mec);
+
+          // Jerarquía
+          if (!jerarquia[sis]) jerarquia[sis] = {};
+          if (sub && !jerarquia[sis][sub]) jerarquia[sis][sub] = [];
+          const arr = sub ? jerarquia[sis][sub] : (jerarquia[sis][''] = jerarquia[sis][''] || []);
+          if (!arr.includes(prt)) arr.push(prt);
+
+          // inv_partes
+          const key = prt.toLowerCase();
+          if (!inv_partes[key]) inv_partes[key] = [];
+          const existe = inv_partes[key].some(x => x.sistema === sis && x.subsistema === sub);
+          if (!existe) inv_partes[key].push({sistema: sis, subsistema: sub});
+        });
+
+        L.partes      = [...partesSet].sort();
+        L.sistemas    = [...sistemasSet].sort();
+        L.modos       = [...modosSet].sort();
+        L.mecanismos  = [...mecSet].sort();
+        L.jerarquia   = jerarquia;
+        L.inv_partes  = inv_partes;
+      }
+
+      return jsonOk({listas: L, timestamp: new Date().toISOString()});
+    }
 
     return jsonOk({msg:'Accion desconocida'});
 
