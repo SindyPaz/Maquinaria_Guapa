@@ -1,9 +1,8 @@
 // Service Worker - Labores Maquinaria PWA
 // Versión: cambia este número para forzar actualización en todos los dispositivos
-var CACHE_VERSION = 'labores-v1.3';
+var CACHE_VERSION = 'labores-v1.4';
 
 var APP_SHELL = [
-  './APP2_Labores.html',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
@@ -11,7 +10,7 @@ var APP_SHELL = [
   './logo_tractor.png'
 ];
 
-// ── INSTALAR: guarda el shell en caché ──────────────────────────────────────
+// ── INSTALAR: guarda el shell en caché (SIN el HTML para que siempre se descargue fresco) ──
 self.addEventListener('install', function(e) {
   e.waitUntil(
     caches.open(CACHE_VERSION).then(function(cache) {
@@ -36,7 +35,7 @@ self.addEventListener('activate', function(e) {
   );
 });
 
-// ── FETCH: Network-first para sync con Google, Cache-first para el shell ────
+// ── FETCH ────────────────────────────────────────────────────────────────────
 self.addEventListener('fetch', function(e) {
   var url = e.request.url;
 
@@ -49,12 +48,34 @@ self.addEventListener('fetch', function(e) {
     return;
   }
 
-  // Para todo lo demás: Cache-first (funciona offline)
+  // HTML principal → Network-first: siempre descarga la versión más reciente
+  // Si no hay red, usa la caché como respaldo
+  if (url.includes('APP2_Labores.html') || url.includes('APP1_Anomalias.html') ||
+      url.endsWith('/') || url.includes('index.html')) {
+    e.respondWith(
+      fetch(e.request, { cache: 'no-store' }).then(function(response) {
+        if (response && response.status === 200) {
+          var clone = response.clone();
+          caches.open(CACHE_VERSION).then(function(cache) {
+            cache.put(e.request, clone);
+          });
+        }
+        return response;
+      }).catch(function() {
+        // Sin red → usar caché
+        return caches.match(e.request).then(function(cached) {
+          return cached || caches.match('./APP2_Labores.html');
+        });
+      })
+    );
+    return;
+  }
+
+  // Íconos y assets estáticos → Cache-first (funcionan offline)
   e.respondWith(
     caches.match(e.request).then(function(cached) {
       if (cached) return cached;
       return fetch(e.request).then(function(response) {
-        // Guarda en caché si es una respuesta válida
         if (response && response.status === 200 && response.type === 'basic') {
           var clone = response.clone();
           caches.open(CACHE_VERSION).then(function(cache) {
@@ -63,7 +84,6 @@ self.addEventListener('fetch', function(e) {
         }
         return response;
       }).catch(function() {
-        // Si falla la red y no hay caché, devuelve el HTML principal
         return caches.match('./APP2_Labores.html');
       });
     })
