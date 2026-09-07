@@ -388,7 +388,6 @@ function init() {
   fill('t-area',  D.areas);
   fill('a-labor', D.labores,      function(l){ return l.codigo + ' - ' + l.descripcion; });
   fill('a-impl',  D.implementos,  function(i){ return i.codigo + ' - ' + i.descripcion; });
-  fill('a-unidad', D.unidades);
   fill('et-op',   D.operadores, function(o){ return o.codigo + ' - ' + o.nombre; });
   fill('et-eq',   D.equipos,    function(e){ return e.codigo + (e.descripcion ? ' - ' + e.descripcion : ''); });
   fill('et-finca', D.fincas);
@@ -450,7 +449,6 @@ function cargarListasServidor() {
       fill('t-area',  D.areas);
       fill('a-labor', D.labores,     function(l){ return l.codigo + ' - ' + l.descripcion; });
       fill('a-impl',  D.implementos, function(i){ return i.codigo + ' - ' + i.descripcion; });
-      fill('a-unidad', D.unidades);
       fill('et-op',   D.operadores, function(o){ return o.codigo + ' - ' + o.nombre; });
       fill('et-eq',   D.equipos,    function(e){ return e.codigo + (e.descripcion ? ' - ' + e.descripcion : ''); });
       fill('et-finca', D.fincas);
