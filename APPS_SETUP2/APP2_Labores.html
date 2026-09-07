@@ -876,7 +876,10 @@ function marcarError(id, ok) {
   el.style.boxShadow   = ok ? 'none' : '0 0 0 3px rgba(239,68,68,.2)';
 }
 
+var syncEnCurso = false;
 async function syncData() {
+  if (syncEnCurso) return;
+  syncEnCurso = true;
   var pend = JSON.parse(localStorage.getItem(STORE + '_sync') || '[]');
   if (!pend.length) { toast('No hay datos pendientes'); return; }
   var ss = document.getElementById('ss');
@@ -890,9 +893,11 @@ async function syncData() {
     if (ss) ss.innerHTML = '<span style="color:#10B981">&#9989; Enviado (' + pend.length + ')</span>';
     setTimeout(function(){ if (ss) ss.innerHTML = '<span style="color:#64748B">&#128246; En linea</span>'; }, 4000);
     toast('Sincronizado: ' + pend.length + ' turnos');
+    syncEnCurso = false;
   } catch(e) {
     if (ss) ss.innerHTML = '<span style="color:#EF4444">Error sync: ' + e.message + '</span>';
     toast('Error al sincronizar', '#EF4444');
+    syncEnCurso = false;
   }
 }
 
