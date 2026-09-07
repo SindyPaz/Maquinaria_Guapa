@@ -580,6 +580,10 @@ function agregarActividad() {
   marcarError('a-labor',     !!ls.value); if (!ls.value) errores.push('Codigo de Labor');
   marcarError('a-finca-act', !!fi);       if (!fi)       errores.push('Finca');
   marcarError('a-lote',      !!lo);       if (!lo)       errores.push('Lote');
+  var cantV = document.getElementById('a-cant').value;
+  marcarError('a-cant', !!cantV); if (!cantV) errores.push('Cantidad');
+  var unidV = document.getElementById('a-unidad').value;
+  marcarError('a-unidad', !!unidV); if (!unidV) errores.push('Unidad');
   if (implTiene) {
     marcarError('a-impl', !!implV);       if (!implV)    errores.push('Implemento');
   }
