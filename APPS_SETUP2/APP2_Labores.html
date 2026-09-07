@@ -146,7 +146,7 @@ textarea{resize:vertical;min-height:70px}
     <select id="a-impl" style="display:none"><option value="">Sin implemento...</option></select></div>
     <div class="rg">
       <div class="fg" style="flex:1"><label>Cantidad</label><input type="number" id="a-cant" placeholder="0.00" step="0.01" min="0"></div>
-      <div class="fg" style="flex:1"><label>Unidad</label><select id="a-unidad"><option value="">-</option></select></div>
+      <div class="fg" style="flex:1"><label>Unidad</label><input type="text" id="a-unidad" placeholder="Auto..." readonly style="background:rgba(16,185,129,.08);color:#A7F3D0;border:1px solid #065F46"></div>
     </div>
     <div class="fg"><label>Observaciones</label><textarea id="a-obs" placeholder="Opcional..."></textarea></div>
     <button class="btn btn-act" id="btn-agregar-act" onclick="agregarActividad()">&#10010; Agregar Actividad</button>
@@ -581,7 +581,6 @@ function agregarActividad() {
   marcarError('a-finca-act', !!fi);       if (!fi)       errores.push('Finca');
   marcarError('a-lote',      !!lo);       if (!lo)       errores.push('Lote');
   var cantV = document.getElementById('a-cant').value;
-  marcarError('a-cant', !!cantV); if (!cantV) errores.push('Cantidad');
   var unidV = document.getElementById('a-unidad').value;
   marcarError('a-unidad', !!unidV); if (!unidV) errores.push('Unidad');
   if (implTiene) {
@@ -660,7 +659,7 @@ function agregarActividad() {
   document.getElementById('a-labor').value = '';
   document.getElementById('a-lote').value  = '';
   document.getElementById('a-impl').value  = '';
-  document.getElementById('a-unidad').selectedIndex = 0;
+  document.getElementById('a-unidad').value = '';
   document.getElementById('a-tipo-cosecha').value = '';
   document.getElementById('fg-tipo-cosecha').style.display = 'none';
   document.getElementById('a-cant').value = '';
