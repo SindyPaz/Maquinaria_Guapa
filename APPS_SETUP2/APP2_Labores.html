@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -373,6 +373,26 @@ function init() {
     document.getElementById('ss').innerHTML = '<span style="color:#EF4444">Error JSON: ' + e.message + '</span>';
     return;
   }
+
+  // ── Cargar listas guardadas offline (fix: unidad auto, listas actualizadas sin internet) ──
+  try {
+    var cached = localStorage.getItem('listas_cache');
+    if (cached) {
+      var cacheObj = JSON.parse(cached);
+      if (cacheObj && cacheObj.listas) {
+        var Lc = cacheObj.listas;
+        if (Lc.operadores  && Lc.operadores.length)  D.operadores  = Lc.operadores;
+        if (Lc.equipos     && Lc.equipos.length)     D.equipos     = Lc.equipos;
+        if (Lc.labores     && Lc.labores.length)     D.labores     = Lc.labores;
+        if (Lc.implementos && Lc.implementos.length) D.implementos = Lc.implementos;
+        if (Lc.lotes       && Lc.lotes.length)       D.lotes       = Lc.lotes;
+        if (Lc.lotes_por_finca) D.lotes_por_finca = Lc.lotes_por_finca;
+        if (Lc.fincas      && Lc.fincas.length)      D.fincas      = Lc.fincas;
+        if (Lc.areas       && Lc.areas.length)       D.areas       = Lc.areas;
+        if (Lc.unidades    && Lc.unidades.length)    D.unidades    = Lc.unidades;
+      }
+    }
+  } catch(e2) { /* no bloquear si hay error en cache */ }
 
   var ahora = new Date(); ahora.setSeconds(0,0);
   var pad = function(n){ return n < 10 ? '0'+n : n; };
